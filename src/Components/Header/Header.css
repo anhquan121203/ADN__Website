@@ -1,0 +1,105 @@
+.header-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-around;
+}
+
+.top-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  background: white;
+}
+
+.top--logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 200px;
+}
+
+.top--logo img {
+  width: 120px;
+  height: auto;
+}
+
+.top--infor {
+  display: flex;
+  gap: 40px;
+  flex: 1;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.top--infor__item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 18px;
+}
+
+.top--infor__item i {
+  font-size: 20px;
+  color: #00a9a4;
+}
+
+.top--infor__item strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.top--infor__item span {
+  color: #888;
+}
+
+.top--infor__item .header-icon {
+  font-size: 25px;
+  color: #00a9a4;
+}
+
+/* NAV BAR  */
+.navBar-menu {
+  background: white;
+  padding: 0px 40px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  
+}
+
+.navBar-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin-right: -450px;
+}
+
+.navBar-menu a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #333;
+  font-size: 20px;
+}
+
+.navBar-menu a:hover {
+  color: #00a9a4;
+  text-decoration: underline;
+}
+
+.navBar-menu__login{
+    gap: 30px;
+    /* font-size: 18px; */
+}
+
+.navBar-menu__icon{
+    font-size: 23px;
+    color: #00a9a4;
+}
