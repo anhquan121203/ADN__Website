@@ -1,7 +1,8 @@
 // Settup axiosIntance
 
+import { API_BASE_URL } from "../Constants/apiConstants";
 import axiosInstance from "./axiosInstance";
-const API_BASE_URL = "https://wdp392-rest-api-with-nodejs-express-mongodb.vercel.app";
+import * as jwt_decode from "jwt-decode"; 
 
 
 export const loginUser = async (userData) => {
@@ -49,5 +50,29 @@ export const signOut = async () => {
     window.location.href = "/login";
   } catch (error) {
     console.error("Error logging out:", error);
+  }
+};
+
+export const loginWithGoogle = async (credentialResponse) => {
+  try {
+    const decoded = jwt_decode(credentialResponse.credential);
+
+    const response = await axiosInstance.post(
+      `${API_BASE_URL}/api/auth/google`,
+      {
+        google_id: decoded.sub,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data?.Errors ||
+      error.response?.data?.Message ||
+      "Google login failed"
+    );
   }
 };

@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_BASE_URL = "https://wdp392-rest-api-with-nodejs-express-mongodb.vercel.app";
+import { API_BASE_URL } from "../Constants/apiConstants";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,

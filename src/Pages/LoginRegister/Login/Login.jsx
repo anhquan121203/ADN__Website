@@ -5,11 +5,14 @@ import { Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { loginUser } from "../../../Api/authApi";
+import { loginUser, loginWithGoogle } from "../../../Api/authApi";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { login } from "../../../Feartures/user/authSlice";
 import { FaGoogle } from "react-icons/fa";
+
+// ROUTER API GG
+import { useGoogleLogin } from "@react-oauth/google";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -23,7 +26,7 @@ function LoginPage() {
       .required("Bắt buộc nhập email!"),
 
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
       .required("Bắt buộc nhập mật khẩu!"),
   });
 
@@ -39,20 +42,20 @@ function LoginPage() {
         const response = await loginUser(values);
 
         // Make sure we receive the correct tokens
-        if (response?.accessToken && response?.refreshToken) {
-          const { accessToken, refreshToken } = response;
+        if (response?.token) {
+          const { token } = response;
 
           // Save token in localStorage
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("accessToken", token);
+          // localStorage.setItem("refreshToken", refreshToken);
 
           // Dispatch login action
-          dispatch(login({ accessToken, refreshToken }));
+          dispatch(login({ token }));
 
           toast.success("Đăng nhập thành công ✅");
-          setTimeout(() => {
+
             navigate("/");
-          }, 1000);
+
         } else {
           toast.error("Login failed. Please try again.");
         }
@@ -62,13 +65,35 @@ function LoginPage() {
     },
   });
 
+  // Handle Google login
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const response = await loginWithGoogle(tokenResponse);
+        const { token } = response;
+
+        // Lưu token và dispatch Redux
+        localStorage.setItem("accessToken", token);
+        // localStorage.setItem("refreshToken", refreshToken);
+        dispatch(login({ token }));
+
+        toast.success("Đăng nhập bằng Google thành công ✅");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      } catch (error) {
+        toast.error("Đăng nhập bằng Google thất bại");
+      }
+    },
+    onError: () => toast.error("Google login failed"),
+  });
+
   return (
     <div className="login-container">
       <div className="login-left">
         <div className="login-logo">
           <img src={logo} alt="logo page" />
         </div>
-
       </div>
 
       {/* LOGIN RIGHT***************** */}
@@ -125,8 +150,13 @@ function LoginPage() {
 
         <p style={{ marginBottom: "-5px" }}>Hoặc đăng nhập với Google</p>
         <div className="social-login">
-          <button type="button" class="btn btn-social">
-            <FaGoogle className="social-icon"/>Google
+          <button
+            type="button"
+            className="btn btn-social"
+            onClick={() => googleLogin()}
+          >
+            <FaGoogle className="social-icon" />
+            Google
           </button>
         </div>
 
