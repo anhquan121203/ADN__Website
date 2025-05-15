@@ -3,6 +3,32 @@
   top: 0;
   right: 0;
   left: 0;
+  z-index: 1000;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  
+}
+
+.header-container.scrolled {
+  position: fixed;
+  top: 0;
+  animation: mymove 2.5s forwards;
+  animation-fill-mode: forwards;
+}
+
+@keyframes mymove {
+  from {
+    top: -50px;
+    opacity: 0;
+  }
+
+  to {
+    top: 0px;
+    opacity: 1;
+  }
+}
+
+.header-container.scrolled:hover {
+  animation-timing-function: linear;
 }
 
 .header-top {
@@ -64,10 +90,10 @@
   color: #00a9a4;
 }
 
-/* NAV BAR  */
+/* NAV BAR MENU */
 .navBar-menu {
   background: white;
-  padding: 0px 40px;
+  padding: 10px 40px;
   border-top: 1px solid #eee;
   display: flex;
   justify-content: space-around;
@@ -86,7 +112,7 @@
   text-decoration: none;
   font-weight: bold;
   color: #333;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .navBar-menu a:hover {

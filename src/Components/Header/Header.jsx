@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/images/logo.png";
 import { CiClock2, CiLocationOn, CiTwitter, CiUser } from "react-icons/ci";
 import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50); // Trigger after 50px scroll
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="header-container">
+    <div className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* HEADER TOP */}
       <div className="header-top">
         <div className="top-menu">
@@ -50,7 +63,7 @@ function Header() {
       <nav className="navBar-menu">
         <ul>
           <li>
-            <a href="#">Trang chủ</a>
+            <a href="/">Trang chủ</a>
           </li>
           <li>
             <a href="#">Xét nghiệm DNA</a>
@@ -67,9 +80,12 @@ function Header() {
         </ul>
 
         <div className="navBar-menu__login">
-          <CiTwitter className="navBar-menu__icon"/>
-          <FaFacebookF className="navBar-menu__icon"/>
-          <CiUser  className="navBar-menu__icon"/>
+          <CiTwitter className="navBar-menu__icon" />
+          <FaFacebookF className="navBar-menu__icon" />
+          {/* <CiUser  className="navBar-menu__icon"/> */}
+          <Link to="/login">
+            <button className="button--menu__login">Đăng nhập</button>
+          </Link>
         </div>
       </nav>
     </div>

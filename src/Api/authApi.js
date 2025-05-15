@@ -1,16 +1,53 @@
-const Login = async (email, password) => {
-  const response = await fetch("https://api.example.com/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  });
+// Settup axiosIntance
 
-  if (!response.ok) {
-    throw new Error("Login failed");
+import axiosInstance from "./axiosInstance";
+const API_BASE_URL = "https://wdp392-rest-api-with-nodejs-express-mongodb.vercel.app";
+
+
+export const loginUser = async (userData) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_BASE_URL}/api/auth`,
+      userData,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data?.Errors ||
+      error.response?.data?.Message ||
+      "An error occurred"
+    );
   }
+};
 
-  const data = await response.json();
-  return data;
-}
+export const registerUser = async (userData) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_BASE_URL}/api/account/register`,
+      userData,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response;
+  } catch (error) {
+    throw (
+      error.response?.data?.Errors ||
+      error.response?.data?.Message ||
+      "An error occurred"
+  );
+  }
+};
+
+export const signOut = async () => {
+  try {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "/login";
+  } catch (error) {
+    console.error("Error logging out:", error);
+  }
+};

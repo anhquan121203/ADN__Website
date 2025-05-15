@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 // CUSTORMER PAGE
 import CustomerLayout from "./Layouts/CustomerLayout";
 import HomePage from "./Pages/CustomerPage/HomePage/HomePage";
+import LoginPage from "./Pages/LoginRegister/Login/Login";
 
 // ADMIN PAGE
 
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
         </Route>
       </Routes>
