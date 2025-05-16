@@ -40,13 +40,11 @@ function LoginPage() {
     onSubmit: async (values) => {
       try {
         const response = await loginUser(values);
-        console.log(response)
+        console.log(response);
 
         // Make sure we receive the correct tokens
         const token = response.data.token;
         if (token) {
-
-
           // Save token in localStorage
           localStorage.setItem("accessToken", token);
           // localStorage.setItem("refreshToken", refreshToken);
@@ -57,7 +55,6 @@ function LoginPage() {
           toast.success("Đăng nhập thành công ✅");
 
           navigate("/");
-
         } else {
           toast.error("Login failed. Please try again.");
         }
@@ -66,54 +63,6 @@ function LoginPage() {
       }
     },
   });
-
-  // Handle Google login
-  // const googleLogin = useGoogleLogin({
-  //   onSuccess: async (tokenResponse) => {
-  //     try {
-  //       const response = await loginWithGoogle(tokenResponse);
-  //       console.log(response);
-  //       const token = response.token; 
-
-  //       localStorage.setItem("accessToken", token);
-  //       dispatch(login({ token }));
-
-  //       toast.success("Đăng nhập bằng Google thành công ✅");
-  //       setTimeout(() => {
-  //         navigate("/");
-  //       }, 1000);
-  //     } catch (error) {
-  //       console.error("Google login error:", error); 
-  //       toast.error("Đăng nhập bằng Google thất bại");
-  //     }
-  //   },
-  //   onError: () => toast.error("Google login failed"),
-  // });
-
-  // const googleLogin = useGoogleLogin({
-  //   flow: "implicit", // hoặc "auth-code" nếu bạn dùng backend token exchange
-  //   scope: "openid email profile",
-  //   onSuccess: async (tokenResponse) => {
-  //     // 👇 Thêm dòng này để lấy id_token (JWT)
-  //     const id_token = tokenResponse.id_token;
-
-  //     try {
-  //       const response = await loginWithGoogle(id_token);
-  //       const token = response.token;
-
-  //       localStorage.setItem("accessToken", token);
-  //       dispatch(login({ token }));
-  //       toast.success("Đăng nhập bằng Google thành công ✅");
-
-  //       navigate("/");
-  //     } catch (error) {
-  //       toast.error("Đăng nhập bằng Google thất bại");
-  //     }
-  //   },
-  //   onError: () => toast.error("Google login failed"),
-  // });
-
-
 
   return (
     <div className="login-container">
@@ -176,21 +125,22 @@ function LoginPage() {
         </form>
 
         <p style={{ marginBottom: "-5px" }}>Hoặc đăng nhập với Google</p>
+
         <div className="social-login">
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               const id_token = credentialResponse.credential;
               try {
                 const response = await loginWithGoogle(id_token);
-                const token = response.token;
+                const token = response.data.acceesToken|| response.token || response.data.token;
 
                 localStorage.setItem("accessToken", token);
                 dispatch(login({ token }));
-                toast.success("Đăng ký bằng Google thành công ✅");
+                toast.success("Đăng nhập bằng Google thành công");
 
-                navigate("/login");
+                navigate("/");
               } catch (error) {
-                toast.error("Đăng ký thất bại!!!");
+                toast.error("Đăng nhập thất bại!!!");
               }
             }}
             onError={() => {

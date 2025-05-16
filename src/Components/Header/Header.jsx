@@ -5,19 +5,34 @@ import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { logout } from "../../Feartures/user/authSlice";
+import { signOut } from "../../Api/authApi";
+import { useSelector } from "react-redux";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [isOpen, setIsOpen] = useState();
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50); // Trigger after 50px scroll
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = async () => {
+    await signOut();
+    dispatch(logout());
+    navigate("/");
+  };
 
   return (
     <div className={`header-container ${isScrolled ? "scrolled" : ""}`}>
@@ -63,29 +78,94 @@ function Header() {
       <nav className="navBar-menu">
         <ul>
           <li>
-            <a href="/">Trang chủ</a>
+            <Link
+              to="/"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Trang chủ
+            </Link>
           </li>
           <li>
-            <a href="/booking">Xét nghiệm DNA</a>
+            <Link
+              to="/booking"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Xét nghiệm DNA
+            </Link>
           </li>
           <li>
-            <a href="#">Blogger</a>
+            <Link
+              to="/blog"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Blog
+            </Link>
           </li>
           <li>
-            <a href="#">Hướng dẫn xét nghiệm</a>
+            <Link
+              to="/news"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Hướng dẫn xét nghiệm
+            </Link>
           </li>
           <li>
-            <a href="#">Về chúng tôi</a>
+            <Link
+              to="/about"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Về chúng tôi
+            </Link>
           </li>
         </ul>
 
         <div className="navBar-menu__login">
-          <CiTwitter className="navBar-menu__icon" />
-          <FaFacebookF className="navBar-menu__icon" />
+          <ul>
+            <li>
+              {" "}
+              <CiTwitter className="navBar-menu__icon" />
+            </li>
+            <li>
+              {" "}
+              <FaFacebookF className="navBar-menu__icon" />
+            </li>
+
+            {isLoggedIn ? (
+              <div className="dropdown-login">
+                <div className="header-avavtar">
+                  <img
+                    style={{
+                      width: "50px",
+                      marginRight: "20px",
+                      height: "50px",
+                      border: "2px solid  #22a8e7",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                    onClick={toggleDropdown}
+                    className="dropdown-button"
+                    src="https://via.placeholder.com/50"
+                    alt=""
+                  />
+                </div>
+
+                {isOpen && (
+                  <div className="dropdown-content">
+                    <a onClick={handleLogout}>Thoát</a>
+                    {/* <Link onClick={handleLogout}>Thoát</Link> */}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <li className="btn-login-form">
+                <Link  to="/login">
+                  <button className="button-login">Đăng nhập</button>
+                </Link >
+              </li>
+            )}
+          </ul>
+
           {/* <CiUser  className="navBar-menu__icon"/> */}
-          <Link to="/login">
-            <button className="button--menu__login">Đăng nhập</button>
-          </Link>
         </div>
       </nav>
     </div>

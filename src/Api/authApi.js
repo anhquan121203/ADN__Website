@@ -45,71 +45,14 @@ export const registerUser = async (userData) => {
 export const signOut = async () => {
   try {
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     window.location.href = "/login";
   } catch (error) {
     console.error("Error logging out:", error);
   }
 };
 
-// export const loginWithGoogle = async (credentialResponse) => {
-//   try {
-//     const decoded = jwt_decode(credentialResponse.credential);
 
-//     const response = await axiosInstance.post(
-//       `${API_BASE_URL}/api/auth/google`,
-//       { google_id: decoded.sub },
-//       { headers: { "Content-Type": "application/json" } }
-//     );
-
-//     return response;
-//   } catch (error) {
-//     throw (
-//       error.response?.data?.Errors ||
-//       error.response?.data?.Message ||
-//       "Google login failed"
-//     );
-//   }
-// };
-
-// export const loginWithGoogle = async (credentialResponse) => {
-//   try {
-//     const credential =
-//       credentialResponse?.credential || credentialResponse?.access_token;
-
-//     if (!credential) {
-//       throw "Không nhận được credential từ Google!";
-//     }
-
-//     const decoded = jwtDecode(credential);
-//     const googleId = decoded.sub;
-
-//     if (!googleId) {
-//       throw "Không lấy được google_id từ credential!";
-//     }
-
-//     const response = await axiosInstance.post(
-//       `${API_BASE_URL}/api/auth/google`,
-//       {
-//         google_id: googleId,
-//       },
-//       {
-//         headers: { "Content-Type": "application/json" },
-//       }
-//     );
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Google login failed:", error);
-//     throw (
-//       error?.response?.data?.Errors ||
-//       error?.response?.data?.Message ||
-//       error?.message ||
-//       "Google login failed"
-//     );
-//   }
-// };
-
+// Login with Google
 export const loginWithGoogle = async (id_token) => {
   try {
     const response = await axiosInstance.post(
@@ -133,12 +76,11 @@ export const loginWithGoogle = async (id_token) => {
 };
 
 // Register with Google
-
 export const registerWithGoogle = async (id_token) => {
   try {
     const response = await axiosInstance.post(
       `${API_BASE_URL}/api/users/google`,
-      { google_id: id_token }, // ✅ id_token là jwt hợp lệ
+      { google_id: id_token }, 
       {
         headers: {
           "Content-Type": "application/json",
@@ -154,3 +96,5 @@ export const registerWithGoogle = async (id_token) => {
     );
   }
 };
+
+// Verify token
