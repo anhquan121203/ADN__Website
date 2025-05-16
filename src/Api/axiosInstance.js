@@ -3,7 +3,7 @@ import { API_BASE_URL } from "../Constants/apiConstants";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 5000,
+  timeout: 15000,
 });
 
 // SETUP AXIOS INSTANCE *************************************************

@@ -20,14 +20,10 @@ function Footer() {
                 alt
                 style={{
                   width: "200px",
-                  marginBottom: "-50px",
-                  marginTop: "-70px",
+                  margin: "20px"
                 }}
               />
-              <p style={{ marginTop: "20px", alignItems: "center" }}>
-                Your skin is your bodys largest organ, and it deserves all the
-                care and love you can give.
-              </p>
+
               <h3>We Accect</h3>
               <div className="card-area">
                 <i className="fa fa-cc-visa" />
@@ -45,16 +41,16 @@ function Footer() {
                   <Link>Trang chủ</Link>
                 </li>
                 <li>
-                  <Link>Sản phẩm</Link>
-                </li>
-                <li>
-                  <Link>Khuyến mãi</Link>
+                  <Link>Xét nghiệm DNA</Link>
                 </li>
                 <li>
                   <Link>Blogger</Link>
                 </li>
                 <li>
-                  <Link>Hỗ chợ khách hàng</Link>
+                  <Link>Hướng dẫ xét nghiệm</Link>
+                </li>
+                <li>
+                  <Link>Về chúng tôi</Link>
                 </li>
               </ul>
             </div>
@@ -65,17 +61,28 @@ function Footer() {
               <ul>
                 <li className="address">
                   <CiLocationOn className="icon" />
-                  <p>182 Pasteur, Bến Nghé, Quận 1, Hồ Chí Minh</p>
+
+                  <div>
+                    <p>Thứ 2 - Thứ 6 08:00-19:00</p>
+                    <p>Thứ 7 và Chủ nhật - Đóng cửa</p>
+                  </div>
+
                 </li>
                 <li className="address">
                   {" "}
                   <CiLocationOn className="icon" />
-                  <p>110 Lê Văn Sỹ, Phường 10, Phú Nhuận, Hồ Chí Minh</p>
+                  <div>
+                    <p>Địa chỉ</p>
+                    <p>123 Đường ABC, Quận 1, TP.HCM</p>
+                  </div>
                 </li>
                 <li className="address">
                   {" "}
                   <CiLocationOn className="icon" />
-                  <p>277 Phan Xích Long, Phường 2, Phú Nhuận, Hồ Chí Minh</p>
+                  <div>
+                    <p>Điện thoại</p>
+                    <p>+84 123 456 789</p>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -83,7 +90,7 @@ function Footer() {
           <div className="col-lg-3 col-sm-6">
             <div className="single-box">
               <h2>Social</h2>
-              <p>Email: Beutylove@shopvn.com</p>
+              <p>Email: ADNBlood@shopvn.com</p>
               <p>Hotline: (+84) 312812314</p>
               <div className="input-group mb-3">
                 <input

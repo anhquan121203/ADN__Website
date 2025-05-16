@@ -66,7 +66,7 @@ function Header() {
             <a href="/">Trang chủ</a>
           </li>
           <li>
-            <a href="#">Xét nghiệm DNA</a>
+            <a href="/booking">Xét nghiệm DNA</a>
           </li>
           <li>
             <a href="#">Blogger</a>

@@ -4,7 +4,6 @@ import { API_BASE_URL } from "../Constants/apiConstants";
 import axiosInstance from "./axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
-
 export const loginUser = async (userData) => {
   try {
     const response = await axiosInstance.post(
@@ -111,13 +110,12 @@ export const signOut = async () => {
 //   }
 // };
 
-
 export const loginWithGoogle = async (id_token) => {
   try {
     const response = await axiosInstance.post(
       `${API_BASE_URL}/api/auth/google`,
       {
-        google_id: id_token, 
+        google_id: id_token,
       },
       {
         headers: { "Content-Type": "application/json" },
@@ -130,6 +128,29 @@ export const loginWithGoogle = async (id_token) => {
       error.response?.data?.Errors ||
       error.response?.data?.Message ||
       "Google login failed"
+    );
+  }
+};
+
+// Register with Google
+
+export const registerWithGoogle = async (id_token) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_BASE_URL}/api/users/google`,
+      { google_id: id_token }, // ✅ id_token là jwt hợp lệ
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data?.Errors ||
+      error.response?.data?.Message ||
+      "Google register failed"
     );
   }
 };

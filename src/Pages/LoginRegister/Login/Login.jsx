@@ -12,7 +12,7 @@ import { login } from "../../../Feartures/user/authSlice";
 import { FaGoogle } from "react-icons/fa";
 
 // ROUTER API GG
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -90,28 +90,28 @@ function LoginPage() {
   //   onError: () => toast.error("Google login failed"),
   // });
 
-  const googleLogin = useGoogleLogin({
-    flow: "implicit", // hoặc "auth-code" nếu bạn dùng backend token exchange
-    scope: "openid email profile",
-    onSuccess: async (tokenResponse) => {
-      // 👇 Thêm dòng này để lấy id_token (JWT)
-      const id_token = tokenResponse.id_token;
+  // const googleLogin = useGoogleLogin({
+  //   flow: "implicit", // hoặc "auth-code" nếu bạn dùng backend token exchange
+  //   scope: "openid email profile",
+  //   onSuccess: async (tokenResponse) => {
+  //     // 👇 Thêm dòng này để lấy id_token (JWT)
+  //     const id_token = tokenResponse.id_token;
 
-      try {
-        const response = await loginWithGoogle(id_token);
-        const token = response.token;
+  //     try {
+  //       const response = await loginWithGoogle(id_token);
+  //       const token = response.token;
 
-        localStorage.setItem("accessToken", token);
-        dispatch(login({ token }));
-        toast.success("Đăng nhập bằng Google thành công ✅");
+  //       localStorage.setItem("accessToken", token);
+  //       dispatch(login({ token }));
+  //       toast.success("Đăng nhập bằng Google thành công ✅");
 
-        navigate("/");
-      } catch (error) {
-        toast.error("Đăng nhập bằng Google thất bại");
-      }
-    },
-    onError: () => toast.error("Google login failed"),
-  });
+  //       navigate("/");
+  //     } catch (error) {
+  //       toast.error("Đăng nhập bằng Google thất bại");
+  //     }
+  //   },
+  //   onError: () => toast.error("Google login failed"),
+  // });
 
 
 
@@ -177,14 +177,26 @@ function LoginPage() {
 
         <p style={{ marginBottom: "-5px" }}>Hoặc đăng nhập với Google</p>
         <div className="social-login">
-          <button
-            type="submit"
-            className="btn btn-social"
-            onClick={() => googleLogin()}
-          >
-            <FaGoogle className="social-icon" />
-            Google
-          </button>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              const id_token = credentialResponse.credential;
+              try {
+                const response = await loginWithGoogle(id_token);
+                const token = response.token;
+
+                localStorage.setItem("accessToken", token);
+                dispatch(login({ token }));
+                toast.success("Đăng ký bằng Google thành công ✅");
+
+                navigate("/login");
+              } catch (error) {
+                toast.error("Đăng ký thất bại!!!");
+              }
+            }}
+            onError={() => {
+              toast.error("Google login failed");
+            }}
+          />
         </div>
 
         <p>
