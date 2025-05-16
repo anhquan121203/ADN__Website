@@ -8,7 +8,7 @@ import CustomerLayout from "./Layouts/CustomerLayout";
 import HomePage from "./Pages/CustomerPage/HomePage/HomePage";
 import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
-import VerifyEmail from "./Components/VerifyToken/VerifyToken";
+// import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 
 // ADMIN PAGE
 
@@ -20,7 +20,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          {/* <Route path="/verify-email/:token" element={<VerifyEmail />} /> */}
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
         </Route>
       </Routes>
