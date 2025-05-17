@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../Api/axiosInstance";
 import { API_BASE_URL } from "../../Constants/apiConstants";
+import axios from "axios";
 
 function VerifyEmail() {
   const { token } = useParams();
@@ -12,7 +13,7 @@ function VerifyEmail() {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        await axiosInstance.post(
+        await axios.post(
           `${API_BASE_URL}/api/auth/verify-token`,
           { token }
         );
