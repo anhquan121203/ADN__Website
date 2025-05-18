@@ -8,11 +8,15 @@ import { Link } from "react-router-dom";
 import { logout } from "../../Feartures/user/authSlice";
 import { signOut } from "../../Api/authApi";
 import { useSelector } from "react-redux";
+import useAuth from "../../Hooks/useAuth";
+import { FaCircleUser } from "react-icons/fa6";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [isOpen, setIsOpen] = useState();
+  const { role, firstName, lastName } = useAuth();
+  // console.log(role);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -76,48 +80,49 @@ function Header() {
       </div>
 
       <nav className="navBar-menu">
-        <ul>
-          <li>
-            <Link
-              to="/"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Trang chủ
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/booking"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Xét nghiệm DNA
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/blog"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Blog
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/news"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Hướng dẫn xét nghiệm
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Về chúng tôi
-            </Link>
-          </li>
-        </ul>
+          <ul>
+            <li>
+              <Link
+                to="/"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Trang chủ
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/booking"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Xét nghiệm DNA
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/blog"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/news"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Hướng dẫn xét nghiệm
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/about"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Về chúng tôi
+              </Link>
+            </li>
+          </ul>
+  
 
         <div className="navBar-menu__login">
           <ul>
@@ -151,17 +156,54 @@ function Header() {
 
                 {isOpen && (
                   <div className="dropdown-content">
+                    {role === "customer" ? (
+                      <>
+                        <a href="/">
+                          {firstName} {lastName}
+                        </a>
+                        <a href="/">15.000.000</a>
+                        <a href="/history">Lịch sử xét nghiệm</a>
+                      </>
+                    ) : role === "staff" ? (
+                      <>
+                        <ul>
+                          <li>
+                            <Link to="/staff">Quản lí</Link>
+                          </li>
+                        </ul>
+                      </>
+                    ) : (
+                      <>
+                        <ul>
+                          <li>
+                            <Link to="/">Dashboard</Link>
+                          </li>
+                        </ul>
+                      </>
+                    )}
+
                     <a onClick={handleLogout}>Thoát</a>
                     {/* <Link onClick={handleLogout}>Thoát</Link> */}
                   </div>
                 )}
               </div>
             ) : (
-              <li className="btn-login-form">
-                <Link  to="/login">
-                  <button className="button-login">Đăng nhập</button>
-                </Link >
-              </li>
+              <>
+                {/* <li className="btn-login-form">
+                  <Link to="/login">
+                    <button className="button-login">Đăng nhập</button>
+                  </Link>
+                </li>
+
+                <li className="btn-login-form">
+                  <Link to="/login">
+                    <button className="button-login">Đăng ký</button>
+                  </Link>
+                </li> */}
+                <Link to="/login">
+                  <FaCircleUser className="navBar-menu__icon" />
+                </Link>
+              </>
             )}
           </ul>
 

@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { PROFILE_API_URL } from "../Constants/userContant";
 import axios from "axios";
 import axiosInstance from "../Api/axiosInstance";
+import { API_BASE_URL } from "../Constants/apiConstants";
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
+   const [isLoading, setIsLoading] = useState(true);
 
   const token =
     useSelector((state) => state.auth.accessToken) ||
@@ -21,15 +22,12 @@ const useAuth = () => {
           console.log("No token found");
           return;
         }
-        const response = await axiosInstance.get(`${PROFILE_API_URL}/GetUserProfile`, {
+        const response = await axiosInstance.get(`${API_BASE_URL}/api/auth`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUser(response.data);
-        // console.log(response.data)
-
-       
+        setUser(response.data.data);
       } catch (error) {
         console.error("Error fetch data user", error);
       }
@@ -37,17 +35,15 @@ const useAuth = () => {
     fetchUserData();
   }, [token]);
 
-  
-
   return {
-    userId: user?.id,
-    avatar: avatar,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
+    userId: user?._id,
+    avatar: user?.avatar_url,
+    firstName: user?.first_name,
+    lastName: user?.last_name,
     address: user?.address,
-    birthday: user?.birthday,
-    phoneNumber: user?.phoneNumber,
-    roleName: user?.roleName,
+    dob: user?.dob,
+    phoneNumber: user?.phone_number,
+    role: user?.role ,
     email: user?.email,
     user,
   };
