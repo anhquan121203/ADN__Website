@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../../assets/images/logo.png";
-import { CiClock2, CiLocationOn, CiTwitter, CiUser } from "react-icons/ci";
+import { CiClock2, CiLocationOn, CiLogout, CiSettings, CiTwitter, CiUser } from "react-icons/ci";
 import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
@@ -10,6 +10,7 @@ import { signOut } from "../../../Api/authApi";
 import { useSelector } from "react-redux";
 import useAuth from "../../../Hooks/useAuth";
 import { FaCircleUser } from "react-icons/fa6";
+import { FcManager } from "react-icons/fc";
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -80,49 +81,49 @@ function Header() {
       </div>
 
       <nav className="navBar-menu">
-          <ul>
-            <li>
-              <Link
-                to="/"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Trang chủ
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/booking"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Xét nghiệm DNA
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/blog"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/news"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Hướng dẫn xét nghiệm
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/about"
-                className={({ isActive }) => (isActive ? "active" : "")}
-              >
-                Về chúng tôi
-              </Link>
-            </li>
-          </ul>
-  
+        <ul>
+          <li>
+            <Link
+              to="/"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Trang chủ
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/booking"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Xét nghiệm DNA
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/blog"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Blog
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/news"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Hướng dẫn xét nghiệm
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/about"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Về chúng tôi
+            </Link>
+          </li>
+        </ul>
+
 
         <div className="navBar-menu__login">
           <ul>
@@ -164,11 +165,11 @@ function Header() {
                         <a href="/">15.000.000</a>
                         <a href="/history">Lịch sử xét nghiệm</a>
                       </>
-                    ) : role === "staff" ? (
+                    ) : role === "admin" ? (
                       <>
                         <ul>
                           <li>
-                            <Link to="/staff">Quản lí</Link>
+                            <Link to="/admin">Quản lí</Link>
                           </li>
                         </ul>
                       </>
@@ -176,30 +177,21 @@ function Header() {
                       <>
                         <ul>
                           <li>
-                            <Link to="/">Dashboard</Link>
+                            <Link to="/admin">Dashboard</Link>
                           </li>
                         </ul>
                       </>
                     )}
 
                     <a onClick={handleLogout}>Thoát</a>
-                    {/* <Link onClick={handleLogout}>Thoát</Link> */}
+                  
                   </div>
                 )}
+
+                
               </div>
             ) : (
               <>
-                {/* <li className="btn-login-form">
-                  <Link to="/login">
-                    <button className="button-login">Đăng nhập</button>
-                  </Link>
-                </li>
-
-                <li className="btn-login-form">
-                  <Link to="/login">
-                    <button className="button-login">Đăng ký</button>
-                  </Link>
-                </li> */}
                 <Link to="/login">
                   <FaCircleUser className="navBar-menu__icon" />
                 </Link>
