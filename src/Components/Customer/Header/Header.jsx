@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../assets/images/logo.png";
+import logo from "../../../assets/images/logo.png";
 import { CiClock2, CiLocationOn, CiTwitter, CiUser } from "react-icons/ci";
 import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { logout } from "../../Feartures/user/authSlice";
-import { signOut } from "../../Api/authApi";
+import { logout } from "../../../Feartures/user/authSlice";
+import { signOut } from "../../../Api/authApi";
 import { useSelector } from "react-redux";
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../../Hooks/useAuth";
 import { FaCircleUser } from "react-icons/fa6";
 
 function Header() {

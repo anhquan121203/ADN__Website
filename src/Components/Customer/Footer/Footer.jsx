@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "./Footer.css";
-import logo from "../../assets/images/logo.png";
+import logo from "../../../assets/images/logo.png";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 import { IoLogoTiktok } from "react-icons/io5";
