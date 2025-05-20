@@ -150,7 +150,7 @@ function LoginPage() {
         </div>
 
         <p>
-          Không có tài không? <Link to="/register">Đăng ký</Link>
+          Không có tài Khoản? <Link to="/register">Đăng ký</Link>
         </p>
       </div>
     </div>
