@@ -26,7 +26,7 @@ export const loginUser = async (userData) => {
 export const registerUser = async (userData) => {
   try {
     const response = await axiosInstance.post(
-      `${API_BASE_URL}/api/account/register`,
+      `${API_BASE_URL}/api/users`,
       userData,
       {
         headers: { "Content-Type": "application/json" },
@@ -50,7 +50,6 @@ export const signOut = async () => {
     console.error("Error logging out:", error);
   }
 };
-
 
 // Login with Google
 export const loginWithGoogle = async (id_token) => {
@@ -80,7 +79,7 @@ export const registerWithGoogle = async (id_token) => {
   try {
     const response = await axiosInstance.post(
       `${API_BASE_URL}/api/users/google`,
-      { google_id: id_token }, 
+      { google_id: id_token },
       {
         headers: {
           "Content-Type": "application/json",
