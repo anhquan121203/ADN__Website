@@ -1,7 +1,8 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import React, { useEffect } from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
 // CUSTORMER PAGE
 import CustomerLayout from "./Layouts/CustomerLayout";
@@ -12,34 +13,88 @@ import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
 
-// ADMIN PAGE
+// Protected route component
+const ProtectedRoute = ({ element, allowedRoles }) => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  
+  // If not logged in, redirect to login
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+  
+  // Check user role from token
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const userRole = decoded.role || "customer"; // Default to customer if no role
+      
+      // If user role is allowed, render the element
+      if (allowedRoles.includes(userRole)) {
+        return element;
+      } else {
+        // Redirect based on role
+        if (userRole === "admin") {
+          return <Navigate to="/admin" />;
+        } else if (userRole === "staff") {
+          return <Navigate to="/staff" />;
+        } else {
+          return <Navigate to="/" />;
+        }
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return <Navigate to="/login" />;
+    }
+  }
+  
+  return <Navigate to="/login" />;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+      <Route path="/" element={<CustomerLayout />}>
+
+        {/* Public routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        </Route>
+        {/* Customer routes */}
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          
+          {/* Add more customer routes here */}
         </Route>
 
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Admin routes */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute 
+              element={<AdminLayout />} 
+              allowedRoles={["admin"]} 
+            />
+          }
+        >
           <Route index element={<DashboardAdmin />} />
           <Route path="/admin/dashboard-admin" element={<DashboardAdmin />} />
         </Route>
-      </Routes>
 
-      {/* ADMIN PAGE */}
-      {/* <Routes>
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardAdmin />} />
-          <Route path="/dashbboard-admin" element={<DashboardAdmin />} />
-        </Route>
-      </Routes> */}
+        {/* Staff routes (if needed) */}
+        {/* <Route 
+          path="/staff" 
+          element={
+            <ProtectedRoute 
+              element={<StaffLayout />} 
+              allowedRoles={["staff"]} 
+            />
+          }
+        >
+          <Route index element={<StaffDashboard />} />
+        </Route> */}
+      </Routes>
 
       {/* Setup toast */}
       <ToastContainer
