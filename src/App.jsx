@@ -11,6 +11,7 @@ import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
+import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 
 // ADMIN PAGE
 
@@ -29,7 +30,8 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
-          <Route path="/admin/dashboard-admin" element={<DashboardAdmin />} />
+          <Route path="dashboard-admin" element={<DashboardAdmin />} />
+          <Route path="manager-account" element={<ManagerUser />} />
         </Route>
       </Routes>
 

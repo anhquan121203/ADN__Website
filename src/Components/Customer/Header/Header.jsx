@@ -16,7 +16,7 @@ function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [isOpen, setIsOpen] = useState();
-  const { role, firstName, lastName } = useAuth();
+  const { role, firstName, lastName, avatar } = useAuth();
   // console.log(role);
 
   const toggleDropdown = () => {
@@ -150,7 +150,7 @@ function Header() {
                     }}
                     onClick={toggleDropdown}
                     className="dropdown-button"
-                    src="https://via.placeholder.com/50"
+                    src={avatar}
                     alt=""
                   />
                 </div>

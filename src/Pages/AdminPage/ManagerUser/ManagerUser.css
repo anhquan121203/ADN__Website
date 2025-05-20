@@ -1,0 +1,104 @@
+.form-account {
+  width: 100%;
+  /* height: 100%; */
+  margin-top: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.account-container {
+  display: flex;
+  width: 100%;
+  /* margin-left: 120px; */
+}
+
+.table-account {
+  margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.table-account th,
+.table-account td {
+  padding: 12px;
+  border-bottom: 1px solid;
+}
+
+.table-account th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+}
+
+.table-account th:after {
+  font-size: 12px;
+  color: #ccc;
+  margin-left: 5px;
+}
+
+.table-account tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.status-active {
+  background-color: #d4f8e8;
+  color: #0ca678;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.action-btnPro {
+  /* display: flex; */
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.btn-updatePro,
+.btn-removePro,
+.detail-account {
+  border: none;
+  margin-right: 5px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: ease-in-out;
+}
+
+.btn-updatePro {
+  background-color: #0ca678;
+  color: white;
+}
+
+.btn-updatePro:hover {
+  background-color: #218838;
+  transform: scale(1);
+}
+
+.btn-removePro {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-removePro:hover {
+  background-color: #c82333;
+  transform: scale(1);
+}
+
+.detail-account{
+  background-color: #468499;
+  color: white;
+}
+
+.detail-account:hover {
+  background-color: #6dbabc;
+  transform: scale(1);
+}

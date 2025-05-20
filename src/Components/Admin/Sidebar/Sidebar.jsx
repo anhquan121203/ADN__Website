@@ -20,13 +20,11 @@ function Sidebar() {
               <a href="#" className="nav-item active">
                 <MdOutlineDashboard /> Dashboard
               </a>
-              
             </div>
-           
-            <a href="#" className="nav-item">
-              <FaUserAlt /> Hồ sơ
+
+            <a href="/admin/manager-account" className="nav-item">
+              <FaUserAlt /> Quản lý người dùng
             </a>
-            
           </nav>
         </div>
       </aside>

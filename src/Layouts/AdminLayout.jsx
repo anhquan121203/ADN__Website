@@ -47,6 +47,9 @@ const outletWrapperStyle = {
   padding: "20px",
   flex: 1,
   overflowY: "auto",
+  backgroundColor: "#f9fafb",
+  marginLeft: "30px",
+  marginRight: "30px",
 };
 
 function AdminLayout() {
