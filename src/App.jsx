@@ -10,8 +10,12 @@ import HomePage from "./Pages/CustomerPage/HomePage/HomePage";
 import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
+// ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
+
+// STAFF PAGE
+import StaffLayout from "./Layouts/StaffLayout";
 
 // Protected route component
 const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -83,7 +87,7 @@ function App() {
         </Route>
 
         {/* Staff routes (if needed) */}
-        {/* <Route 
+        <Route 
           path="/staff" 
           element={
             <ProtectedRoute 
@@ -92,8 +96,8 @@ function App() {
             />
           }
         >
-          <Route index element={<StaffDashboard />} />
-        </Route> */}
+          {/* <Route index element={<StaffDashboard />} /> */}
+        </Route>
       </Routes>
 
       {/* Setup toast */}
