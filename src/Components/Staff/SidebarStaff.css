@@ -1,4 +1,4 @@
-.sidebar {
+.sidebar-staff {
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -10,7 +10,7 @@
   transition: width 0.3s ease;
 }
 
-.sidebar.collapsed {
+.sidebar-staff.collapsed {
   width: 100px;
 }
 
@@ -21,7 +21,7 @@
   justify-content: center;
 }
 
-.sidebar.collapsed .sidebar-header {
+.sidebar-staff.collapsed .sidebar-header {
   padding: 20px 0;
 }
 
@@ -48,7 +48,7 @@
   padding-right: 5px;
 }
 
-.sidebar.collapsed .sidebar-menu {
+.sidebar-staff.collapsed .sidebar-menu {
   padding-right: 0;
 }
 

@@ -1,5 +1,5 @@
 /* Sidebar */
-.sidebar {
+.sidebar-admin {
   width: 256px;
   background-color: #ffffff;
   /* border-right: 1px solid #e5e7eb; */
@@ -9,13 +9,13 @@
   justify-content: space-between;
 }
 
-.brand {
+.brand-admin {
   display: flex;
   align-items: center;
   margin-bottom: 40px;
 }
 
-.brand-icon {
+.brand-admin__icon {
   width: 24px;
   height: 24px;
   background-color: #3B82F6;

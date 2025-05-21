@@ -21,19 +21,19 @@ import StaffLayout from "./Layouts/StaffLayout";
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  
+
 //   // If not logged in, redirect to login
 //   if (!isLoggedIn) {
 //     return <Navigate to="/login" />;
 //   }
-  
+
 //   // Check user role from token
 //   const token = localStorage.getItem("accessToken");
 //   if (token) {
 //     try {
 //       const decoded = jwtDecode(token);
 //       const userRole = decoded.role || "customer"; // Default to customer if no role
-      
+
 //       // If user role is allowed, render the element
 //       if (allowedRoles.includes(userRole)) {
 //         return element;
@@ -52,7 +52,7 @@ import StaffLayout from "./Layouts/StaffLayout";
 //       return <Navigate to="/login" />;
 //     }
 //   }
-  
+
 //   return <Navigate to="/login" />;
 // };
 
@@ -66,24 +66,28 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-         
+
         </Route>
 
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
-          <Route path="/admin/dashboard-admin" element={<DashboardAdmin />} />
+          <Route path="dashboard-admin" element={<DashboardAdmin />} />
+          <Route path="manager-account" element={<ManagerUser />} />
         </Route>
+
+
+        {/* <Route
+        path="/staff"
+        element={<StaffLayout />}
+      >
+        <Route index element={<DashboardStaff />} />
+      </Route> */}
+
       </Routes>
 
+      
 
-      {/* ADMIN PAGE */}
-      {/* <Routes>
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardAdmin />} />
-          <Route path="/dashbboard-admin" element={<DashboardAdmin />} />
-        </Route>
-      </Routes> */}
 
 
       {/* Setup toast */}

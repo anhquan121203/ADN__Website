@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './index.css';
+import './SidebarStaff.css';
 import logo from '../../assets/images/logo.png'; // Import the logo image
 import { 
   FaHome, 
@@ -17,7 +17,7 @@ import {
   FaChevronRight
 } from 'react-icons/fa';
 
-function Sidebar() {
+function SidebarStaff() {
   const [isCollapsed, setIsCollapsed] = useState(true); // Default to collapsed state
 
   const toggleSidebar = () => {
@@ -25,7 +25,7 @@ function Sidebar() {
   };
 
   return (
-    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`sidebar-staff ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="logo">
           {isCollapsed ? (
@@ -118,4 +118,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default SidebarStaff;

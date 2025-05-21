@@ -1,8 +1,9 @@
 import React from 'react'
-import Sidebar from '../Components/Staff/Sidebar'
+import SidebarStaff from '../Components/Staff/SidebarStaff'
+
 function StaffLayout () {
   return (
-    <Sidebar/>
+    <SidebarStaff/>
   )
 }
 
