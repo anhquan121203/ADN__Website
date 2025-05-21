@@ -39,6 +39,51 @@ function Header() {
     navigate("/");
   };
 
+  // Add this function to get avatar fallback
+  const getAvatarContent = () => {
+    if (avatar) {
+      return (
+        <img
+          style={{
+            width: "50px",
+            marginRight: "20px",
+            height: "50px",
+            border: "2px solid  #22a8e7",
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+          onClick={toggleDropdown}
+          className="dropdown-button"
+          src={avatar}
+          alt=""
+        />
+      );
+    }
+    return (
+      <div
+        style={{
+          width: "50px",
+          marginRight: "20px",
+          height: "50px",
+          border: "2px solid #22a8e7",
+          borderRadius: "50%",
+          backgroundColor: "#e2e8f0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          color: "#4a5568",
+          cursor: "pointer",
+        }}
+        onClick={toggleDropdown}
+        className="dropdown-button"
+      >
+        {lastName ? lastName.charAt(0).toUpperCase() : <FaCircleUser />}
+      </div>
+    );
+  };
+
   return (
     <div className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* HEADER TOP */}
@@ -139,20 +184,7 @@ function Header() {
             {isLoggedIn ? (
               <div className="dropdown-login">
                 <div className="header-avavtar">
-                  <img
-                    style={{
-                      width: "50px",
-                      marginRight: "20px",
-                      height: "50px",
-                      border: "2px solid  #22a8e7",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                    onClick={toggleDropdown}
-                    className="dropdown-button"
-                    src={avatar}
-                    alt=""
-                  />
+                  {getAvatarContent()}
                 </div>
 
                 {isOpen && (
@@ -165,7 +197,7 @@ function Header() {
                         <a href="/">15.000.000</a>
                         <a href="/history">Lịch sử xét nghiệm</a>
                       </>
-                    ) : role === "admin" ? (
+                    ) : role === "staff" ? (
                       <>
                         <ul>
                           <li>
