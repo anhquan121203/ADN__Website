@@ -3,7 +3,7 @@ import React from 'react'
 function DashboardAdmin() {
   return (
     <div>
-      <h1>XIN CHAP ADMINNN</h1>
+      <h1>XIN CHAP ADMINNnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn</h1>
     </div>
   )
 }

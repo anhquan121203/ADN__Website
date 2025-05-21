@@ -13,6 +13,7 @@ import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
+import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
@@ -71,12 +72,7 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
-          <Route path="dashboard-admin" element={<DashboardAdmin />} />
-          <Route path="manager-account" element={<ManagerUser />} />
-        </Route>
-
-        <Route path="/staff" element={<StaffLayout />}>
-
+          <Route path="/admin/dashboard-admin" element={<DashboardAdmin />} />
         </Route>
       </Routes>
 
