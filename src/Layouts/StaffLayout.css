@@ -1,0 +1,17 @@
+.staff-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.staff-sidebar {
+  height: 100%;
+  z-index: 100;
+}
+
+.staff-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f5f7fa;
+}

@@ -113,7 +113,7 @@ function LoginPage() {
               <input type="checkbox" style={{ marginRight: "5px" }} />
               Giữ đăng nhập lần sau!!!
             </label>
-            <Link>Quên mật khẩu</Link>
+            <Link to ="/forgot-password">Quên mật khẩu</Link>
           </div>
           <button
             type="submit"

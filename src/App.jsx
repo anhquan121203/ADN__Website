@@ -3,13 +3,14 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-
 // CUSTORMER PAGE
 import CustomerLayout from "./Layouts/CustomerLayout";
 import HomePage from "./Pages/CustomerPage/HomePage/HomePage";
 import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
+import ForgotPassword from './Pages/LoginRegister/ForgotPassword/ForgotPassword';
+
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
@@ -17,7 +18,7 @@ import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
-
+import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -66,7 +67,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-
+          <Route path="/forgot-password" element={<ForgotPassword />}/>
         </Route>
 
 
@@ -77,12 +78,13 @@ function App() {
         </Route>
 
 
-        {/* <Route
+        <Route
         path="/staff"
         element={<StaffLayout />}
       >
-        <Route index element={<DashboardStaff />} />
-      </Route> */}
+          <Route index element={<StaffProfile />} />
+          <Route path="profile" element={<StaffProfile />} />
+          </Route>
 
       </Routes>
 

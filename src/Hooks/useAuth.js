@@ -15,7 +15,6 @@ const useAuth = () => {
     useSelector((state) => state.auth.accessToken) ||
     localStorage.getItem("accessToken");
 
-  useEffect(() => {
     const fetchUserData = async () => {
       try {
         if (!token) {
@@ -32,9 +31,10 @@ const useAuth = () => {
         console.error("Error fetch data user", error);
       }
     };
+    useEffect(() => {
     fetchUserData();
   }, [token]);
-
+  
   return {
     userId: user?._id,
     avatar: user?.avatar_url,
@@ -46,6 +46,7 @@ const useAuth = () => {
     role: user?.role ,
     email: user?.email,
     user,
+    refreshUserData: fetchUserData,
   };
 };
 

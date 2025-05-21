@@ -49,12 +49,6 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/profile">
-              <FaUser className="menu-icon" />
-              <span className="menu-text">User Profile</span>
-            </Link>
-          </li>
-          <li>
             <Link to="/settings">
               <FaCog className="menu-icon" />
               <span className="menu-text">Account Settings</span>
@@ -88,6 +82,12 @@ function SidebarStaff() {
             <Link to="/onboarding">
               <FaHandshake className="menu-icon" />
               <span className="menu-text">Onboarding</span>
+            </Link>
+          </li>
+          <li>
+            <Link to="/staff/profile">
+              <FaUser className="menu-icon" />
+              <span className="menu-text">User Profile</span>
             </Link>
           </li>
         </ul>
