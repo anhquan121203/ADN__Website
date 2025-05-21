@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../Components/Admin/Sidebar/Sidebar";
-import Topbar from "../Components/Admin/Topbar/Topbar";
+import Sidebar from "../Components/Admin/Sidebar/SidebarAdmin";
+import Topbar from "../Components/Admin/Topbar/TopbarAdmin";
 
 const layoutStyle = {
   display: "flex",

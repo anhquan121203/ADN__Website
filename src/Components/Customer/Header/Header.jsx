@@ -169,7 +169,7 @@ function Header() {
                       <>
                         <ul>
                           <li>
-                            <Link to="/admin">Quản lí</Link>
+                            <Link to="/staff">Người lấy mẫu</Link>
                           </li>
                         </ul>
                       </>
