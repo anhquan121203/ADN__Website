@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'
+import './ProfileManger.css'
 import useAuth from '../../../Hooks/useAuth';
-import useStaff from '../../../Hooks/useUser';
-import './ViewProfileStaff.css';
-import { FaCheck, FaUser } from 'react-icons/fa'; // Add FaUser import
+import useUser from '../../../Hooks/useUser';
+import { FaCheck, FaUser, FaEdit, FaKey } from 'react-icons/fa'; // Add FaEdit and FaKey imports
 import { format } from 'date-fns';
-import EditProfile from './EditProfile';
-import ChangePasswordModal from './ChangePasswordModal';
-
-const ViewProfile = () => {
+import ChangePasswordModal from './ModalChangePassword/ModalChangePassword';
+import EditProfile from './EditProfile/EditProfile';
+const ProfileManager = () => {
   const { user, refreshUserData } = useAuth();
-  const { loading } = useStaff();
+  const { loading } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -69,7 +68,7 @@ const ViewProfile = () => {
   };
 
   return (
-    <div>
+   <div>
       <div className="profile-header">
         <div className="profile-avatar">
           {user?.avatar_url ? (
@@ -139,10 +138,22 @@ const ViewProfile = () => {
         </div>
 
         <div className="profile-actions">
-          <button className="btn-edit" onClick={handleEdit}>Edit Profile</button>
-          {/* Only show Change Password button if user doesn't have google_id */}
+          <button 
+            className="btn-edit" 
+            onClick={handleEdit}
+            disabled={loading}
+          >
+            <FaEdit size={16} />
+            {loading ? 'Loading...' : 'Edit Profile'}
+          </button>
+          
           {!user?.google_id && (
-            <button className="btn-change-password" onClick={handleChangePassword}>
+            <button 
+              className="btn-change-password" 
+              onClick={handleChangePassword}
+              disabled={loading}
+            >
+              <FaKey size={16} />
               Change Password
             </button>
           )}
@@ -160,4 +171,4 @@ const ViewProfile = () => {
   );
 };
 
-export default ViewProfile;
+export default ProfileManager;
