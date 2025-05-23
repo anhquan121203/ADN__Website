@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import useUser from '../../../Hooks/useUser';
-import useAuth from '../../../Hooks/useAuth';
+import useUser from '../../../../Hooks/useUser';
+import useAuth from '../../../../Hooks/useAuth';
 import { toast } from 'react-toastify';
-import './ViewProfileStaff.css';
+import '../ProfileManger.css';
 
 const ChangePasswordModal = ({ onClose, userId }) => {
   const { changeUserPassword, loading } = useUser();

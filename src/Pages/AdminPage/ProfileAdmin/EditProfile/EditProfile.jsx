@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import useStaff from '../../../Hooks/useUser';
-import './ViewProfileStaff.css';
+import useUser from '../../../../Hooks/useUser';
+import '../ProfileAdmin.css';
 import { FaEnvelope, FaCheck, FaUpload, FaUser } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { handleUploadFile } from '../../../utils/config/upload';
+import { handleUploadFile } from '../../../../utils/config/upload';
 
 const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
-  const { updateUsers, loading } = useStaff();
+  const { updateUsers, loading } = useUser();
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     id: '',

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser, changePassword as changePasswordAction, forgotPassword } from "../Feartures/staff/staffSlice";
 
-const useStaff = () => {
+const useUser = () => {
     const dispatch = useDispatch();
     const { accounts, loading, error, total } = useSelector((state) => state.account);
 
@@ -33,4 +33,4 @@ const useStaff = () => {
     }
     return { accounts, loading, error, total, updateUsers, changeUserPassword, forgotPasswords };
 };
-export default useStaff;
+export default useUser;

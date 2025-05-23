@@ -7,9 +7,17 @@ import {
   updateUser,
   deleteUser,
 } from "../Feartures/admin/adminSlice";
+import {
+  createUser,
+  getUserById,
+  searchUser,
+} from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
   const dispatch = useDispatch();
+  const { accounts, loading, error, total } = useSelector(
+    (state) => state.account
+  );
   const { accounts, loading, error, total } = useSelector(
     (state) => state.account
   );
@@ -34,6 +42,8 @@ const useAdmin = () => {
   const userById = async (id) => {
     try {
       await dispatch(getUserById(id));
+      const response = await dispatch(getUserById(id)).unwrap();
+      return { success: true, data: response };
     } catch (error) {
       console.error("Error create Staff");
     }
@@ -68,6 +78,8 @@ const useAdmin = () => {
     updateUserById,
     deleteUserById,
   };
+ 
+
 };
 
 export default useAdmin;

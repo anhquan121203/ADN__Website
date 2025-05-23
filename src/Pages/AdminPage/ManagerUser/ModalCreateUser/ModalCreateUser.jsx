@@ -17,7 +17,7 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
 
   useEffect(() => {
     if (isModalOpen) {
-      form.resetFields(); // Always reset form when modal opens
+      form.resetFields(); 
       setSelectedFile(null);
     }
   }, [isModalOpen]);

@@ -15,10 +15,16 @@ import ForgotPassword from './Pages/LoginRegister/ForgotPassword/ForgotPassword'
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
 import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
-
+import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
 import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
+import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
+
+// MANAGER PAGE
+import ManagerLayout from "./Layouts/ManagerLayout";
+import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
+
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -75,6 +81,8 @@ function App() {
           <Route index element={<DashboardAdmin />} />
           <Route path="dashboard-admin" element={<DashboardAdmin />} />
           <Route path="manager-account" element={<ManagerUser />} />
+          <Route path="service-admin" element={<ServiceAdmin />} />
+          <Route path="profile" element={<ProfileAdmin />} />
         </Route>
 
 
@@ -83,12 +91,14 @@ function App() {
         element={<StaffLayout />}
       >
           <Route index element={<StaffProfile />} />
-          <Route path="profile" element={<StaffProfile />} />
           </Route>
 
+          <Route path="/manager" element={<ManagerLayout />}>
+          <Route index element={<ManagerProfile />} />
+          </Route>
       </Routes>
 
-      
+
 
 
 

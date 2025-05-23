@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Modal, Pagination } from "antd";
 import "./ManagerUser.css";
 import useAdmin from "../../../Hooks/useAdmin";
@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import ModalCreateUser from "./ModalCreateUser/ModalCreateUser";
 import { FaPlus } from "react-icons/fa";
 import ModalEditUser from "./ModalEditUser/ModalEditUser";
+import ModalDetailUser from "./ModalDetailUser/ModalDetailUser";
 
 function ManagerUser() {
   const {
@@ -15,6 +16,7 @@ function ManagerUser() {
     error,
     searchUserPag,
     addNewUser,
+    userById,
     updateUserById,
     deleteUserById,
   } = useAdmin();
@@ -26,6 +28,7 @@ function ManagerUser() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -71,6 +74,22 @@ function ManagerUser() {
       } catch (error) {
         toast.error("Xóa tài khoản không thành công!");
       }
+    }
+  };
+  const handleDetailUser = async (userId) => {
+    try {
+      const result = await userById(userId);
+      if (result.success) {
+        setSelectedUser(result.data.data);
+        setIsDetailModalOpen(true);
+      }
+      // return result;
+    } catch (error) {
+      // toast.error("Thêm tài khoản không thành công");
+      return {
+        success: false,
+        message: "Xem chi tiết tài khoản không thành công!",
+      };
     }
   };
 
@@ -126,7 +145,12 @@ function ManagerUser() {
                     <td>{item.is_verified ? "✅" : "❌"}</td>
                     <td>{item.status ? "Hoạt động" : "Bị khóa"}</td>
                     <td>
-                      <button className="detail-account">Chi tiết</button>
+                      <button
+                        className="detail-account"
+                        onClick={() => handleDetailUser(item._id)}
+                      >
+                        Chi tiết
+                      </button>
                     </td>
                     <td>
                       <button
@@ -186,6 +210,12 @@ function ManagerUser() {
           initialValues={editUser}
         />
       )}
+      {/* Detail User Modal */}
+      <ModalDetailUser
+        isModalOpen={isDetailModalOpen}
+        handleCancel={() => setIsDetailModalOpen(false)}
+        selectedUser={selectedUser}
+      />
     </div>
   );
 }

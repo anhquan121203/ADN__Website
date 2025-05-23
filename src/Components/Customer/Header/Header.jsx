@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../../assets/images/logo.png";
-import { CiClock2, CiLocationOn, CiLogout, CiSettings, CiTwitter, CiUser } from "react-icons/ci";
+import {
+  CiClock2,
+  CiLocationOn,
+  CiLogout,
+  CiSettings,
+  CiTwitter,
+  CiUser,
+} from "react-icons/ci";
 import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
@@ -169,7 +176,6 @@ function Header() {
           </li>
         </ul>
 
-
         <div className="navBar-menu__login">
           <ul>
             <li>
@@ -183,17 +189,13 @@ function Header() {
 
             {isLoggedIn ? (
               <div className="dropdown-login">
-                <div className="header-avavtar">
-                  {getAvatarContent()}
-                </div>
+                <div className="header-avavtar">{getAvatarContent()}</div>
 
                 {isOpen && (
                   <div className="dropdown-content">
                     {role === "customer" ? (
                       <>
-                        <a href="/">
-                          {firstName} {lastName}
-                        </a>
+                        {firstName} {lastName}
                         <a href="/">15.000.000</a>
                         <a href="/history">Lịch sử xét nghiệm</a>
                       </>
@@ -202,6 +204,14 @@ function Header() {
                         <ul>
                           <li>
                             <Link to="/staff">Người lấy mẫu</Link>
+                          </li>
+                        </ul>
+                      </>
+                    ) : role === "manager" ? (
+                      <>
+                        <ul>
+                          <li>
+                            <Link to="/manager">Người quan ly</Link>
                           </li>
                         </ul>
                       </>
@@ -216,11 +226,8 @@ function Header() {
                     )}
 
                     <a onClick={handleLogout}>Thoát</a>
-                  
                   </div>
                 )}
-
-                
               </div>
             ) : (
               <>
