@@ -183,7 +183,7 @@
   color: #f66;
 }
 
-.btn-edit {
+/* .btn-edit {
   background-color: #4d7cfe;
   color: white;
   border: none;
@@ -193,7 +193,7 @@
   cursor: pointer;
   margin-top: 16px;
   width: 100%;
-}
+} */
 
 /* Edit form styles */
 .profile-edit-form {

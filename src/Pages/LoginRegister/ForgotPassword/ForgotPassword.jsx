@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import useStaff from '../../../Hooks/useStaff';
+import useStaff from '../../../Hooks/useUser';
 import logo from "../../../assets/images/logo.png";
 import './ForgotPassword.css';
 

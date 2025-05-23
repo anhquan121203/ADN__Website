@@ -29,6 +29,10 @@ function Sidebar() {
               <Link to="/admin/service-admin" className="nav-item">
                 <FaUserAlt /> Quản lý thiết bị
               </Link>
+              
+              <Link to="/admin/profile" className="nav-item">
+                <FaUserAlt /> Hồ sơ 
+              </Link>
             </div>
           </nav>
         </div>

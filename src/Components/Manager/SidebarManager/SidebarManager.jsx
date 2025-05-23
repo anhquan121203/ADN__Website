@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './SidebarStaff.css';
-import logo from '../../assets/images/logo.png'; // Import the logo image
+import './SidebarManger.css';
+import logo from '../../../assets/images/logo.png'; // Import the logo image
 import { 
   FaHome, 
   FaChartPie, 
@@ -17,7 +17,7 @@ import {
   FaChevronRight
 } from 'react-icons/fa';
 
-function SidebarStaff() {
+function SidebarManager() {
   const [isCollapsed, setIsCollapsed] = useState(false); // Default to collapsed state
 
   const toggleSidebar = () => {
@@ -85,7 +85,7 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/staff">
+            <Link to="/manager">
               <FaUser className="menu-icon" />
               <span className="menu-text">User Profile</span>
             </Link>
@@ -118,4 +118,4 @@ function SidebarStaff() {
   );
 }
 
-export default SidebarStaff;
+export default SidebarManager;
