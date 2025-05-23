@@ -115,7 +115,10 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
             <Select.Option value="customer">Customer</Select.Option>
             <Select.Option value="manager">Manager</Select.Option>
             <Select.Option value="staff">Staff</Select.Option>
-            <Select.Option value="admin">Admin</Select.Option>
+            {/* <Select.Option value="admin">Admin</Select.Option> */}
+            <Select.Option value="laboratory_technician">
+              LLaboratory Technician
+            </Select.Option>
           </Select>
         </Form.Item>
       </Form>

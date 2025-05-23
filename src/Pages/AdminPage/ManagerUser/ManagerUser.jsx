@@ -5,6 +5,7 @@ import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
 import ModalCreateUser from "./ModalCreateUser/ModalCreateUser";
 import { FaPlus } from "react-icons/fa";
+import ModalEditUser from "./ModalEditUser/ModalEditUser";
 import ModalDetailUser from "./ModalDetailUser/ModalDetailUser";
 
 function ManagerUser() {
@@ -16,6 +17,8 @@ function ManagerUser() {
     searchUserPag,
     addNewUser,
     userById,
+    updateUserById,
+    deleteUserById,
   } = useAdmin();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -23,7 +26,8 @@ function ManagerUser() {
   const [selectedUser, setSelectedUser] = useState(null);
   // modal thêm tài khoản
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
+  const [editUser, setEditUser] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const openAddModal = () => {
@@ -43,7 +47,35 @@ function ManagerUser() {
       return { success: false, message: "Thêm tài khoản không thành công" };
     }
   };
-
+  const handleEditUser = async (userData) => {
+    try {
+      const result = await updateUserById(editUser._id, userData);
+      if (result.success) {
+        setIsEditModalOpen(false);
+        toast.success("Cập nhật tài khoản thành công");
+      } else {
+        toast.error(result.message || "Cập nhật tài khoản không thành công!");
+      }
+      return result;
+    } catch (error) {
+      toast.error("Cập nhật tài khoản không thành công!");
+      return { success: false, message: "Cập nhật tài khoản không thành công" };
+    }
+  };
+  const handleDeleteUser = async (user) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) {
+      try {
+        const result = await deleteUserById(user._id);
+        if (result.success) {
+          toast.success("Xóa tài khoản thành công");
+        } else {
+          toast.error(result.message || "Xóa tài khoản không thành công!");
+        }
+      } catch (error) {
+        toast.error("Xóa tài khoản không thành công!");
+      }
+    }
+  };
   const handleDetailUser = async (userId) => {
     try {
       const result = await userById(userId);
@@ -99,6 +131,7 @@ function ManagerUser() {
                 <th>Đã xác thực</th>
                 <th>Trạng thái</th>
                 <th>Mô tả</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +150,24 @@ function ManagerUser() {
                         onClick={() => handleDetailUser(item._id)}
                       >
                         Chi tiết
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="edit-account"
+                        onClick={() => {
+                          setEditUser(item);
+                          setIsEditModalOpen(true);
+                        }}
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        className="delete-account"
+                        style={{ marginLeft: 8 }}
+                        onClick={() => handleDeleteUser(item)}
+                      >
+                        Xóa
                       </button>
                     </td>
                   </tr>
@@ -144,12 +195,21 @@ function ManagerUser() {
       </div>
 
       {/* Add Product Modal */}
-      <ModalCreateUser
-        isModalOpen={isAddModalOpen}
-        handleCancel={() => setIsAddModalOpen(false)}
-        handleAdd={handleAddUser}
-      />
-
+      {isAddModalOpen && (
+        <ModalCreateUser
+          isModalOpen={isAddModalOpen}
+          handleCancel={() => setIsAddModalOpen(false)}
+          handleAdd={handleAddUser}
+        />
+      )}
+      {isEditModalOpen && (
+        <ModalEditUser
+          isModalOpen={isEditModalOpen}
+          handleCancel={() => setIsEditModalOpen(false)}
+          handleEdit={handleEditUser}
+          initialValues={editUser}
+        />
+      )}
       {/* Detail User Modal */}
       <ModalDetailUser
         isModalOpen={isDetailModalOpen}
