@@ -7,17 +7,9 @@ import {
   updateUser,
   deleteUser,
 } from "../Feartures/admin/adminSlice";
-import {
-  createUser,
-  getUserById,
-  searchUser,
-} from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
   const dispatch = useDispatch();
-  const { accounts, loading, error, total } = useSelector(
-    (state) => state.account
-  );
   const { accounts, loading, error, total } = useSelector(
     (state) => state.account
   );
@@ -78,8 +70,6 @@ const useAdmin = () => {
     updateUserById,
     deleteUserById,
   };
- 
-
 };
 
 export default useAdmin;
