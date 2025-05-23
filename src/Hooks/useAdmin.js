@@ -1,10 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
-import { createUser, getUserById, searchUser } from "../Feartures/admin/adminSlice";
+import {
+  createUser,
+  getUserById,
+  searchUser,
+} from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
   const dispatch = useDispatch();
-  const { accounts, loading, error, total } = useSelector((state) => state.account);
+  const { accounts, loading, error, total } = useSelector(
+    (state) => state.account
+  );
 
   const searchUserPag = async (searchPayload) => {
     try {
@@ -16,8 +21,8 @@ const useAdmin = () => {
 
   const addNewUser = async (createNewUser) => {
     try {
-     const response = await dispatch(createUser(createNewUser)).unwrap(); 
-    return { success: true, data: response };
+      const response = await dispatch(createUser(createNewUser)).unwrap();
+      return { success: true, data: response };
     } catch (error) {
       console.error("Error create Staff");
     }
@@ -25,15 +30,22 @@ const useAdmin = () => {
 
   const userById = async (id) => {
     try {
-        await dispatch(getUserById(id));
+      const response = await dispatch(getUserById(id)).unwrap();
+      return { success: true, data: response };
     } catch (error) {
       console.error("Error create Staff");
-        
     }
-  }
-    
+  };
 
-  return { accounts, loading, error, total, searchUserPag, addNewUser, userById };
+  return {
+    accounts,
+    loading,
+    error,
+    total,
+    searchUserPag,
+    addNewUser,
+    userById,
+  };
 };
 
 export default useAdmin;

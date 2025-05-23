@@ -19,6 +19,8 @@ import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
 import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
+import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
+
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -75,6 +77,7 @@ function App() {
           <Route index element={<DashboardAdmin />} />
           <Route path="dashboard-admin" element={<DashboardAdmin />} />
           <Route path="manager-account" element={<ManagerUser />} />
+          <Route path="service-admin" element={<ServiceAdmin />} />
         </Route>
 
 
