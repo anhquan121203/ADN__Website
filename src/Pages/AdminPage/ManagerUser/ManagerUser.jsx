@@ -47,6 +47,8 @@ function ManagerUser() {
       return { success: false, message: "Thêm tài khoản không thành công" };
     }
   };
+
+  // update user
   const handleEditUser = async (userData) => {
     try {
       const result = await updateUserById(editUser._id, userData);
@@ -62,6 +64,8 @@ function ManagerUser() {
       return { success: false, message: "Cập nhật tài khoản không thành công" };
     }
   };
+
+  // delete user
   const handleDeleteUser = async (user) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) {
       try {
@@ -76,6 +80,8 @@ function ManagerUser() {
       }
     }
   };
+
+  // detail user
   const handleDetailUser = async (userId) => {
     try {
       const result = await userById(userId);

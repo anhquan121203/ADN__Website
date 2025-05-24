@@ -1,7 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { use, useEffect } from "react";
 
-import { searchService } from "../Feartures/services/seviceSlice";
+import {
+  createService,
+  getServiceById,
+  searchService,
+} from "../Feartures/services/seviceSlice";
 
 const useService = () => {
   const dispatch = useDispatch();
@@ -17,6 +21,23 @@ const useService = () => {
     }
   };
 
+  const addNewService = async (createNewService) => {
+    try {
+      const response = await dispatch(createService(createNewService)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error create Staff");
+    }
+  };
+
+ const serviceById = async (id) => {
+    try {
+      const response = await dispatch(getServiceById(id)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error create Staff");
+    }
+  };
 
   return {
     services,
@@ -24,6 +45,8 @@ const useService = () => {
     error,
     total,
     searchListService,
+    addNewService,
+    serviceById
   };
 };
 

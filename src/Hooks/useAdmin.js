@@ -33,7 +33,6 @@ const useAdmin = () => {
 
   const userById = async (id) => {
     try {
-      await dispatch(getUserById(id));
       const response = await dispatch(getUserById(id)).unwrap();
       return { success: true, data: response };
     } catch (error) {
