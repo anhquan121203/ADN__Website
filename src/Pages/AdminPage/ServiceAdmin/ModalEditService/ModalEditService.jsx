@@ -6,43 +6,47 @@ import {
   InputNumber,
   Modal,
   Select,
-  Upload,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
-const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
+const ModalEditService = ({
+  isModalOpen,
+  handleCancel,
+  handleEdit,
+  editService,
+}) => {
   const [form] = Form.useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    if (isModalOpen) {
-      form.resetFields();
-      setSelectedFile(null);
+    if (editService) {
+      form.setFieldsValue({
+        ...editService,
+      });
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, editService]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
 
-      const response = await handleAdd(values);
-
+      const response = await handleEdit(values);
       if (response.success === true) {
         form.resetFields();
         handleCancel();
-        toast.success("Tạo thiết bị mới thành công");
+        toast.success("Cập nhật tài khoản thành công");
       } else {
-        toast.error(response.message || "Tạo thiết bị mới không thành công!");
+        toast.error(response.message || "Cập nhật tài khoản không thành công!");
       }
     } catch (error) {
-      toast.error("Tạo thiết bị mới không thành công!");
+      toast.error("Cập nhật tài khoản không thành công!");
     }
   };
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Chỉnh sửa tài khoản"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -50,11 +54,14 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo tài khoản
+          Cập nhật
         </Button>,
       ]}
     >
-      <Form form={form} layout="vertical">
+      <Form
+        form={form}
+        layout="vertical">
+
         <Form.Item
           label="Tên"
           name="name"
@@ -120,4 +127,4 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   );
 };
 
-export default ModalCreateService;
+export default ModalEditService;

@@ -25,11 +25,11 @@
 .table-account th,
 .table-account td {
   padding: 12px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid #ddd;
 }
 
 .table-account th {
-  background-color: #f8f9fa;
+  background-color: #f5f5f5;
   font-weight: bold;
   cursor: pointer;
   position: relative;
@@ -93,7 +93,7 @@
   transform: scale(1);
 }
 
-.detail-account{
+.detail-account {
   background-color: #468499;
   color: white;
 }
@@ -102,3 +102,30 @@
   background-color: #6dbabc;
   transform: scale(1);
 }
+
+/* Status */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 12px;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
+}
+
+.status-badge.active {
+  background-color: #d1fae5; 
+  color: #065f46;            
+}
+
+.status-badge.inactive {
+  background-color: #fef3c7; 
+  color: #92400e;            
+}
+
+.status-badge.offline {
+  background-color: #fee2e2; 
+  color: #b91c1c;            
+}
+

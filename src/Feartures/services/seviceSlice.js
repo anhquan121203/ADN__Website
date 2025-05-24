@@ -45,6 +45,7 @@ export const createService = createAsyncThunk(
   }
 );
 
+// get by ID
 export const getServiceById = createAsyncThunk(
   "account/getServiceById",
   async (id, { rejectWithValue }) => {
@@ -57,6 +58,48 @@ export const getServiceById = createAsyncThunk(
         },
       });
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// update service
+export const updateService = createAsyncThunk(
+  "account/updateService",
+  async ({ id, updateData }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.put(
+        `${API_BASE_URL}/api/service/${id}`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// Delete service
+export const deleteService = createAsyncThunk(
+  "account/deleteService",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.delete(`${API_BASE_URL}/api/service/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -93,11 +136,21 @@ const serviceSlice = createSlice({
         state.loading = false;
         state.services.push(action.payload);
       })
-      // .addCase(createService.fulfilled, (state, action) => {
-      //   state.services.unshift(action.payload);
-      //   state.total += 1;
-      //   state.error = null;
-      // });
+
+      // Update service
+      .addCase(updateService.fulfilled, (state, action) => {
+        state.services = state.services.map((service) =>
+          service._id === action.payload.id ? action.payload : service
+        );
+      })
+
+      // delete service
+      .addCase(deleteService.fulfilled, (state, action) => {
+        state.loading = false;
+        state.services = state.services.filter(
+          (s) => s._id !== action.payload.id
+        );
+      });
   },
 });
 
