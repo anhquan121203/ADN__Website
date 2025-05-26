@@ -108,6 +108,32 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
+// changle status
+export const changeStatus = createAsyncThunk(
+  "account/changeStatus",
+  async ({ userId, status }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.put(
+        `${API_BASE_URL}/api/users/change-status`,
+        {
+          user_id: userId, 
+          status,         
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "ADMIN",
   initialState: {
@@ -134,17 +160,10 @@ const adminSlice = createSlice({
       })
 
       //  createUser
-      .addCase(createUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(createUser.fulfilled, (state, action) => {
         state.loading = false;
         state.accounts.push(action.payload);
-      })
-      .addCase(createUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to fetch accounts";
+        state.total += 1;
       })
 
       // Update user
@@ -157,13 +176,24 @@ const adminSlice = createSlice({
           state.accounts[idx] = action.payload.data;
         }
       })
-      
+
       // Delete user
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
         state.accounts = state.accounts.filter(
           (u) => u._id !== action.payload.id
         );
+      })
+
+      // Change status
+      .addCase(changeStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const idx = state.accounts.findIndex(
+          (u) => u._id === action.payload.data?._id
+        );
+        if (idx !== -1) {
+          state.accounts[idx] = action.payload.data;
+        }
       });
   },
 });

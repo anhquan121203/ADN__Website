@@ -6,6 +6,7 @@ import {
   searchUser,
   updateUser,
   deleteUser,
+  changeStatus,
 } from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
@@ -58,6 +59,16 @@ const useAdmin = () => {
     }
   };
 
+  // Change Status
+  const changeStatusUser = async(userId) => {
+    try {
+      const response = await dispatch(changeStatus(userId)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: "Thay đổi trạng thái tài khoản không thành công" };
+    }
+  }
+
   return {
     accounts,
     loading,
@@ -68,6 +79,7 @@ const useAdmin = () => {
     userById,
     updateUserById,
     deleteUserById,
+    changeStatusUser,
   };
 };
 
