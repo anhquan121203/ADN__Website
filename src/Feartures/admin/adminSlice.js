@@ -146,6 +146,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Failed to fetch accounts";
       })
+
       // Update user
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -156,6 +157,7 @@ const adminSlice = createSlice({
           state.accounts[idx] = action.payload.data;
         }
       })
+      
       // Delete user
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;

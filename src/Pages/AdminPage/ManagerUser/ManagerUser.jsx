@@ -30,6 +30,22 @@ function ManagerUser() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  // display role
+  const getRoleName = (role) => {
+    switch (role) {
+      case "staff":
+        return "Nhân viên";
+      case "customer":
+        return "Khách hàng";
+      case "manager":
+        return "Quản lý";
+      case "laboratory_technician":
+        return "Người xét nghiệm";
+      default:
+        return role;
+    }
+  };
+
   const openAddModal = () => {
     setIsAddModalOpen(true);
     setSelectedUser(null);
@@ -47,6 +63,8 @@ function ManagerUser() {
       return { success: false, message: "Thêm tài khoản không thành công" };
     }
   };
+
+  // update user
   const handleEditUser = async (userData) => {
     try {
       const result = await updateUserById(editUser._id, userData);
@@ -62,6 +80,8 @@ function ManagerUser() {
       return { success: false, message: "Cập nhật tài khoản không thành công" };
     }
   };
+
+  // delete user
   const handleDeleteUser = async (user) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) {
       try {
@@ -76,6 +96,8 @@ function ManagerUser() {
       }
     }
   };
+
+  // detail user
   const handleDetailUser = async (userId) => {
     try {
       const result = await userById(userId);
@@ -120,6 +142,7 @@ function ManagerUser() {
 
       {/* Table account */}
       <div className="form-account">
+        <h5>Danh sách người dùng</h5>
         <div className="account-container">
           <table className="table-account">
             <thead>
@@ -128,7 +151,6 @@ function ManagerUser() {
                 <th>Họ Tên</th>
                 <th>Email</th>
                 <th>Vai trò</th>
-                <th>Đã xác thực</th>
                 <th>Trạng thái</th>
                 <th>Mô tả</th>
                 <th>Hành động</th>
@@ -141,9 +163,17 @@ function ManagerUser() {
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{`${item.first_name} ${item.last_name}`}</td>
                     <td>{item.email} </td>
-                    <td>{item.role} </td>
-                    <td>{item.is_verified ? "✅" : "❌"}</td>
-                    <td>{item.status ? "Hoạt động" : "Bị khóa"}</td>
+                    <td>{getRoleName(item.role)} </td>
+                    <td>
+                      <span
+                        className={`status-badge ${
+                          item.status ? "active" : "inactive"
+                        }`}
+                      >
+                        {item.status ? "ACTIVE" : "INACTIVE"}
+                      </span>
+                    </td>
+
                     <td>
                       <button
                         className="detail-account"
