@@ -9,7 +9,9 @@ import HomePage from "./Pages/CustomerPage/HomePage/HomePage";
 import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
-import ForgotPassword from './Pages/LoginRegister/ForgotPassword/ForgotPassword';
+import ForgotPassword from "./Pages/LoginRegister/ForgotPassword/ForgotPassword";
+import CustomerSideBarLayoyt from "./Layouts/CustomerSideBarLayoyt";
+import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
@@ -75,7 +77,9 @@ function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />}/>
         </Route>
-
+        <Route path="/customer" element={<CustomerSideBarLayoyt />}>
+          <Route index element={<CustomerProfile />} />
+        </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardAdmin />} />
@@ -85,22 +89,14 @@ function App() {
           <Route path="profile" element={<ProfileAdmin />} />
         </Route>
 
-
-        <Route
-        path="/staff"
-        element={<StaffLayout />}
-      >
+        <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffProfile />} />
-          </Route>
+        </Route>
 
-          <Route path="/manager" element={<ManagerLayout />}>
+        <Route path="/manager" element={<ManagerLayout />}>
           <Route index element={<ManagerProfile />} />
-          </Route>
+        </Route>
       </Routes>
-
-
-
-
 
       {/* Setup toast */}
       <ToastContainer
@@ -128,12 +124,12 @@ function App() {
     //     </Route>
 
     //     {/* Admin routes */}
-    //     <Route 
-    //       path="/admin" 
+    //     <Route
+    //       path="/admin"
     //       element={
-    //         <ProtectedRoute 
-    //           element={<AdminLayout />} 
-    //           allowedRoles={["admin"]} 
+    //         <ProtectedRoute
+    //           element={<AdminLayout />}
+    //           allowedRoles={["admin"]}
     //         />
     //       }
     //     >
@@ -142,12 +138,12 @@ function App() {
     //     </Route>
 
     //     {/* Staff routes (if needed) */}
-    //     <Route 
-    //       path="/staff" 
+    //     <Route
+    //       path="/staff"
     //       element={
-    //         <ProtectedRoute 
-    //           element={<StaffLayout />} 
-    //           allowedRoles={["staff"]} 
+    //         <ProtectedRoute
+    //           element={<StaffLayout />}
+    //           allowedRoles={["staff"]}
     //         />
     //       }
     //     >
