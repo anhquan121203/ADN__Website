@@ -62,14 +62,24 @@ function Register() {
     onSubmit: async (values) => {
       try {
         const response = await registerUser(values);
+        console.log(response);
 
-        if (response.status === 200) {
+        if (
+          response.status === 200 ||
+          response.status === 201 ||
+          response.data?.success
+        ) {
           console.log("đăng ký thành công!!!!");
 
-          const { token } = response.data;
-          localStorage.setItem("accessToken", token);
+          // const { token } = response.data;
+          // localStorage.setItem("accessToken", token);
 
-          dispatch(login({ token }));
+          // dispatch(login({ token }));
+          const { token } = response.data;
+          if (token) {
+            localStorage.setItem("accessToken", token);
+            dispatch(login({ token }));
+          }
           navigate("/login");
           toast.success("Đăng kí thành công!!!", { autoClose: 1000 });
         } else {
@@ -259,7 +269,7 @@ function Register() {
                 onBlur={formik.handleBlur}
                 className={
                   formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword
+                  formik.errors.confirmPassword
                     ? "error"
                     : ""
                 }
@@ -281,7 +291,6 @@ function Register() {
           >
             {formik.isSubmitting ? "Đang đăng ký..." : "Đăng ký"}
           </button>
-
         </form>
 
         <p style={{ marginBottom: "-5px" }}>Hoặc đăng ký với Google</p>
