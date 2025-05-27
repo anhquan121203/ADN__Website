@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SidebarCustomer from "../Components/Customer/SideBarCustomer/SidebarCustomer";
-import TopbarCustomer from "../Components/Customer/TopBarCustomer/TopBarCustomer";
+import SidebarCustomer from "../Components/Customer/SidebarCustomer/SidebarCustomer";
+import TopbarCustomer from "../Components/Customer/TopbarCustomer/TopbarCustomer";
 
 
 const layoutStyle = {
@@ -53,6 +53,7 @@ const outletWrapperStyle = {
   marginLeft: "30px",
   marginRight: "30px",
 };
+
 function CustomerSideBarLayout() {
   return (
     <div style={layoutStyle}>
