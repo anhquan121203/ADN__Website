@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SidebarCustomer from "../Components/Customer/SidebarCustomer/SidebarCustomer";
-import TopbarCustomer from "../Components/Customer/TopbarCustomer/TopbarCustomer";
+import SidebarCustomer from "../Components/Customer/sidebarcustomer/SidebarCustomer";
+import TopbarCustomer from "../Components/Customer/topbarcustomer/TopbarCustomer";
 
 
 const layoutStyle = {
