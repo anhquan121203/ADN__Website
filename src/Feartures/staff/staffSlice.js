@@ -52,11 +52,119 @@ export const forgotPassword = createAsyncThunk(
         throw rejectWithValue (error.response?.data || error.message);
       }
     }
-)
+);
+
+export const getAppointments = createAsyncThunk(
+  "staff/getAppointments",
+  async (searchParams, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      
+      // Build query string from search params
+      const queryParams = new URLSearchParams();
+      
+      for (const [key, value] of Object.entries(searchParams)) {
+        if (value) {
+          queryParams.append(key, value);
+        }
+      }
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/service/appointments?${queryParams.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// Add new thunks for services
+export const getServices = createAsyncThunk(
+  "staff/getServices",
+  async (searchParams, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      
+      // Build query string from search params
+      const queryParams = new URLSearchParams();
+      
+      // Set default is_active to true if not specified
+      if (searchParams.is_active === undefined) {
+        queryParams.append('is_active', true);
+      }
+      
+      for (const [key, value] of Object.entries(searchParams)) {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value);
+        }
+      }
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/service/search?${queryParams.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const getServiceById = createAsyncThunk(
+  "staff/getServiceById",
+  async (serviceId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/service/${serviceId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const getChildServices = createAsyncThunk(
+  "staff/getChildServices",
+  async (parentId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/service/${parentId}/child`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 const staffSlice = createSlice({
     name: "STAFF",
     initialState: {
         accounts: [],
+        appointments: null,
+        services: null,
+        serviceDetails: null,
+        childServices: [],
         loading: false,
         error: null,
         total: 0,
@@ -75,8 +183,69 @@ const staffSlice = createSlice({
            .addCase(updateUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Đã xảy ra lỗi";
+            })
+            
+            // Add cases for getAppointments
+            .addCase(getAppointments.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAppointments.fulfilled, (state, action) => {
+                state.loading = false;
+                state.appointments = action.payload;
+                state.error = null;
+            })
+            .addCase(getAppointments.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch appointments";
+            })
+            
+            // Add cases for getServices
+            .addCase(getServices.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getServices.fulfilled, (state, action) => {
+                state.loading = false;
+                state.services = action.payload;
+                state.error = null;
+            })
+            .addCase(getServices.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch services";
+            })
+            
+            // Add cases for getServiceById
+            .addCase(getServiceById.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getServiceById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.serviceDetails = action.payload;
+                state.error = null;
+            })
+            .addCase(getServiceById.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch service details";
+            })
+            
+            // Add cases for getChildServices
+            .addCase(getChildServices.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getChildServices.fulfilled, (state, action) => {
+                state.loading = false;
+                state.childServices = action.payload;
+                state.error = null;
+            })
+            .addCase(getChildServices.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch child services";
             });
     },
 })
 
-export default staffSlice;
+// Change this line - export the reducer instead of the slice
+export default staffSlice.reducer;

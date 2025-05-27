@@ -49,15 +49,15 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/settings">
+            <Link to="/staff/appointment">
               <FaCog className="menu-icon" />
-              <span className="menu-text">Account Settings</span>
+              <span className="menu-text">Appointment</span>
             </Link>
           </li>
           <li>
-            <Link to="/payments">
+            <Link to="/staff/service">
               <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Payments</span>
+              <span className="menu-text">Service</span>
             </Link>
           </li>
           <li>
