@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SidebarCustomerV1 from "../Components/Customer/sidebarcustomer/SideBarCustomerV1";
+import SidebarCustomerV1 from "../Components/Customer/sidebarcus/SideBarCustomerV1";
 import TopbarCustomerV1 from "../Components/Customer/topbarcustomer/TopbarCustomerV1";
 
 const layoutStyle = {
