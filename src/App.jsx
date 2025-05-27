@@ -10,7 +10,7 @@ import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 import ForgotPassword from "./Pages/LoginRegister/ForgotPassword/ForgotPassword";
-import CustomerSideBarLayoyt from "./Layouts/CustomerSideBarLayoyt";
+import CustomerSideBarLayout from "./Layouts/CustomerSideBarLayout";
 import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 
 // ADMIN PAGE
@@ -26,6 +26,7 @@ import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
+
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -77,7 +78,7 @@ function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />}/>
         </Route>
-        <Route path="/customer" element={<CustomerSideBarLayoyt />}>
+        <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
         </Route>
 

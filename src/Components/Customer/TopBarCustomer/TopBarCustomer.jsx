@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './TopBarCustomer.css'
+import './TopbarCustomer.css'
 import { FaBars } from 'react-icons/fa'
 import { CiLogout, CiSearch, CiSettings } from 'react-icons/ci'
 import { IoIosNotificationsOutline, IoMdArrowDropdown } from 'react-icons/io'
@@ -9,7 +9,7 @@ import { logout } from '../../../Feartures/user/authSlice'
 import { useNavigate } from 'react-router-dom'
 import { FcManager } from 'react-icons/fc'
 
-function TopBarCustomer() {
+function TopbarCustomer() {
   const { firstName, lastName, email } = useAuth();
     const [ dropdownOpen, setDropdownOpen ] = useState(false);
     const dispatch = useDispatch();
@@ -59,4 +59,4 @@ function TopBarCustomer() {
         </div>
     )
 }
-export default TopBarCustomer
+export default TopbarCustomer
