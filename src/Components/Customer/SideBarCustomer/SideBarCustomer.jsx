@@ -5,6 +5,7 @@ import { RiAdminLine } from "react-icons/ri";
 import { FaUserAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/images/logo.png";
+
 function SidebarCustomer() {
   return (
     <div className="customer-layout">
