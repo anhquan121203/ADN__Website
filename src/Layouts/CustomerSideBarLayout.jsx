@@ -1,8 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SidebarCustomer from "../Components/Customer/sidebarcustomer/SidebarCustomer";
-import TopbarCustomer from "../Components/Customer/topbarcustomer/TopbarCustomer";
-
+import SidebarCustomerV1 from "../Components/Customer/sidebarcustomer/SideBarCustomerV1";
+import TopbarCustomerV1 from "../Components/Customer/topbarcustomer/TopbarCustomerV1";
 
 const layoutStyle = {
   display: "flex",
@@ -58,11 +57,11 @@ function CustomerSideBarLayout() {
   return (
     <div style={layoutStyle}>
       <div style={sidebarStyle}>
-        <SidebarCustomer/>
+        <SidebarCustomerV1 />
       </div>
       <div style={mainWrapperStyle}>
         <div style={topbarStyle}>
-          <TopbarCustomer />
+          <TopbarCustomerV1 />
         </div>
         <div style={outletWrapperStyle}>
           <Outlet />

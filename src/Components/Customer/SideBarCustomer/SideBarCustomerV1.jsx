@@ -6,7 +6,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/images/logo.png";
 
-function SidebarCustomer() {
+function SidebarCustomerV1() {
   return (
     <div className="customer-layout">
       <aside className="sidebar-customer">
@@ -47,4 +47,4 @@ function SidebarCustomer() {
   );
 }
 
-export default SidebarCustomer;
+export default SidebarCustomerV1;
