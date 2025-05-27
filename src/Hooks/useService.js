@@ -52,8 +52,16 @@ const useService = () => {
   }
 
   const deleteServiceById = async (id) => {
-    await dispatch(deleteService(id))
+  try {
+    await dispatch(deleteService(id)).unwrap();
+    toast.success("Xóa thiết bị thành công!");
+    return { success: true };
+  } catch (error) {
+    toast.error("Xóa thất bại!");
+    return { success: false };
   }
+};
+
 
   return {
     services,

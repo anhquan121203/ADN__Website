@@ -140,15 +140,14 @@ const serviceSlice = createSlice({
       // Update service
       .addCase(updateService.fulfilled, (state, action) => {
         state.services = state.services.map((service) =>
-          service._id === action.payload.id ? action.payload : service
+          service._id === action.payload._id ? action.payload : service
         );
       })
 
       // delete service
       .addCase(deleteService.fulfilled, (state, action) => {
-        state.loading = false;
         state.services = state.services.filter(
-          (s) => s._id !== action.payload.id
+          (service) => service._id !== action.payload
         );
       });
   },

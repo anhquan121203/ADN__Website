@@ -1,12 +1,15 @@
 import React, { use, useEffect, useState } from "react";
-import { Modal, Pagination } from "antd";
+import { Modal, Pagination, Select, Switch } from "antd";
 import "./ManagerUser.css";
 import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
 import ModalCreateUser from "./ModalCreateUser/ModalCreateUser";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import ModalEditUser from "./ModalEditUser/ModalEditUser";
 import ModalDetailUser from "./ModalDetailUser/ModalDetailUser";
+import UserFilter from "./FilterUser/FilterUser";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 function ManagerUser() {
   const {
@@ -19,6 +22,7 @@ function ManagerUser() {
     userById,
     updateUserById,
     deleteUserById,
+    changeStatusUser,
   } = useAdmin();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -29,6 +33,37 @@ function ManagerUser() {
   const [editUser, setEditUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  // filter  user
+  const [filters, setFilters] = useState({
+    keyword: "",
+    role: "",
+    is_verified: "",
+    status: "",
+    is_deleted: false,
+  });
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    const condition = {
+      keyword: filters.keyword,
+      role: filters.role,
+      is_verified: filters.is_verified === "" ? undefined : filters.is_verified,
+      status: filters.status === "" ? undefined : filters.status,
+      is_deleted: filters.is_deleted,
+    };
+
+    searchUserPag({
+      pageInfo: {
+        pageNum: currentPage,
+        pageSize: pageSize,
+      },
+      searchCondition: condition,
+    });
+  }, [currentPage, filters]);
 
   // display role
   const getRoleName = (role) => {
@@ -45,6 +80,22 @@ function ManagerUser() {
         return role;
     }
   };
+
+  // useEffect(() => {
+  //   searchUserPag({
+  //     pageInfo: {
+  //       pageNum: currentPage,
+  //       pageSize: pageSize,
+  //     },
+  //     searchCondition: {
+  //       keyword: "",
+  //       role: "",
+  //       is_verified: true,
+  //       status: true,
+  //       is_deleted: false,
+  //     },
+  //   });
+  // }, [currentPage]);
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -115,21 +166,24 @@ function ManagerUser() {
     }
   };
 
-  useEffect(() => {
-    searchUserPag({
-      pageInfo: {
-        pageNum: currentPage,
-        pageSize: pageSize,
-      },
-      searchCondition: {
-        keyword: "",
-        role: "",
-        is_verified: true,
-        status: true,
-        is_deleted: false,
-      },
-    });
-  }, [currentPage]);
+  // change status user
+  const handleChangeStatus = async (user) => {
+    try {
+      const newStatus = !user.status;
+      const result = await changeStatusUser({
+        userId: user._id,
+        status: newStatus,
+      });
+      if (result.success) {
+        toast.success("Thay đổi trạng thái tài khoản thành công");
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: "Thay đổi trạng thái tài khoản không thành công",
+      };
+    }
+  };
 
   return (
     <div className="manager-account">
@@ -144,6 +198,9 @@ function ManagerUser() {
       <div className="form-account">
         <h5>Danh sách người dùng</h5>
         <div className="account-container">
+
+          <UserFilter filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+
           <table className="table-account">
             <thead>
               <tr>
@@ -152,7 +209,7 @@ function ManagerUser() {
                 <th>Email</th>
                 <th>Vai trò</th>
                 <th>Trạng thái</th>
-                <th>Mô tả</th>
+                <th>Xác thực</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -161,7 +218,14 @@ function ManagerUser() {
                 accounts.map((item, index) => (
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                    <td>{`${item.first_name} ${item.last_name}`}</td>
+                    <td>
+                      <Switch
+                        className="toggle-changeStatus"
+                        checked={item.status}
+                        onClick={() => handleChangeStatus(item)}
+                      />
+                      {`${item.first_name} ${item.last_name}`}
+                    </td>
                     <td>{item.email} </td>
                     <td>{getRoleName(item.role)} </td>
                     <td>
@@ -175,30 +239,19 @@ function ManagerUser() {
                     </td>
 
                     <td>
-                      <button
-                        className="detail-account"
-                        onClick={() => handleDetailUser(item._id)}
-                      >
-                        Chi tiết
-                      </button>
+                      {item.is_verified ? " ✅ Đã xác thực" : "❌ Chưa xác thực"}
                     </td>
-                    <td>
-                      <button
-                        className="edit-account"
-                        onClick={() => {
+
+                    <td className="action-icons">
+                      <CiEdit className="icon-actionAdmin" onClick={() => {
                           setEditUser(item);
                           setIsEditModalOpen(true);
-                        }}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="delete-account"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => handleDeleteUser(item)}
-                      >
-                        Xóa
-                      </button>
+                        }}/>
+
+                      <MdDeleteOutline  className="icon-actionAdmin" onClick={() => handleDeleteUser(item)}/>
+
+                      <FaRegEye  className="icon-actionAdmin" onClick={() => handleDetailUser(item._id)}/>
+                      
                     </td>
                   </tr>
                 ))

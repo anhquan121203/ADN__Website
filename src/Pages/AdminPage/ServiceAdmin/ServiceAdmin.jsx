@@ -33,6 +33,31 @@ function ServiceAdmin() {
   const [editService, setEditService] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // type Service
+  const getType = (type) => {
+    switch (type) {
+      case "civil":
+        return "Dân sự";
+      case "administrative":
+        return "Hành chính";
+      default:
+        return type;
+    }
+  };
+
+  const getSampleMethod = (sample_method) => {
+    switch (sample_method) {
+      case "home_collected":
+        return "Lấy mẫu tại nhà";
+      case "self_collected":
+        return "Tư lấy mẫu";
+      case "facility_collected":
+        return "Lấy mẫu tại cơ sở";
+      default:
+        return sample_method;
+    }
+  };
+
   // create service
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -84,22 +109,9 @@ function ServiceAdmin() {
   };
 
   const handleEditService = async (serviceData) => {
-    try {
-      const result = await updateServiceById(editService._id, serviceData);
-      if (result.success) {
-        setIsEditModalOpen(false);
-        // toast.success("Cập nhật thiết bị thành công");
-        searchListService({
-          is_active: true,
-          pageNum: currentPage,
-          pageSize: pageSize,
-          sort_by: "created_at",
-          sort_order: "desc",
-        });
-      }
-      return result.data;
-    } catch (error) {
-      return { success: false, message: "Cập nhật thiết bị không thành công" };
+    const result = await updateServiceById(editService._id, serviceData);
+    if (result.success) {
+      setIsEditModalOpen(false);
     }
   };
 
@@ -109,22 +121,16 @@ function ServiceAdmin() {
     setSelectedService(service);
   };
 
-  const handleDeleteService = () => {
-    if(selectedService._id){
-      deleteServiceById(selectedService._id);
-      searchListService({
-          is_active: true,
-          pageNum: currentPage,
-          pageSize: pageSize,
-          sort_by: "created_at",
-          sort_order: "desc",
-        });
-      toast.success("Xóa thiết bị thành công!");
-      setIsDeleteModalOpen(false);
-    }else {
-      toast.error("Lỗi: ID sản phẩm không hợp lệ!");
+  const handleDeleteService = async () => {
+    if (selectedService?._id) {
+      const result = await deleteServiceById(selectedService._id);
+      if (result.success) {
+        setIsDeleteModalOpen(false);
+      }
+    } else {
+      toast.error("Lỗi: ID thiết bị không hợp lệ!");
     }
-  }
+  };
 
   useEffect(() => {
     searchListService({
@@ -167,11 +173,17 @@ function ServiceAdmin() {
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item.name}</td>
-                    <td>{item.type} </td>
-                    <td>{item.sample_method} </td>
+                    <td> {getType(item.type)} </td>
+                    <td>{getSampleMethod(item.sample_method)} </td>
                     <td>{item.estimated_time} </td>
                     <td>{item.price} </td>
-                    <td>{item.is_active ? "✅" : "❌"}</td>
+                    <td><span
+                        className={`status-badge ${
+                          item.is_active ? "active" : "inactive"
+                        }`}
+                      >
+                        {item.is_active ? "ACTIVE" : "INACTIVE"}
+                      </span></td>
                     <td>
                       <button
                         className="detail-account"
