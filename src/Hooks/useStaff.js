@@ -6,7 +6,10 @@ import {
   getAppointments,
   getServices,
   getServiceById,
-  getChildServices
+  getChildServices,
+  getDepartments,
+  getDepartmentById,
+  getSlots,
 } from '../Feartures/staff/staffSlice';
 
 const useStaff = () => {
@@ -21,8 +24,18 @@ const useStaff = () => {
     serviceDetails,
     childServices,
     loading, 
-    error 
+    error, 
+    departments, // Add this
   } = staffState;
+
+  const fetchDepartments = async (searchParams = {}) => {
+    try {
+      const result = await dispatch(getDepartments(searchParams)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
 
   // Add new functions for services with better error handling
   const fetchServices = async (searchParams = { is_active: true }) => {
@@ -90,6 +103,24 @@ const useStaff = () => {
     }
   };
 
+  const fetchDepartmentById = async (departmentId) => {
+    try {
+      const result = await dispatch(getDepartmentById(departmentId)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
+  const fetchSlots = async (searchParams = {}) => {
+    try {
+      const result = await dispatch(getSlots(searchParams)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
+
   return {
     accounts,
     appointments,
@@ -104,7 +135,11 @@ const useStaff = () => {
     fetchAppointments,
     fetchServices,
     fetchServiceById,
-    fetchChildServices
+    fetchChildServices,
+    departments,
+    fetchDepartments,
+    fetchDepartmentById,
+    fetchSlots,
   };
 };
 

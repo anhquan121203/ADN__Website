@@ -47,9 +47,6 @@ const View = () => {
     }
   };
   
-  // Add this to debug the actual services data
-  console.log('Services data:', services);
-  
   useEffect(() => {
     loadServices();
   }, [searchParams, pagination.current, pagination.pageSize]);

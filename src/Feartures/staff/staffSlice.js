@@ -157,6 +157,93 @@ export const getChildServices = createAsyncThunk(
     }
   }
 );
+// Add new thunk for departments
+export const getDepartments = createAsyncThunk(
+  "staff/getDepartments",
+  async (searchParams, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const queryParams = new URLSearchParams();
+      
+      // Set default values if not specified
+      const params = {
+        is_deleted: false,
+        sort_by: 'created_at',
+        sort_order: 'desc',
+        ...searchParams
+      };
+      
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value);
+        }
+      }
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/department/search?${queryParams.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+// Add after getDepartments thunk
+export const getDepartmentById = createAsyncThunk(
+  "staff/getDepartmentById",
+  async (departmentId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/department/${departmentId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const getSlots = createAsyncThunk(
+  "staff/getSlots",
+  async (searchParams, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const queryParams = new URLSearchParams();
+      
+      const params = {
+        pageNum: 1,
+        pageSize: 10,
+        ...searchParams
+      };
+      
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined && value !== null && value !== '') {
+          queryParams.append(key, value);
+        }
+      }
+      
+      const response = await axios.get(
+        `${API_BASE_URL}/api/slot/search?${queryParams.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const staffSlice = createSlice({
     name: "STAFF",
     initialState: {
@@ -165,6 +252,9 @@ const staffSlice = createSlice({
         services: null,
         serviceDetails: null,
         childServices: [],
+        departments: null,
+        departmentDetails: null,
+        slots: null,
         loading: false,
         error: null,
         total: 0,
@@ -243,7 +333,49 @@ const staffSlice = createSlice({
             .addCase(getChildServices.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Failed to fetch child services";
-            });
+            })
+            // Add cases for getDepartments
+            .addCase(getDepartments.pending, (state) => {
+              state.loading = true;
+              state.error = null;
+          })
+          .addCase(getDepartments.fulfilled, (state, action) => {
+              state.loading = false;
+              state.departments = action.payload;
+              state.error = null;
+          })
+          .addCase(getDepartments.rejected, (state, action) => {
+              state.loading = false;
+              state.error = action.payload || "Failed to fetch departments";
+          })
+          // Add to extraReducers
+  .addCase(getDepartmentById.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+.addCase(getDepartmentById.fulfilled, (state, action) => {
+  state.loading = false;
+  state.departmentDetails = action.payload;
+  state.error = null;
+})
+.addCase(getDepartmentById.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload || "Failed to fetch department details";
+})
+// Add to extraReducers
+.addCase(getSlots.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+.addCase(getSlots.fulfilled, (state, action) => {
+  state.loading = false;
+  state.slots = action.payload;
+  state.error = null;
+})
+.addCase(getSlots.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload || "Failed to fetch slots";
+});
     },
 })
 

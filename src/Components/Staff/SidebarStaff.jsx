@@ -61,15 +61,15 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/inbox">
+            <Link to="/staff/department">
               <FaInbox className="menu-icon" />
-              <span className="menu-text">Inbox</span>
+              <span className="menu-text">Department</span>
             </Link>
           </li>
           <li>
-            <Link to="/contacts">
+            <Link to="/staff/slot">
               <FaAddressBook className="menu-icon" />
-              <span className="menu-text">Contacts</span>
+              <span className="menu-text">Slot</span>
             </Link>
           </li>
           <li>
