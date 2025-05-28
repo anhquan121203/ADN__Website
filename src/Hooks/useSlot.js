@@ -1,52 +1,44 @@
 import { useDispatch, useSelector } from "react-redux";
 import { use, useEffect } from "react";
-
-import {
-  changeStatus,
-  createService,
-  deleteService,
-  getServiceById,
-  searchService,
-  updateService,
-} from "../Feartures/services/seviceSlice";
 import { data } from "react-router-dom";
+import { changeStatus, createSlot, getSlotById, searchSlot, updateSlot } from "../Feartures/slots/slotSlice";
 
-const useService = () => {
+const useSlot = () => {
   const dispatch = useDispatch();
-  const { services, loading, error, total } = useSelector(
-    (state) => state.service
+  const { slots, loading, error, total } = useSelector(
+    (state) => state.slot
   );
 
-  const searchListService = async (searchPayload) => {
+  const searchListSlot = async (searchPayload) => {
     try {
-      await dispatch(searchService(searchPayload));
+      await dispatch(searchSlot(searchPayload));
     } catch (error) {
       console.error("Error create service");
     }
   };
 
-  const addNewService = async (createNewService) => {
+  const addNewSlot = async (createNewSlot) => {
     try {
-      const response = await dispatch(createService(createNewService)).unwrap();
+      const response = await dispatch(createSlot(createNewSlot)).unwrap();
       return { success: true, data: response };
     } catch (error) {
       console.error("Error create Staff");
     }
   };
 
-  const serviceById = async (id) => {
+  const slotById = async (id) => {
     try {
-      const response = await dispatch(getServiceById(id)).unwrap();
+      const response = await dispatch(getSlotById(id)).unwrap();
       return { success: true, data: response };
     } catch (error) {
       console.error("Error create Staff");
     }
   };
 
-  const updateServiceById = async (id, updateData) => {
+  const updateSlotById = async (id, updateData) => {
     try {
       const response = await dispatch(
-        updateService({ id, updateData })
+        updateSlot({ id, updateData })
       ).unwrap();
       return { success: true, data: response };
     } catch (error) {
@@ -54,16 +46,6 @@ const useService = () => {
     }
   };
 
-  const deleteServiceById = async (id) => {
-    try {
-      await dispatch(deleteService(id)).unwrap();
-      toast.success("Xóa thiết bị thành công!");
-      return { success: true };
-    } catch (error) {
-      toast.error("Xóa thất bại!");
-      return { success: false };
-    }
-  };
 
   // Change Status
   const changeStatusService = async ({id, status}) => {
@@ -79,17 +61,16 @@ const useService = () => {
   };
 
   return {
-    services,
+    slots,
     loading,
     error,
     total,
-    searchListService,
-    addNewService,
-    serviceById,
-    updateServiceById,
-    deleteServiceById,
+    searchListSlot,
+    addNewSlot,
+    slotById,
+    updateSlotById,
     changeStatusService,
   };
 };
 
-export default useService;
+export default useSlot;

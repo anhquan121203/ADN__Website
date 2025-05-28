@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Modal, Pagination, Select, Switch } from "antd";
+import { Modal, Pagination, Popconfirm, Select, Switch } from "antd";
 import "./ManagerUser.css";
 import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
@@ -9,7 +9,7 @@ import ModalEditUser from "./ModalEditUser/ModalEditUser";
 import ModalDetailUser from "./ModalDetailUser/ModalDetailUser";
 import UserFilter from "./FilterUser/FilterUser";
 import { CiEdit } from "react-icons/ci";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdBlock, MdDeleteOutline } from "react-icons/md";
 
 function ManagerUser() {
   const {
@@ -33,6 +33,11 @@ function ManagerUser() {
   const [editUser, setEditUser] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
 
   // filter  user
   const [filters, setFilters] = useState({
@@ -174,14 +179,33 @@ function ManagerUser() {
         userId: user._id,
         status: newStatus,
       });
-      if (result.success) {
+
+      if (result?.success) {
         toast.success("Thay đổi trạng thái tài khoản thành công");
+        const condition = {
+          keyword: filters.keyword,
+          role: filters.role,
+          is_deleted: filters.is_deleted,
+        };
+        if (filters.is_verified !== "") {
+          condition.is_verified = filters.is_verified;
+        }
+        if (filters.status !== "") {
+          condition.status = filters.status;
+        }
+
+        await searchUserPag({
+          pageInfo: {
+            pageNum: currentPage,
+            pageSize: pageSize,
+          },
+          searchCondition: condition,
+        });
+      } else {
+        toast.error(result?.message || "Thay đổi thất bại");
       }
     } catch (error) {
-      return {
-        success: false,
-        message: "Thay đổi trạng thái tài khoản không thành công",
-      };
+      toast.error("Thay đổi trạng thái tài khoản không thành công");
     }
   };
 
@@ -198,8 +222,11 @@ function ManagerUser() {
       <div className="form-account">
         <h5>Danh sách người dùng</h5>
         <div className="account-container">
-
-          <UserFilter filters={filters} setFilters={setFilters} onSearch={handleSearch} />
+          <UserFilter
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+          />
 
           <table className="table-account">
             <thead>
@@ -218,14 +245,7 @@ function ManagerUser() {
                 accounts.map((item, index) => (
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                    <td>
-                      <Switch
-                        className="toggle-changeStatus"
-                        checked={item.status}
-                        onClick={() => handleChangeStatus(item)}
-                      />
-                      {`${item.first_name} ${item.last_name}`}
-                    </td>
+                    <td>{`${item.first_name} ${item.last_name}`}</td>
                     <td>{item.email} </td>
                     <td>{getRoleName(item.role)} </td>
                     <td>
@@ -239,19 +259,40 @@ function ManagerUser() {
                     </td>
 
                     <td>
-                      {item.is_verified ? " ✅ Đã xác thực" : "❌ Chưa xác thực"}
+                      {item.is_verified
+                        ? " ✅ Đã xác thực"
+                        : "❌ Chưa xác thực"}
                     </td>
 
                     <td className="action-icons">
-                      <CiEdit className="icon-actionAdmin" onClick={() => {
+                      <CiEdit
+                        className="icon-actionAdmin"
+                        onClick={() => {
                           setEditUser(item);
                           setIsEditModalOpen(true);
-                        }}/>
+                        }}
+                      />
 
-                      <MdDeleteOutline  className="icon-actionAdmin" onClick={() => handleDeleteUser(item)}/>
+                      <MdDeleteOutline
+                        className="icon-actionAdmin"
+                        onClick={() => handleDeleteUser(item)}
+                      />
 
-                      <FaRegEye  className="icon-actionAdmin" onClick={() => handleDetailUser(item._id)}/>
-                      
+                      <FaRegEye
+                        className="icon-actionAdmin"
+                        onClick={() => handleDetailUser(item._id)}
+                      />
+
+                      <Popconfirm
+                        title="Khóa tài khoản"
+                        description="Bạn có muốn khóa tài khoản này không?"
+                        onConfirm={() => handleChangeStatus(item)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <MdBlock className="icon-actionAdmin" />
+                      </Popconfirm>
                     </td>
                   </tr>
                 ))

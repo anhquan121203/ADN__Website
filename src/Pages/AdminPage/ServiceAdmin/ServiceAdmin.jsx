@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Modal, Pagination } from "antd";
+import { Modal, Pagination, Popconfirm } from "antd";
 import "./ServiceAdmin.css";
 import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
@@ -9,6 +9,8 @@ import useService from "../../../Hooks/useService";
 import ModalCreateService from "./ModalCreateService/ModalCreateService";
 import ModalDetailService from "./ModalDetailService/ModalDetailService";
 import ModalEditService from "./ModalEditService/ModalEditService";
+import { MdBlock } from "react-icons/md";
+import FilterService from "./FilterService/FilterService";
 
 function ServiceAdmin() {
   const {
@@ -21,6 +23,7 @@ function ServiceAdmin() {
     serviceById,
     updateServiceById,
     deleteServiceById,
+    changeStatusService,
   } = useService();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -32,6 +35,42 @@ function ServiceAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editService, setEditService] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const cancel = (e) => {
+    message.error("Click on No");
+  };
+
+  useEffect(() => {
+    searchListService({
+      is_active: true,
+      pageNum: currentPage,
+      pageSize: pageSize,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
+  }, [currentPage]);
+
+  // Filter service
+  const [filters, setFilters] = useState({
+    type: "",
+    sample_method: "",
+    is_active: "",
+    min_price: "",
+    max_price: "",
+    keyword: "",
+    sort_by: "created_at",
+    sort_order: "desc",
+    start_date: "",
+    end_date: "",
+  });
+
+  const handleSearch = () => {
+    searchListService({
+      ...filters,
+      pageNum: currentPage,
+      pageSize: pageSize,
+    });
+  };
 
   // type Service
   const getType = (type) => {
@@ -132,15 +171,28 @@ function ServiceAdmin() {
     }
   };
 
-  useEffect(() => {
-    searchListService({
-      is_active: true,
-      pageNum: currentPage,
-      pageSize: pageSize,
-      sort_by: "created_at",
-      sort_order: "desc",
-    });
-  }, [currentPage]);
+  // change status
+  const handleChangeStatus = async (service) => {
+    try {
+      const result = await changeStatusService({
+        id: service._id,
+        status: !service.is_active,
+      });
+      if (result?.success) {
+        toast.success("Thay đổi trạng thái thành công");
+        // reload lại danh sách nếu cần
+        searchListService({
+          is_active: true,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          sort_by: "created_at",
+          sort_order: "desc",
+        });
+      }
+    } catch (error) {
+      toast.error("Thay đổi trạng thái không thành công");
+    }
+  };
 
   return (
     <div className="manager-account">
@@ -154,6 +206,12 @@ function ServiceAdmin() {
       {/* Table account */}
       <div className="form-account">
         <div className="account-container">
+          <FilterService
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+          />
+
           <table className="table-account">
             <thead>
               <tr>
@@ -177,13 +235,15 @@ function ServiceAdmin() {
                     <td>{getSampleMethod(item.sample_method)} </td>
                     <td>{item.estimated_time} </td>
                     <td>{item.price} </td>
-                    <td><span
+                    <td>
+                      <span
                         className={`status-badge ${
                           item.is_active ? "active" : "inactive"
                         }`}
                       >
                         {item.is_active ? "ACTIVE" : "INACTIVE"}
-                      </span></td>
+                      </span>
+                    </td>
                     <td>
                       <button
                         className="detail-account"
@@ -206,6 +266,17 @@ function ServiceAdmin() {
                       >
                         Xóa
                       </button>
+
+                      <Popconfirm
+                        title="Khóa tài khoản"
+                        description="Bạn có muốn khóa tài khoản này không?"
+                        onConfirm={() => handleChangeStatus(item)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <MdBlock className="icon-actionAdmin" />
+                      </Popconfirm>
                     </td>
                   </tr>
                 ))

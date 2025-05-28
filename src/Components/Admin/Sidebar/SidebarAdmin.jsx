@@ -9,6 +9,7 @@ import { RiAdminLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
+import { CiCalendar } from "react-icons/ci";
 
 function Sidebar() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
@@ -29,11 +30,12 @@ function Sidebar() {
                 <MdOutlineDashboard /> Dashboard
               </Link>
 
+              {/* Quản lý người dùng */}
               <Link to="/admin/manager-account" className="nav-item">
-                <LuListTodo  /> Quản lý người dùng
+                <LuListTodo /> Quản lý người dùng
               </Link>
 
-              {/* Dropdown: Quản lý thiết bị */}
+              {/*Quản lý thiết bị */}
               <div
                 className={`nav-item dropdown-service ${
                   serviceDropdownOpen ? "open" : ""
@@ -64,6 +66,11 @@ function Sidebar() {
                   </Link>
                 </div>
               )}
+
+              {/* Quản lý slot */}
+              <Link to="/admin/slot-admin" className="nav-item">
+                <CiCalendar  /> Lịch làm việc
+              </Link>
 
               <Link to="/admin/profile" className="nav-item">
                 <FaUserAlt /> Hồ sơ
