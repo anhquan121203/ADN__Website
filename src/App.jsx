@@ -22,6 +22,10 @@ import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
 import StaffLayout from "./Layouts/StaffLayout";
 import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
 import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
+import AppointmentStaff from "./Pages/StaffPage/StaffAppointments/View";
+import StaffService from "./Pages/StaffPage/StaffService/View"
+import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View"
+import StaffSlot from "./Pages/StaffPage/StaffSlot/View"
 
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
@@ -92,7 +96,11 @@ function App() {
 
         <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffProfile />} />
-        </Route>
+          <Route path="appointment" element={<AppointmentStaff />} /> 
+          <Route path="service" element={<StaffService />} />
+          <Route path="department" element={<StaffDepartment />} />
+          <Route path="slot" element={<StaffSlot />} />
+          </Route>
 
         <Route path="/manager" element={<ManagerLayout />}>
           <Route index element={<ManagerProfile />} />
