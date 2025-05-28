@@ -196,7 +196,7 @@ function Header() {
                     {role === "customer" ? (
                       <>
                         {firstName} {lastName}
-                        <a href="/">15.000.000</a>
+                        <a href="/customer">Profile</a>
                         <a href="/history">Lịch sử xét nghiệm</a>
                       </>
                     ) : role === "staff" ? (
