@@ -9,6 +9,7 @@ import { RiAdminLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 
 function Sidebar() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
@@ -30,7 +31,7 @@ function Sidebar() {
               </Link>
 
               <Link to="/admin/manager-account" className="nav-item">
-                <LuListTodo  /> Quản lý người dùng
+                <LuListTodo /> Quản lý người dùng
               </Link>
 
               {/* Dropdown: Quản lý thiết bị */}
@@ -64,7 +65,9 @@ function Sidebar() {
                   </Link>
                 </div>
               )}
-
+              <Link to="/admin/department-admin" className="nav-item">
+                <HiOutlineOfficeBuilding /> Quản lý phòng ban
+              </Link>
               <Link to="/admin/profile" className="nav-item">
                 <FaUserAlt /> Hồ sơ
               </Link>

@@ -18,19 +18,19 @@ import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
 import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
+import DepartmentAdmin from "./Pages/AdminPage/DepartmentAdmin/DepartmentAdmin";
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
 import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
 import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
 import AppointmentStaff from "./Pages/StaffPage/StaffAppointments/View";
-import StaffService from "./Pages/StaffPage/StaffService/View"
-import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View"
-import StaffSlot from "./Pages/StaffPage/StaffSlot/View"
+import StaffService from "./Pages/StaffPage/StaffService/View";
+import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View";
+import StaffSlot from "./Pages/StaffPage/StaffSlot/View";
 
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
-
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -80,7 +80,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          <Route path="/forgot-password" element={<ForgotPassword />}/>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
         <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
@@ -92,15 +92,16 @@ function App() {
           <Route path="manager-account" element={<ManagerUser />} />
           <Route path="service-admin" element={<ServiceAdmin />} />
           <Route path="profile" element={<ProfileAdmin />} />
+          <Route path="department-admin" element={<DepartmentAdmin />} />
         </Route>
 
         <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffProfile />} />
-          <Route path="appointment" element={<AppointmentStaff />} /> 
+          <Route path="appointment" element={<AppointmentStaff />} />
           <Route path="service" element={<StaffService />} />
           <Route path="department" element={<StaffDepartment />} />
           <Route path="slot" element={<StaffSlot />} />
-          </Route>
+        </Route>
 
         <Route path="/manager" element={<ManagerLayout />}>
           <Route index element={<ManagerProfile />} />
