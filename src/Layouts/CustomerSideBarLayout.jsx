@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-import TopbarCustomerV1 from "../Components/Customer/topbarcustomer/TopbarCustomerV1";
 
 const layoutStyle = {
   display: "flex",
@@ -9,17 +8,17 @@ const layoutStyle = {
   backgroundColor: "#f8fafc",
 };
 
-const sidebarStyle = {
-  width: "290px",
-  backgroundColor: "#ffffff",
-  borderRight: "1px solid #e2e8f0",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  bottom: 0,
-  overflowY: "auto",
-  zIndex: 1000,
-};
+// const sidebarStyle = {
+//   width: "290px",
+//   backgroundColor: "#ffffff",
+//   borderRight: "1px solid #e2e8f0",
+//   position: "fixed",
+//   top: 0,
+//   left: 0,
+//   bottom: 0,
+//   overflowY: "auto",
+//   zIndex: 1000,
+// };
 
 const mainWrapperStyle = {
   marginLeft: "290px",
@@ -29,19 +28,19 @@ const mainWrapperStyle = {
   height: "100vh",
 };
 
-const topbarStyle = {
-  height: "70px",
-  backgroundColor: "#ffffff",
-  borderBottom: "1px solid #e2e8f0",
-  position: "fixed",
-  top: 0,
-  left: "290px",
-  right: 0,
-  zIndex: 4,
-  display: "flex",
-  alignItems: "center",
-  padding: "0 20px",
-};
+// const topbarStyle = {
+//   height: "70px",
+//   backgroundColor: "#ffffff",
+//   borderBottom: "1px solid #e2e8f0",
+//   position: "fixed",
+//   top: 0,
+//   left: "290px",
+//   right: 0,
+//   zIndex: 4,
+//   display: "flex",
+//   alignItems: "center",
+//   padding: "0 20px",
+// };
 
 const outletWrapperStyle = {
   marginTop: "70px",
@@ -60,9 +59,9 @@ function CustomerSideBarLayout() {
         <SidebarCustomerV1 />
       </div> */}
       <div style={mainWrapperStyle}>
-        <div style={topbarStyle}>
+        {/* <div style={topbarStyle}>
           <TopbarCustomerV1 />
-        </div>
+        </div> */}
         <div style={outletWrapperStyle}>
           <Outlet />
         </div>
