@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import SidebarCustomerV1 from "../Components/Customer/sidebarcus/SideBarCustomerV1";
+
 import TopbarCustomerV1 from "../Components/Customer/topbarcustomer/TopbarCustomerV1";
 
 const layoutStyle = {
@@ -56,9 +56,9 @@ const outletWrapperStyle = {
 function CustomerSideBarLayout() {
   return (
     <div style={layoutStyle}>
-      <div style={sidebarStyle}>
+      {/* <div style={sidebarStyle}>
         <SidebarCustomerV1 />
-      </div>
+      </div> */}
       <div style={mainWrapperStyle}>
         <div style={topbarStyle}>
           <TopbarCustomerV1 />
