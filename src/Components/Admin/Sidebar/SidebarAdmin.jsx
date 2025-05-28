@@ -9,6 +9,7 @@ import { RiAdminLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { CiCalendar } from "react-icons/ci";
 
 function Sidebar() {
@@ -72,6 +73,9 @@ function Sidebar() {
                 <CiCalendar  /> Lịch làm việc
               </Link>
 
+              <Link to="/admin/department-admin" className="nav-item">
+                <HiOutlineOfficeBuilding /> Quản lý phòng ban
+              </Link>
               <Link to="/admin/profile" className="nav-item">
                 <FaUserAlt /> Hồ sơ
               </Link>

@@ -11,7 +11,7 @@ import LoginPage from "./Pages/LoginRegister/Login/Login";
 import Register from "./Pages/LoginRegister/Register/Register";
 import VerifyEmail from "./Components/VerifyToken/VerifyToken";
 import ForgotPassword from "./Pages/LoginRegister/ForgotPassword/ForgotPassword";
-import CustomerSideBarLayoyt from "./Layouts/CustomerSideBarLayoyt";
+import CustomerSideBarLayout from "./Layouts/CustomerSideBarLayout";
 import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 
 // ADMIN PAGE
@@ -19,12 +19,17 @@ import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
 import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
+import DepartmentAdmin from "./Pages/AdminPage/DepartmentAdmin/DepartmentAdmin";
 import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
 import StaffProfile from "./Pages/StaffPage/StaffProfile/ViewProfile";
 import ServiceAdmin from "./Pages/AdminPage/ServiceAdmin/ServiceAdmin";
+import AppointmentStaff from "./Pages/StaffPage/StaffAppointments/View";
+import StaffService from "./Pages/StaffPage/StaffService/View";
+import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View";
+import StaffSlot from "./Pages/StaffPage/StaffSlot/View";
 
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
@@ -80,7 +85,7 @@ function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
-        <Route path="/customer" element={<CustomerSideBarLayoyt />}>
+        <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
         </Route>
 
@@ -91,12 +96,17 @@ function App() {
           <Route path="manager-account" element={<ManagerUser />} />
           <Route path="service-admin" element={<ServiceAdmin />} />
           <Route path="profile" element={<ProfileAdmin />} />
+          <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
         </Route>
 
         {/* STAFF ROUTES*********************************** */}
         <Route path="/staff" element={<StaffLayout />}>
           <Route index element={<StaffProfile />} />
+          <Route path="appointment" element={<AppointmentStaff />} />
+          <Route path="service" element={<StaffService />} />
+          <Route path="department" element={<StaffDepartment />} />
+          <Route path="slot" element={<StaffSlot />} />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}

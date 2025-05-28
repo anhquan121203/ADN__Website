@@ -1,8 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-
-import SidebarCustomer from "../Components/Customer/SideBarCustomer/SidebarCustomer";
-import TopBarCustomer from "../Components/Customer/TopBarCustomer/TopBarCustomer";
+import Sidebarcus from "../Components/Customer/Sidebarcus/Sidebarcus";
+import Topbarcus from "../Components/Customer/Topbarcus/Topbarcus";
 
 const layoutStyle = {
   display: "flex",
@@ -53,15 +52,16 @@ const outletWrapperStyle = {
   marginLeft: "30px",
   marginRight: "30px",
 };
-function CustomerSideBarLayoyt() {
+
+function CustomerSideBarLayout() {
   return (
     <div style={layoutStyle}>
       <div style={sidebarStyle}>
-        <SidebarCustomer />
+        <Sidebarcus />
       </div>
       <div style={mainWrapperStyle}>
         <div style={topbarStyle}>
-          <TopBarCustomer />
+          <Topbarcus />
         </div>
         <div style={outletWrapperStyle}>
           <Outlet />
@@ -71,4 +71,4 @@ function CustomerSideBarLayoyt() {
   );
 }
 
-export default CustomerSideBarLayoyt;
+export default CustomerSideBarLayout;

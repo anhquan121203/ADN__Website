@@ -3,6 +3,7 @@ import authSlice from "../Feartures/user/authSlice";
 import adminSlice from "../Feartures/admin/adminSlice";
 import serviceSlice from "../Feartures/services/seviceSlice";
 import slotSlice from "../Feartures/slots/slotSlice";
+import departmentSlice from "../Feartures/department/departmentSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
         account: adminSlice.reducer,
         service: serviceSlice.reducer,
         slot: slotSlice.reducer,
+        department: departmentSlice.reducer,
     },
     
 })

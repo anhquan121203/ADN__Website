@@ -1,12 +1,12 @@
 import React from "react";
-import "./SidebarCustomer.css";
+import "./Sidebarcus.css";
 import { MdOutlineDashboard } from "react-icons/md";
 import { RiAdminLine } from "react-icons/ri";
 import { FaUserAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/images/logo.png";
 
-function SidebarCustomer() {
+function Sidebarcus() {
   return (
     <div className="customer-layout">
       <aside className="sidebar-customer">
@@ -47,4 +47,4 @@ function SidebarCustomer() {
   );
 }
 
-export default SidebarCustomer;
+export default Sidebarcus;
