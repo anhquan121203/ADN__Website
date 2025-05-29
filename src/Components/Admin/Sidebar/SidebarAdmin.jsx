@@ -14,6 +14,7 @@ import { CiCalendar } from "react-icons/ci";
 
 function Sidebar() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
   return (
     <div>
@@ -32,9 +33,36 @@ function Sidebar() {
               </Link>
 
               {/* Quản lý người dùng */}
-              <Link to="/admin/manager-account" className="nav-item">
-                <LuListTodo /> Quản lý người dùng
-              </Link>
+              <div
+                className={`nav-item dropdown-service ${
+                  accountDropdownOpen ? "open" : ""
+                }`}
+                onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+              >
+                <div className="dropdown-left">
+                  <LuListTodo />
+                  <span>Quản lý tài khoản</span>
+                </div>
+                <IoIosArrowDown
+                  className={`dropdown-icon ${
+                    accountDropdownOpen ? "rotate" : ""
+                  }`}
+                />
+              </div>
+
+              {accountDropdownOpen && (
+                <div className="submenu">
+                  <Link to="/admin/manager-account" className="submenu-item">
+                    Danh sách người dùng
+                  </Link>
+                  <Link
+                    to="/admin/manager-staff-profile"
+                    className="submenu-item"
+                  >
+                    Danh sách nhân viên
+                  </Link>
+                </div>
+              )}
 
               {/*Quản lý thiết bị */}
               <div

@@ -7,40 +7,82 @@ import {
   Modal,
   Select,
   TimePicker,
-  Upload,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 import useAdmin from "../../../../Hooks/useAdmin";
-import useDepartment from "../../../../Hooks/useDepartment";
 import useService from "../../../../Hooks/useService";
 
-const { RangePicker } = DatePicker;
-
-const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
+const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
   const [form] = Form.useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const { accounts, getListStaff } = useAdmin();
   const { services, searchListService } = useService();
 
   useEffect(() => {
-    getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
-    searchListService({
-      is_active: true,
-      pageNum: 1,
-      pageSize: 100,
-      sort_by: "created_at",
-      sort_order: "desc",
-    });
-  }, []);
-
-  useEffect(() => {
     if (isModalOpen) {
-      form.resetFields();
-      setSelectedFile(null);
+      getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
+      searchListService({
+        is_active: true,
+        pageNum: 1,
+        pageSize: 100,
+        sort_by: "created_at",
+        sort_order: "desc",
+      });
     }
   }, [isModalOpen]);
+
+  useEffect(() => {
+    console.log("Edit slot:", editSlot);
+    console.log("Accounts:", accounts);
+    console.log("Services:", services);
+  }, [editSlot, accounts, services]);
+
+  //   useEffect(() => {
+  //     if (editSlot) {
+  //       form.setFieldsValue({
+  //         ...editSlot,
+  //       });
+  //     }
+  //   }, [isModalOpen, editSlot]);
+
+  useEffect(() => {
+    if (editSlot && editSlot.time_slots?.[0]) {
+      const ts = editSlot.time_slots[0];
+
+      const date = dayjs(new Date(ts.year, ts.month - 1, ts.day));
+      const startTime = dayjs(
+        new Date(
+          ts.year,
+          ts.month - 1,
+          ts.day,
+          ts.start_time.hour,
+          ts.start_time.minute
+        )
+      );
+      const endTime = dayjs(
+        new Date(
+          ts.year,
+          ts.month - 1,
+          ts.day,
+          ts.end_time.hour,
+          ts.end_time.minute
+        )
+      );
+
+      form.setFieldsValue({
+        ...editSlot,
+
+        staff_profile_ids: editSlot.staff_profile_ids.map((s) =>
+          typeof s === "string" ? s : s._id
+        ),
+
+        date,
+        time_range: [startTime, endTime],
+      });
+    }
+  }, [isModalOpen, editSlot]);
 
   const handleSubmit = async () => {
     try {
@@ -72,23 +114,22 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
       delete submitData.date;
       delete submitData.time_range;
 
-      const response = await handleAdd(submitData);
-
+      const response = await handleEdit(values);
       if (response.success === true) {
         form.resetFields();
         handleCancel();
-        toast.success("Tạo Slot mới thành công");
+        toast.success("Cập nhật slot thành công");
       } else {
-        toast.error(response.message || "Tạo slot mới không thành công!");
+        toast.error(response.message || "Cập nhật slot không thành công!");
       }
     } catch (error) {
-      toast.error("Tạo slot mới không thành công!");
+      toast.error("Cập nhật slot không thành công!");
     }
   };
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Chỉnh sửa slot"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -96,7 +137,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo tài khoản
+          Cập nhật
         </Button>,
       ]}
     >
@@ -163,4 +204,4 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   );
 };
 
-export default ModalCreateSlot;
+export default ModalEditSlot;

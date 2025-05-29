@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
 
 import {
   changeStatus,
@@ -8,8 +7,7 @@ import {
   getServiceById,
   searchService,
   updateService,
-} from "../Feartures/services/seviceSlice";
-import { data } from "react-router-dom";
+} from "../Feartures/services/serviceSlice";
 
 const useService = () => {
   const dispatch = useDispatch();

@@ -1,0 +1,26 @@
+.topTable-slot {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-slot {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.icon-slot {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.icon-slot:hover {
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  transform: scale(1.4);
+}

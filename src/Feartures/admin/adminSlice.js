@@ -5,7 +5,7 @@ import { API_BASE_URL } from "../../Constants/apiConstants";
 // Async thunks
 
 export const searchUser = createAsyncThunk(
-  "account/searchUser",
+  "admin/searchUser",
   async (searchPayload, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -27,7 +27,7 @@ export const searchUser = createAsyncThunk(
 );
 
 export const createUser = createAsyncThunk(
-  "account/createUser",
+  "admin/createUser",
   async (createNewUser, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -49,7 +49,7 @@ export const createUser = createAsyncThunk(
 );
 
 export const getUserById = createAsyncThunk(
-  "account/getUserById",
+  "admin/getUserById",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -68,7 +68,7 @@ export const getUserById = createAsyncThunk(
 
 // Update user
 export const updateUser = createAsyncThunk(
-  "account/updateUser",
+  "admin/updateUser",
   async ({ id, updateData }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -91,7 +91,7 @@ export const updateUser = createAsyncThunk(
 
 // Delete user
 export const deleteUser = createAsyncThunk(
-  "account/deleteUser",
+  "admin/deleteUser",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -108,17 +108,17 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
-// changle status
+// change status
 export const changeStatus = createAsyncThunk(
-  "account/changeStatus",
+  "admin/changeStatus",
   async ({ userId, status }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.put(
         `${API_BASE_URL}/api/users/change-status`,
         {
-          user_id: userId, 
-          status,         
+          user_id: userId,
+          status,
         },
         {
           headers: {
@@ -128,6 +128,29 @@ export const changeStatus = createAsyncThunk(
         }
       );
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// Manager staff profile
+export const searchStaff = createAsyncThunk(
+  "admin/searchStaff",
+  async (searchPayload, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/staff-profile/search`,
+        {
+          params: searchPayload,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -194,6 +217,21 @@ const adminSlice = createSlice({
         if (idx !== -1) {
           state.accounts[idx] = action.payload.data;
         }
+      })
+
+      // Staff profile data
+      .addCase(searchStaff.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchStaff.fulfilled, (state, action) => {
+        state.loading = false;
+        state.accounts = action.payload.pageData; // Lấy danh sách user
+        state.total = action.payload.pageInfo.totalItems; // Tổng số user
+      })
+      .addCase(searchStaff.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch accounts";
       });
   },
 });

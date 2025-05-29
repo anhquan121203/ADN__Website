@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   changeStatus,
+  searchStaff,
 } from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
@@ -69,6 +70,15 @@ const useAdmin = () => {
     }
   }
 
+  // get list staff profile
+  const getListStaff = async (searchPayload) => {
+    try {
+      await dispatch(searchStaff(searchPayload));
+    } catch (error) {
+      console.error("Error create Staff");
+    }
+  };
+
   return {
     accounts,
     loading,
@@ -80,6 +90,7 @@ const useAdmin = () => {
     updateUserById,
     deleteUserById,
     changeStatusUser,
+    getListStaff
   };
 };
 

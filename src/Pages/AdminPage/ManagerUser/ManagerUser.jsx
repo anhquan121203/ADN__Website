@@ -264,35 +264,37 @@ function ManagerUser() {
                         : "❌ Chưa xác thực"}
                     </td>
 
-                    <td className="action-icons">
-                      <CiEdit
-                        className="icon-actionAdmin"
-                        onClick={() => {
-                          setEditUser(item);
-                          setIsEditModalOpen(true);
-                        }}
-                      />
+                    <td>
+                      <div className="action-admin">
+                        <CiEdit
+                          className="icon-admin"
+                          onClick={() => {
+                            setEditUser(item);
+                            setIsEditModalOpen(true);
+                          }}
+                        />
 
-                      <MdDeleteOutline
-                        className="icon-actionAdmin"
-                        onClick={() => handleDeleteUser(item)}
-                      />
+                        <MdDeleteOutline
+                          className="icon-admin"
+                          onClick={() => handleDeleteUser(item)}
+                        />
 
-                      <FaRegEye
-                        className="icon-actionAdmin"
-                        onClick={() => handleDetailUser(item._id)}
-                      />
+                        <FaRegEye
+                          className="icon-admin"
+                          onClick={() => handleDetailUser(item._id)}
+                        />
 
-                      <Popconfirm
-                        title="Khóa tài khoản"
-                        description="Bạn có muốn khóa tài khoản này không?"
-                        onConfirm={() => handleChangeStatus(item)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <MdBlock className="icon-actionAdmin" />
-                      </Popconfirm>
+                        <Popconfirm
+                          title="Khóa tài khoản"
+                          description="Bạn có muốn khóa tài khoản này không?"
+                          onConfirm={() => handleChangeStatus(item)}
+                          onCancel={cancel}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <MdBlock className="icon-admin" />
+                        </Popconfirm>
+                      </div>
                     </td>
                   </tr>
                 ))

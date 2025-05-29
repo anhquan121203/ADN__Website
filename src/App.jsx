@@ -34,6 +34,7 @@ import StaffSlot from "./Pages/StaffPage/StaffSlot/View";
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
+import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerStaffProfile";
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -98,6 +99,7 @@ function App() {
           <Route path="profile" element={<ProfileAdmin />} />
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
+          <Route path="manager-staff-profile" element={<ManagerStaffProfile />} />
         </Route>
 
         {/* STAFF ROUTES*********************************** */}
