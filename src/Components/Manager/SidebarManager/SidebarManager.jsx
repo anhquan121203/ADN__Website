@@ -25,7 +25,7 @@ function SidebarManager() {
   };
 
   return (
-    <div className={`sidebar-staff ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`sidebar-manager ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="logo">
           {isCollapsed ? (

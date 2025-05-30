@@ -380,4 +380,4 @@ const staffSlice = createSlice({
 })
 
 // Change this line - export the reducer instead of the slice
-export default staffSlice.reducer;
+export default staffSlice;
