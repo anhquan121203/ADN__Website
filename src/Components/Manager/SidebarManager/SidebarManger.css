@@ -1,4 +1,4 @@
-.sidebar-staff {
+.sidebar-manager {
     display: flex;
     flex-direction: column;
     width: 250px;
@@ -10,7 +10,7 @@
     transition: width 0.3s ease;
   }
   
-  .sidebar-staff.collapsed {
+  .sidebar-manager.collapsed {
     width: 70px;
   }
   
@@ -21,7 +21,7 @@
     justify-content: center;
   }
   
-  .sidebar-staff.collapsed .sidebar-header {
+  .sidebar-manager.collapsed .sidebar-header {
     padding: 20px 0;
   }
   
@@ -36,7 +36,7 @@
     max-width: 100%;
   }
   
-  .sidebar-staff.collapsed .logo-image {
+  .sidebar-manager.collapsed .logo-image {
     height: 30px;
   }
   
@@ -46,7 +46,7 @@
     padding-right: 5px;
   }
   
-  .sidebar-staff.collapsed .sidebar-menu {
+  .sidebar-manager.collapsed .sidebar-menu {
     padding-right: 0;
   }
   
@@ -75,7 +75,7 @@
     padding: 0;
   }
   
-  .sidebar-staff.collapsed .sidebar-menu li {
+  .sidebar-manager.collapsed .sidebar-menu li {
     display: flex;
     justify-content: center;
     margin: 15px 0;
@@ -92,7 +92,7 @@
     width: 100%;
   }
   
-  .sidebar-staff.collapsed .sidebar-menu li a {
+  .sidebar-manager.collapsed .sidebar-menu li a {
     justify-content: center;
     padding: 12px 0;
   }
@@ -113,7 +113,7 @@
     opacity: 0.7;
   }
   
-  .sidebar-staff.collapsed .menu-icon {
+  .sidebar-manager.collapsed .menu-icon {
     margin-right: 0;
     font-size: 22px;
   }
@@ -122,7 +122,7 @@
     opacity: 1;
   }
   
-  .sidebar-staff.collapsed .menu-text {
+  .sidebar-manager.collapsed .menu-text {
     display: none;
   }
   
@@ -139,7 +139,7 @@
     margin: 0;
   }
   
-  .sidebar-staff.collapsed .sidebar-footer li {
+  .sidebar-manager.collapsed .sidebar-footer li {
     display: flex;
     justify-content: center;
     margin: 15px 0;
@@ -155,7 +155,7 @@
     width: 100%;
   }
   
-  .sidebar-staff.collapsed .sidebar-footer li a {
+  .sidebar-manager.collapsed .sidebar-footer li a {
     justify-content: center;
     padding: 12px 0;
   }
@@ -165,7 +165,7 @@
     color: #ffffff;
   }
   
-  .sidebar-staff.collapsed .sidebar-footer .menu-text {
+  .sidebar-manager.collapsed .sidebar-footer .menu-text {
     display: none;
   }
   
@@ -188,7 +188,7 @@
     transition: transform 0.3s ease;
   }
   
-  .sidebar-staff.collapsed .collapse-button button {
+  .sidebar-manager.collapsed .collapse-button button {
     transform: rotate(180deg);
   }
   
