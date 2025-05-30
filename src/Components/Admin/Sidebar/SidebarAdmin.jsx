@@ -9,9 +9,12 @@ import { RiAdminLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { CiCalendar } from "react-icons/ci";
 
 function Sidebar() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
 
   return (
     <div>
@@ -29,11 +32,39 @@ function Sidebar() {
                 <MdOutlineDashboard /> Dashboard
               </Link>
 
-              <Link to="/admin/manager-account" className="nav-item">
-                <LuListTodo  /> Quản lý người dùng
-              </Link>
+              {/* Quản lý người dùng */}
+              <div
+                className={`nav-item dropdown-service ${
+                  accountDropdownOpen ? "open" : ""
+                }`}
+                onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+              >
+                <div className="dropdown-left">
+                  <LuListTodo />
+                  <span>Quản lý tài khoản</span>
+                </div>
+                <IoIosArrowDown
+                  className={`dropdown-icon ${
+                    accountDropdownOpen ? "rotate" : ""
+                  }`}
+                />
+              </div>
 
-              {/* Dropdown: Quản lý thiết bị */}
+              {accountDropdownOpen && (
+                <div className="submenu">
+                  <Link to="/admin/manager-account" className="submenu-item">
+                    Danh sách người dùng
+                  </Link>
+                  <Link
+                    to="/admin/manager-staff-profile"
+                    className="submenu-item"
+                  >
+                    Danh sách nhân viên
+                  </Link>
+                </div>
+              )}
+
+              {/*Quản lý thiết bị */}
               <div
                 className={`nav-item dropdown-service ${
                   serviceDropdownOpen ? "open" : ""
@@ -65,6 +96,14 @@ function Sidebar() {
                 </div>
               )}
 
+              {/* Quản lý slot */}
+              <Link to="/admin/slot-admin" className="nav-item">
+                <CiCalendar  /> Lịch làm việc
+              </Link>
+
+              <Link to="/admin/department-admin" className="nav-item">
+                <HiOutlineOfficeBuilding /> Quản lý phòng ban
+              </Link>
               <Link to="/admin/profile" className="nav-item">
                 <FaUserAlt /> Hồ sơ
               </Link>

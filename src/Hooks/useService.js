@@ -1,14 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
 
 import {
+  changeStatus,
   createService,
   deleteService,
   getServiceById,
   searchService,
   updateService,
-} from "../Feartures/services/seviceSlice";
-import { data } from "react-router-dom";
+} from "../Feartures/services/serviceSlice";
 
 const useService = () => {
   const dispatch = useDispatch();
@@ -33,7 +32,7 @@ const useService = () => {
     }
   };
 
- const serviceById = async (id) => {
+  const serviceById = async (id) => {
     try {
       const response = await dispatch(getServiceById(id)).unwrap();
       return { success: true, data: response };
@@ -44,24 +43,38 @@ const useService = () => {
 
   const updateServiceById = async (id, updateData) => {
     try {
-      const response = await dispatch(updateService({id, updateData})).unwrap();
-      return {success: true, data: response}
+      const response = await dispatch(
+        updateService({ id, updateData })
+      ).unwrap();
+      return { success: true, data: response };
     } catch (error) {
       return { success: false, message: "Cập nhật thiết bị không thành công!" };
     }
-  }
+  };
 
   const deleteServiceById = async (id) => {
-  try {
-    await dispatch(deleteService(id)).unwrap();
-    toast.success("Xóa thiết bị thành công!");
-    return { success: true };
-  } catch (error) {
-    toast.error("Xóa thất bại!");
-    return { success: false };
-  }
-};
+    try {
+      await dispatch(deleteService(id)).unwrap();
+      toast.success("Xóa thiết bị thành công!");
+      return { success: true };
+    } catch (error) {
+      toast.error("Xóa thất bại!");
+      return { success: false };
+    }
+  };
 
+  // Change Status
+  const changeStatusService = async ({id, status}) => {
+    try {
+      const response = await dispatch(changeStatus({id, status})).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Thay đổi trạng thái tài khoản không thành công",
+      };
+    }
+  };
 
   return {
     services,
@@ -72,7 +85,8 @@ const useService = () => {
     addNewService,
     serviceById,
     updateServiceById,
-    deleteServiceById
+    deleteServiceById,
+    changeStatusService,
   };
 };
 

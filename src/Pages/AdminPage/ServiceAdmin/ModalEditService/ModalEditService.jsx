@@ -35,12 +35,12 @@ const ModalEditService = ({
       if (response.success === true) {
         form.resetFields();
         handleCancel();
-        toast.success("Cập nhật tài khoản thành công");
+        toast.success("Cập nhật dịch vụ thành công");
       } else {
-        toast.error(response.message || "Cập nhật tài khoản không thành công!");
+        toast.error(response.message || "Cập nhật dịch vụ không thành công!");
       }
     } catch (error) {
-      toast.error("Cập nhật tài khoản không thành công!");
+      toast.error("Cập nhật dịch vụ không thành công!");
     }
   };
 

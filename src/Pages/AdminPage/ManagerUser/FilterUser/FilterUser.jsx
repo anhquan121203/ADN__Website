@@ -77,7 +77,7 @@ function UserFilter({ filters, setFilters, onSearch }) {
         <Select.Option value={true}>Đã xóa</Select.Option>
       </Select>
 
-      {/* <button
+      <button
         onClick={onSearch}
         style={{
           padding: "8px 16px",
@@ -85,10 +85,12 @@ function UserFilter({ filters, setFilters, onSearch }) {
           color: "#fff",
           border: "none",
           borderRadius: "4px",
+          textAlign: "center",
+          height: "32px"
         }}
       >
         Tìm kiếm
-      </button> */}
+      </button>
     </div>
   );
 }

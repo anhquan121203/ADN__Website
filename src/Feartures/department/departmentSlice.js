@@ -2,19 +2,22 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_BASE_URL } from "../../Constants/apiConstants";
 
-// Async thunks
-export const searchService = createAsyncThunk(
-  "service/searchService",
-  async (listService, { rejectWithValue }) => {
+// Search department
+export const searchDepartment = createAsyncThunk(
+  "department/searchDepartmen",
+  async (listDepartment, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/api/service/search`, {
-        params: listService,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/api/department/search`,
+        {
+          params: listDepartment,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -22,15 +25,15 @@ export const searchService = createAsyncThunk(
   }
 );
 
-// create service
-export const createService = createAsyncThunk(
-  "account/createService",
-  async (createNewService, { rejectWithValue }) => {
+// Create department
+export const createDepartment = createAsyncThunk(
+  "department/createDepartment",
+  async (createNewDepartment, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.post(
-        `${API_BASE_URL}/api/service/create`,
-        createNewService,
+        `${API_BASE_URL}/api/department/create`,
+        createNewDepartment,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,13 +48,13 @@ export const createService = createAsyncThunk(
   }
 );
 
-// get by ID
-export const getServiceById = createAsyncThunk(
-  "account/getServiceById",
+// Get department by ID
+export const getDepartmentById = createAsyncThunk(
+  "department/getDepartmentById",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/api/service/${id}`, {
+      const response = await axios.get(`${API_BASE_URL}/api/department/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -64,14 +67,14 @@ export const getServiceById = createAsyncThunk(
   }
 );
 
-// update service
-export const updateService = createAsyncThunk(
-  "account/updateService",
+// Update department
+export const updateDepartment = createAsyncThunk(
+  "department/updateDepartment",
   async ({ id, updateData }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.put(
-        `${API_BASE_URL}/api/service/${id}`,
+        `${API_BASE_URL}/api/department/${id}`,
         updateData,
         {
           headers: {
@@ -87,13 +90,13 @@ export const updateService = createAsyncThunk(
   }
 );
 
-// Delete service
-export const deleteService = createAsyncThunk(
-  "account/deleteService",
+// Delete department
+export const deleteDepartment = createAsyncThunk(
+  "department/deleteDepartment",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${API_BASE_URL}/api/service/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/department/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -106,10 +109,11 @@ export const deleteService = createAsyncThunk(
   }
 );
 
-const serviceSlice = createSlice({
-  name: "SERVICE",
+// Slice
+const departmentSlice = createSlice({
+  name: "DEPARTMENT",
   initialState: {
-    services: [],
+    departments: [],
     loading: false,
     error: null,
     total: 0,
@@ -117,40 +121,40 @@ const serviceSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(searchService.pending, (state) => {
+      .addCase(searchDepartment.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchService.fulfilled, (state, action) => {
+      .addCase(searchDepartment.fulfilled, (state, action) => {
         state.loading = false;
-        state.services = action.payload.pageData; // Lấy danh sách service
-        state.total = action.payload.pageInfo.totalItems; // Tổng số service
+        state.departments = action.payload.pageData; // Lấy danh sách department
+        state.total = action.payload.pageInfo.totalItems; // Tổng số department
       })
-      .addCase(searchService.rejected, (state, action) => {
+      .addCase(searchDepartment.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Failed to fetch accounts";
-      })
-
-      //  createService
-      .addCase(createService.fulfilled, (state, action) => {
-        state.loading = false;
-        state.services.push(action.payload);
+        state.error = action.payload || "Failed to fetch departments";
       })
 
-      // Update service
-      .addCase(updateService.fulfilled, (state, action) => {
-        state.services = state.services.map((service) =>
-          service._id === action.payload._id ? action.payload : service
+      // Create department
+      .addCase(createDepartment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.departments.push(action.payload);
+      })
+
+      // Update department
+      .addCase(updateDepartment.fulfilled, (state, action) => {
+        state.departments = state.departments.map((department) =>
+          department._id === action.payload._id ? action.payload : department
         );
       })
 
-      // delete service
-      .addCase(deleteService.fulfilled, (state, action) => {
-        state.services = state.services.filter(
-          (service) => service._id !== action.payload
+      // Delete department
+      .addCase(deleteDepartment.fulfilled, (state, action) => {
+        state.departments = state.departments.filter(
+          (department) => department._id !== action.payload
         );
       });
   },
 });
 
-export default serviceSlice;
+export default departmentSlice;

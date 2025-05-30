@@ -6,6 +6,24 @@
   padding: 20px;
 }
 
+.button-add__account {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 5px;
+  background-color: #21a1f1;
+  color: #fff;
+  /* box-shadow: 2px 2px 2px 0 black; */
+}
+
+.button-add__account:hover {
+  background-color: #0067a7;
+}
+
 .account-container {
   display: flex;
   width: 100%;
@@ -54,15 +72,14 @@
   font-weight: bold;
 }
 
-/* Action bbutton */
-action-icons{
+/* Action button */
+.action-admin {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: row;
+  align-items: center;
 }
 
-.icon-actionAdmin{
+.icon-admin {
   width: 20px;
   height: 20px;
   margin-right: 10px;
@@ -70,11 +87,11 @@ action-icons{
   transition: background-color 0.3s ease;
 }
 
-.icon-actionAdmin:hover {
+.icon-admin:hover {
   background-color: #e0e0e0;
-   border-radius: 50%;
+  border-radius: 50%;
   transform: scale(1.4);
-}
+} 
 
 .action-btnPro {
   /* display: flex; */
@@ -138,20 +155,20 @@ action-icons{
 }
 
 .status-badge.active {
-  background-color: #d1fae5; 
-  color: #065f46;            
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .status-badge.inactive {
-  background-color: #fef3c7; 
-  color: #92400e;            
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 .status-badge.offline {
-  background-color: #fee2e2; 
-  color: #b91c1c;            
+  background-color: #fee2e2;
+  color: #b91c1c;
 }
 
-.toggle-changeStatus{
+.toggle-changeStatus {
   margin-right: 10px;
 }
