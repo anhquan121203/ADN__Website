@@ -7,8 +7,10 @@ import { FaPlus } from "react-icons/fa";
 import ModalCreateDepartment from "./ModalCreateDepartment/ModalCreateDepartment";
 import ModalEditDepartment from "./ModalEditDepartment/ModalEditDepartment";
 import ModalDetailDepartment from "./ModalDetailDepartment/ModalDetailDepartment";
+import useAdmin from "../../../Hooks/useAdmin";
 
 function DepartmentAdmin() {
+  const { accounts, searchUserPag } = useAdmin();
   const {
     departments,
     total,
@@ -36,7 +38,7 @@ function DepartmentAdmin() {
     setIsAddModalOpen(true);
     setSelectedDepartment(null);
   };
-  console.log("Danh sách phòng ban:", departments);
+
   const handleAddDepartment = async (departmentData) => {
     try {
       const result = await addNewDepartment(departmentData);
@@ -100,10 +102,24 @@ function DepartmentAdmin() {
   };
 
   useEffect(() => {
-    console.log("Tham số gửi lên API:", {
-      pageNum: currentPage,
-      pageSize: pageSize,
-    });
+    if (isAddModalOpen) {
+      searchUserPag({
+        pageInfo: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+        searchCondition: {
+          keyword: "",
+          role: "manager",
+          is_verified: true,
+          status: true,
+          is_deleted: false,
+        },
+      });
+    }
+  }, [isAddModalOpen]);
+
+  useEffect(() => {
     searchListDepartment({
       is_deleted: false,
       is_active: true,
@@ -208,6 +224,8 @@ function DepartmentAdmin() {
         isModalOpen={isAddModalOpen}
         handleCancel={() => setIsAddModalOpen(false)}
         handleAdd={handleAddDepartment}
+        managers={accounts}
+        loadingManagers={loading}
       />
 
       {/* Update department */}

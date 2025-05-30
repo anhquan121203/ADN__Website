@@ -18,7 +18,6 @@ export const searchDepartment = createAsyncThunk(
           },
         }
       );
-      console.log(response.data.data);
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -127,7 +126,6 @@ const departmentSlice = createSlice({
         state.error = null;
       })
       .addCase(searchDepartment.fulfilled, (state, action) => {
-        console.log("Dữ liệu trả về từ API:", action.payload);
         state.loading = false;
         state.departments = action.payload.pageData; // Lấy danh sách department
         state.total = action.payload.pageInfo.totalItems; // Tổng số department
