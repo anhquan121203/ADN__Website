@@ -44,12 +44,15 @@ function DepartmentAdmin() {
       const result = await addNewDepartment(departmentData);
       if (result.success) {
         setIsAddModalOpen(false);
+        toast.success("Thêm phòng ban thành công!");
         searchListDepartment({
           pageNum: currentPage,
           pageSize: pageSize,
         });
+      } else {
+        toast.error("Thêm phòng ban không thành công!");
       }
-      return result.data;
+      return result?.data;
     } catch (error) {
       toast.error("Thêm phòng ban không thành công!");
     }
@@ -75,12 +78,23 @@ function DepartmentAdmin() {
   };
 
   const handleEditDepartment = async (departmentData) => {
-    const result = await updateDepartmentById(
-      editDepartment._id,
-      departmentData
-    );
-    if (result.success) {
-      setIsEditModalOpen(false);
+    try {
+      const result = await updateDepartmentById(
+        editDepartment._id,
+        departmentData
+      );
+      if (result.success) {
+        setIsEditModalOpen(false);
+        toast.success("Cập nhật phòng ban thành công!");
+        searchListDepartment({
+          pageNum: currentPage,
+          pageSize: pageSize,
+        });
+      } else {
+        toast.error("Cập nhật phòng ban không thành công!");
+      }
+    } catch (error) {
+      toast.error("Cập nhật phòng ban không thành công!");
     }
   };
 
@@ -101,23 +115,27 @@ function DepartmentAdmin() {
     }
   };
 
+  const fetchManagers = () => {
+    searchUserPag({
+      pageInfo: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+      searchCondition: {
+        keyword: "",
+        role: "manager",
+        is_verified: true,
+        status: true,
+        is_deleted: false,
+      },
+    });
+  };
+
   useEffect(() => {
-    if (isAddModalOpen) {
-      searchUserPag({
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 10,
-        },
-        searchCondition: {
-          keyword: "",
-          role: "manager",
-          is_verified: true,
-          status: true,
-          is_deleted: false,
-        },
-      });
+    if (isAddModalOpen || isEditModalOpen) {
+      fetchManagers();
     }
-  }, [isAddModalOpen]);
+  }, [isAddModalOpen, isEditModalOpen]);
 
   useEffect(() => {
     searchListDepartment({
@@ -234,6 +252,8 @@ function DepartmentAdmin() {
         handleCancel={() => setIsEditModalOpen(false)}
         handleEdit={handleEditDepartment}
         editDepartment={editDepartment}
+        managers={accounts}
+        loadingManagers={loading}
       />
 
       {/* Modal details department */}
