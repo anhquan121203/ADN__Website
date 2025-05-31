@@ -40,7 +40,7 @@ function LoginPage() {
     onSubmit: async (values) => {
       try {
         const response = await loginUser(values);
-        console.log(response);
+        // console.log(response);
 
         // Make sure we receive the correct tokens
         const token = response.data.token;

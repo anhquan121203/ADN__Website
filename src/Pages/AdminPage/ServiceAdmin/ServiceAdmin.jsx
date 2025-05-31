@@ -54,14 +54,12 @@ function ServiceAdmin() {
   const [filters, setFilters] = useState({
     type: "",
     sample_method: "",
-    is_active: "",
+    is_active: true,
     min_price: "",
     max_price: "",
     keyword: "",
     sort_by: "created_at",
     sort_order: "desc",
-    start_date: "",
-    end_date: "",
   });
 
   const handleSearch = () => {
@@ -234,7 +232,7 @@ function ServiceAdmin() {
                     <td> {getType(item.type)} </td>
                     <td>{getSampleMethod(item.sample_method)} </td>
                     <td>{item.estimated_time} </td>
-                    <td>{item.price} </td>
+                    <td>{item.price.toLocaleString()} VND </td>
                     <td>
                       <span
                         className={`status-badge ${

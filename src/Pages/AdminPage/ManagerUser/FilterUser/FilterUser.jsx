@@ -1,6 +1,6 @@
 // UserFilter.jsx
 import React from "react";
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import Search from "antd/es/input/Search";
 
 function UserFilter({ filters, setFilters, onSearch }) {
@@ -15,13 +15,6 @@ function UserFilter({ filters, setFilters, onSearch }) {
         justifyContent: "flex-end",
       }}
     >
-      {/* <input
-        placeholder="Tìm kiếm theo tên/email"
-        value={filters.keyword}
-        onChange={(e) => setFilters({ ...filters, keyword: e.target.value })}
-        style={{ padding: 8, width: 200 }}
-      /> */}
-
       <Search
         placeholder="Nhập tên cần tìm kiếm..."
         value={filters.keyword}
@@ -77,7 +70,8 @@ function UserFilter({ filters, setFilters, onSearch }) {
         <Select.Option value={true}>Đã xóa</Select.Option>
       </Select>
 
-      <button
+      <Button
+        type="primary"
         onClick={onSearch}
         style={{
           padding: "8px 16px",
@@ -85,12 +79,12 @@ function UserFilter({ filters, setFilters, onSearch }) {
           color: "#fff",
           border: "none",
           borderRadius: "4px",
-          textAlign: "center",
-          height: "32px"
+          height: 33,
         }}
       >
         Tìm kiếm
-      </button>
+      </Button>
+
     </div>
   );
 }
