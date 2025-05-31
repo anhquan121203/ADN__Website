@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pagination } from "antd";
+import { Pagination, Popconfirm } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import "./SlotAdmin.css";
@@ -11,6 +11,8 @@ import ModalCreateSlot from "./ModalCreateSlot/ModalCreateSlot";
 import { CiEdit } from "react-icons/ci";
 import ModalEditSlot from "./ModalEditSlot/ModalEditSlot";
 import ModalDetailSlot from "./ModalDetailSlot/ModalDetailSlot";
+import { MdBlock } from "react-icons/md";
+import ModalChangeStatusSlot from "./ModalChangeStatusSlot/ModalChangeStatusSlot";
 
 function SlotAdmin() {
   const {
@@ -22,6 +24,7 @@ function SlotAdmin() {
     addNewSlot,
     updateSlotById,
     slotById,
+    changeStatusSlot,
   } = useSlot();
 
   const dispatch = useDispatch();
@@ -34,6 +37,13 @@ function SlotAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // detail slot
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  // change slot
+  const [isChangeStatusModal, setIsChangeStatusModal] = useState();
+  const [slotToChangeStatus, setSlotToChangeStatus] = useState(null);
+
+  const cancel = (e) => {
+    message.error("Click on No");
+  };
 
   useEffect(() => {
     searchListSlot({
@@ -44,7 +54,6 @@ function SlotAdmin() {
       sort_order: "asc",
     });
   }, [currentPage]);
-
 
   // validate time slot
   const formatSlotDate = (slot) => {
@@ -153,6 +162,31 @@ function SlotAdmin() {
     }
   };
 
+  //change status slot
+  const openChangeStatusModal = (slot) => {
+    setIsChangeStatusModal(true);
+    setSlotToChangeStatus(slot);
+  };
+
+  const handleChangeStatus = async ({ id, status }) => {
+    try {
+      const result = await changeStatusSlot({ id, status });
+      if (result?.success) {
+        // Cập nhật danh sách sau khi đổi trạng thái
+        searchListSlot({
+          is_active: true,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          sort_by: "start_time",
+          sort_order: "asc",
+        });
+      }
+      return result;
+    } catch (error) {
+      return { success: false, message: "Đã xảy ra lỗi" };
+    }
+  };
+
   return (
     <div className="manager-account">
       <div className="header-manager-account">
@@ -163,7 +197,6 @@ function SlotAdmin() {
       </div>
 
       <div className="form-account">
-
         <div className="account-container">
           {slots.length > 0 ? (
             Object.entries(groupSlotsByDate(slots)).map(
@@ -191,6 +224,11 @@ function SlotAdmin() {
                             <FaRegEye
                               className="icon-slot"
                               onClick={() => handleDetailSlot(slot._id)}
+                            />
+
+                            <MdBlock
+                              className="icon-slot"
+                              onClick={() => openChangeStatusModal(slot)}
                             />
                           </div>
                         </div>
@@ -271,7 +309,15 @@ function SlotAdmin() {
         <ModalDetailSlot
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
-          selectedSlot={selectedSlot} />
+          selectedSlot={selectedSlot}
+        />
+
+        <ModalChangeStatusSlot
+          isModalOpen={isChangeStatusModal}
+          handleCancel={() => setIsChangeStatusModal(false)}
+          handleChange={handleChangeStatus}
+          changeStatusSlot={slotToChangeStatus}
+        />
       </div>
     </div>
   );

@@ -1,16 +1,18 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useMemo, useState } from "react";
 import { Modal, Pagination, Popconfirm } from "antd";
 import "./ServiceAdmin.css";
 import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
 
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import useService from "../../../Hooks/useService";
 import ModalCreateService from "./ModalCreateService/ModalCreateService";
 import ModalDetailService from "./ModalDetailService/ModalDetailService";
 import ModalEditService from "./ModalEditService/ModalEditService";
-import { MdBlock } from "react-icons/md";
+import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import FilterService from "./FilterService/FilterService";
+import { CiEdit } from "react-icons/ci";
+import { debounce } from "lodash";
 
 function ServiceAdmin() {
   const {
@@ -62,13 +64,34 @@ function ServiceAdmin() {
     sort_order: "desc",
   });
 
-  const handleSearch = () => {
+  // const handleSearch = () => {
+  //   searchListService({
+  //     ...filters,
+  //     pageNum: currentPage,
+  //     pageSize: pageSize,
+  //   });
+  // };
+
+  const handleSearch = useCallback(() => {
     searchListService({
       ...filters,
       pageNum: currentPage,
       pageSize: pageSize,
     });
-  };
+  }, [filters, currentPage]);
+
+  // debounce 500ms
+  const debouncedSearch = useMemo(
+    () => debounce(handleSearch, 500),
+    [handleSearch]
+  );
+
+  useEffect(() => {
+    debouncedSearch();
+    return () => {
+      debouncedSearch.cancel(); // cleanup
+    };
+  }, [filters, currentPage]);
 
   // type Service
   const getType = (type) => {
@@ -243,38 +266,33 @@ function ServiceAdmin() {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="detail-account"
-                        onClick={() => handleDetailService(item._id)}
-                      >
-                        Chi tiết
-                      </button>
+                      <div className="action-service">
+                        <CiEdit
+                          className="icon-service"
+                          onClick={() => openEditModal(item)}
+                        />
 
-                      <button
-                        className="edit-account"
-                        onClick={() => openEditModal(item)}
-                      >
-                        Sửa
-                      </button>
+                        <MdDeleteOutline
+                          className="icon-service"
+                          onClick={() => openDeleteModal(item)}
+                        />
 
-                      <button
-                        className="delete-account"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => openDeleteModal(item)}
-                      >
-                        Xóa
-                      </button>
+                        <FaRegEye
+                          className="icon-service"
+                          onClick={() => handleDetailService(item._id)}
+                        />
 
-                      <Popconfirm
-                        title="Khóa tài khoản"
-                        description="Bạn có muốn khóa tài khoản này không?"
-                        onConfirm={() => handleChangeStatus(item)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <MdBlock className="icon-actionAdmin" />
-                      </Popconfirm>
+                        <Popconfirm
+                          title="Khóa tài khoản"
+                          description="Bạn có muốn khóa tài khoản này không?"
+                          onConfirm={() => handleChangeStatus(item)}
+                          onCancel={cancel}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <MdBlock className="icon-service" />
+                        </Popconfirm>
+                      </div>
                     </td>
                   </tr>
                 ))

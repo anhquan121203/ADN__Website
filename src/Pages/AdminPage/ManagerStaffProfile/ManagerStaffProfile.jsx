@@ -87,16 +87,13 @@ function ManagerStaffProfile() {
                           item.status === "active" ? "active" : "inactive"
                         }`}
                       >
-                        {item.status.toUpperCase()}
+                        {item.status}
                       </span>
                     </td>
                     <td>
-                      {/* Nếu có xác thực thì xử lý ở đây, ví dụ giả định là luôn true */}
                       <span className="status-badge active">Đã xác thực</span>
                     </td>
-                    <td>
-                      
-                    </td>
+                    <td></td>
                   </tr>
                 ))
               ) : (
