@@ -11,8 +11,6 @@ import ModalCreateSlot from "./ModalCreateSlot/ModalCreateSlot";
 import { CiEdit } from "react-icons/ci";
 import ModalEditSlot from "./ModalEditSlot/ModalEditSlot";
 import ModalDetailSlot from "./ModalDetailSlot/ModalDetailSlot";
-import { getSlotByStaffId } from "../../../Feartures/slots/slotSlice";
-import FilterSlotByStaff from "./FilterSlotByStaff/FilterSlotByStaff";
 
 function SlotAdmin() {
   const {
