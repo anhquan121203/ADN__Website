@@ -12,8 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAdmin from "../../../../Hooks/useAdmin";
-import useDepartment from "../../../../Hooks/useDepartment";
-import useService from "../../../../Hooks/useService";
 
 const { RangePicker } = DatePicker;
 
@@ -22,17 +20,10 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const { accounts, getListStaff } = useAdmin();
-  const { services, searchListService } = useService();
 
   useEffect(() => {
     getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
-    searchListService({
-      is_active: true,
-      pageNum: 1,
-      pageSize: 100,
-      sort_by: "created_at",
-      sort_order: "desc",
-    });
+    
   }, []);
 
   useEffect(() => {
@@ -110,20 +101,6 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
             {accounts?.map((staff) => (
               <Select.Option key={staff._id} value={staff._id}>
                 {`${staff.user_id?.first_name} ${staff.user_id?.last_name}`}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          label="Phòng ban"
-          name="service_id"
-          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
-        >
-          <Select placeholder="Chọn phòng ban">
-            {services?.map((service) => (
-              <Select.Option key={service._id} value={service._id}>
-                {service.name}
               </Select.Option>
             ))}
           </Select>

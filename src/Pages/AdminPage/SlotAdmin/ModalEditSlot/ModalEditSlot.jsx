@@ -12,40 +12,17 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import useAdmin from "../../../../Hooks/useAdmin";
-import useService from "../../../../Hooks/useService";
 
 const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
   const [form] = Form.useForm();
 
   const { accounts, getListStaff } = useAdmin();
-  const { services, searchListService } = useService();
 
   useEffect(() => {
     if (isModalOpen) {
       getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
-      searchListService({
-        is_active: true,
-        pageNum: 1,
-        pageSize: 100,
-        sort_by: "created_at",
-        sort_order: "desc",
-      });
     }
   }, [isModalOpen]);
-
-  // useEffect(() => {
-  //   console.log("Edit slot:", editSlot);
-  //   console.log("Accounts:", accounts);
-  //   console.log("Services:", services);
-  // }, [editSlot, accounts, services]);
-
-  //   useEffect(() => {
-  //     if (editSlot) {
-  //       form.setFieldsValue({
-  //         ...editSlot,
-  //       });
-  //     }
-  //   }, [isModalOpen, editSlot]);
 
   useEffect(() => {
     if (editSlot && editSlot.time_slots?.[0]) {
@@ -73,11 +50,7 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
 
       form.setFieldsValue({
         ...editSlot,
-
-        staff_profile_ids: editSlot.staff_profile_ids.map((s) =>
-          typeof s === "string" ? s : s._id
-        ),
-
+        staff_profile_ids: editSlot.staff_profile_ids.map((s) => s._id),
         date,
         time_range: [startTime, endTime],
       });
@@ -114,7 +87,7 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
       delete submitData.date;
       delete submitData.time_range;
 
-      const response = await handleEdit(values);
+      const response = await handleEdit(submitData);
       if (response.success === true) {
         form.resetFields();
         handleCancel();
@@ -126,6 +99,7 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
       toast.error("Cập nhật slot không thành công!");
     }
   };
+
 
   return (
     <Modal
@@ -151,20 +125,6 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
             {accounts?.map((staff) => (
               <Select.Option key={staff._id} value={staff._id}>
                 {`${staff.user_id?.first_name} ${staff.user_id?.last_name}`}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          label="Phòng ban"
-          name="service_id"
-          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
-        >
-          <Select placeholder="Chọn phòng ban">
-            {services?.map((service) => (
-              <Select.Option key={service._id} value={service._id}>
-                {service.name}
               </Select.Option>
             ))}
           </Select>
