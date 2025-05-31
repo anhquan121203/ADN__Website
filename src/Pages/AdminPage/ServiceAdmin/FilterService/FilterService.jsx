@@ -1,17 +1,16 @@
-import React from "react";
-import { Select, InputNumber, DatePicker } from "antd";
+import React, { useEffect } from "react";
+import { Select, InputNumber, Button } from "antd";
 import Search from "antd/es/input/Search";
-import dayjs from "dayjs";
-
-const { RangePicker } = DatePicker;
 
 function FilterService({ filters, setFilters, onSearch }) {
-  const handleDateChange = (dates) => {
-    setFilters({
-      ...filters,
-      start_date: dates?.[0]?.toISOString() || null,
-      end_date: dates?.[1]?.toISOString() || null,
-    });
+
+  const defaultFilters = {
+    keyword: "",
+    type: undefined,
+    sample_method: undefined,
+    is_active: true,
+    min_price: undefined,
+    max_price: undefined,
   };
 
   return (
@@ -70,6 +69,7 @@ function FilterService({ filters, setFilters, onSearch }) {
       <InputNumber
         placeholder="Giá tối thiểu"
         value={filters.min_price}
+        style={{ height: 33 }}
         onChange={(value) => setFilters({ ...filters, min_price: value })}
         min={0}
       />
@@ -77,21 +77,13 @@ function FilterService({ filters, setFilters, onSearch }) {
       <InputNumber
         placeholder="Giá tối đa"
         value={filters.max_price}
+        style={{ height: 33 }}
         onChange={(value) => setFilters({ ...filters, max_price: value })}
         min={0}
       />
 
-      <RangePicker
-        onChange={handleDateChange}
-        value={
-          filters.start_date && filters.end_date
-            ? [dayjs(filters.start_date), dayjs(filters.end_date)]
-            : null
-        }
-      />
-
-
-      <button
+      <Button
+        type="primary"
         onClick={onSearch}
         style={{
           padding: "8px 16px",
@@ -99,10 +91,15 @@ function FilterService({ filters, setFilters, onSearch }) {
           color: "#fff",
           border: "none",
           borderRadius: "4px",
+          height: 33,
         }}
       >
         Tìm kiếm
-      </button>
+      </Button>
+
+      <Button color="cyan" variant="solid" onClick={() => setFilters(defaultFilters)}>
+        Reset
+      </Button>
     </div>
   );
 }

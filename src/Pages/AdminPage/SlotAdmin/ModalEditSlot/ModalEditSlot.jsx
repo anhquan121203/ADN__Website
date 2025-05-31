@@ -33,11 +33,11 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
     }
   }, [isModalOpen]);
 
-  useEffect(() => {
-    console.log("Edit slot:", editSlot);
-    console.log("Accounts:", accounts);
-    console.log("Services:", services);
-  }, [editSlot, accounts, services]);
+  // useEffect(() => {
+  //   console.log("Edit slot:", editSlot);
+  //   console.log("Accounts:", accounts);
+  //   console.log("Services:", services);
+  // }, [editSlot, accounts, services]);
 
   //   useEffect(() => {
   //     if (editSlot) {

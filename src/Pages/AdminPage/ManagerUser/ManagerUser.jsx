@@ -44,22 +44,22 @@ function ManagerUser() {
     keyword: "",
     role: "",
     is_verified: "",
-    status: "",
+    status: true,
     is_deleted: false,
   });
 
   const handleSearch = () => {
-    setCurrentPage(1);
-  };
-
-  useEffect(() => {
     const condition = {
-      keyword: filters.keyword,
-      role: filters.role,
-      is_verified: filters.is_verified === "" ? undefined : filters.is_verified,
-      status: filters.status === "" ? undefined : filters.status,
-      is_deleted: filters.is_deleted,
+      ...(filters.keyword && { keyword: filters.keyword }),
+      ...(filters.role && { role: filters.role }),
+      ...(filters.status !== "" && { status: filters.status }),
+      ...(filters.is_verified !== "" && { is_verified: filters.is_verified }),
+      ...(filters.is_deleted !== "" && { is_deleted: filters.is_deleted }),
     };
+
+    if (Object.keys(condition).length === 0) {
+      condition.keyword = " "; // fallback để tránh object rỗng
+    }
 
     searchUserPag({
       pageInfo: {
@@ -68,7 +68,7 @@ function ManagerUser() {
       },
       searchCondition: condition,
     });
-  }, [currentPage, filters]);
+  };
 
   // display role
   const getRoleName = (role) => {
@@ -86,21 +86,21 @@ function ManagerUser() {
     }
   };
 
-  // useEffect(() => {
-  //   searchUserPag({
-  //     pageInfo: {
-  //       pageNum: currentPage,
-  //       pageSize: pageSize,
-  //     },
-  //     searchCondition: {
-  //       keyword: "",
-  //       role: "",
-  //       is_verified: true,
-  //       status: true,
-  //       is_deleted: false,
-  //     },
-  //   });
-  // }, [currentPage]);
+  useEffect(() => {
+    searchUserPag({
+      pageInfo: {
+        pageNum: currentPage,
+        pageSize: pageSize,
+      },
+      searchCondition: {
+        keyword: "",
+        role: "",
+        is_verified: true,
+        status: true,
+        is_deleted: false,
+      },
+    });
+  }, [currentPage]);
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -254,7 +254,7 @@ function ManagerUser() {
                           item.status ? "active" : "inactive"
                         }`}
                       >
-                        {item.status ? "ACTIVE" : "INACTIVE"}
+                        {item.status ? "Hoạt động" : "Bị khóa"}
                       </span>
                     </td>
 
