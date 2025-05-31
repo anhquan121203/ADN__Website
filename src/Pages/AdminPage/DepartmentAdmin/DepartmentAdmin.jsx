@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Pagination } from "antd";
+import { Button, Input, Modal, Pagination, Select, Spin, Table } from "antd";
 import "./DepartmentAdmin.css";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
@@ -16,11 +16,13 @@ function DepartmentAdmin() {
     total,
     loading,
     error,
+    statistics,
     searchListDepartment,
     addNewDepartment,
     departmentById,
     updateDepartmentById,
     deleteDepartmentById,
+    fetchDepartmentStatistics,
   } = useDepartment();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +34,13 @@ function DepartmentAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editDepartment, setEditDepartment] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // State cho thống kê
+  const [statDepartmentId, setStatDepartmentId] = useState(null);
+  const [statDateFrom, setStatDateFrom] = useState("");
+  const [statDateTo, setStatDateTo] = useState("");
+  const [statLoading, setStatLoading] = useState(false);
+  const [statResult, setStatResult] = useState(null);
 
   // Open Add Modal
   const openAddModal = () => {
@@ -46,8 +55,12 @@ function DepartmentAdmin() {
         setIsAddModalOpen(false);
         toast.success("Thêm phòng ban thành công!");
         searchListDepartment({
+          is_deleted: false,
+          is_active: true,
           pageNum: currentPage,
           pageSize: pageSize,
+          sort_by: "created_at",
+          sort_order: "desc",
         });
       } else {
         toast.error("Thêm phòng ban không thành công!");
@@ -87,8 +100,12 @@ function DepartmentAdmin() {
         setIsEditModalOpen(false);
         toast.success("Cập nhật phòng ban thành công!");
         searchListDepartment({
+          is_deleted: false,
+          is_active: true,
           pageNum: currentPage,
           pageSize: pageSize,
+          sort_by: "created_at",
+          sort_order: "desc",
         });
       } else {
         toast.error("Cập nhật phòng ban không thành công!");
@@ -112,6 +129,28 @@ function DepartmentAdmin() {
       }
     } else {
       toast.error("Lỗi: ID phòng ban không hợp lệ!");
+    }
+  };
+
+  // Xử lý thống kê
+  const handleStatistic = async () => {
+    if (!statDepartmentId) {
+      toast.error("Vui lòng chọn phòng ban!");
+      return;
+    }
+    setStatLoading(true);
+    const res = await fetchDepartmentStatistics({
+      departmentId: statDepartmentId,
+      date_from: statDateFrom || undefined,
+      date_to: statDateTo || undefined,
+    });
+    setStatLoading(false);
+    if (res.success) {
+      console.log("statResult:", res.data);
+      setStatResult(res.data);
+    } else {
+      setStatResult(null);
+      toast.error("Không lấy được dữ liệu thống kê!");
     }
   };
 
@@ -235,6 +274,85 @@ function DepartmentAdmin() {
             justifyContent: "flex-end",
           }}
         />
+
+        <div
+          style={{
+            marginTop: 40,
+            padding: 24,
+            background: "#fff",
+            borderRadius: 8,
+          }}
+        >
+          <h2 style={{ marginBottom: 16 }}>Dữ liệu thống kê phòng ban</h2>
+          <div
+            style={{
+              display: "flex",
+              gap: 16,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
+            <Select
+              style={{ minWidth: 220 }}
+              placeholder="Chọn phòng ban"
+              value={statDepartmentId}
+              onChange={setStatDepartmentId}
+              options={departments.map((d) => ({
+                value: d._id,
+                label: d.name,
+              }))}
+              showSearch
+              optionFilterProp="label"
+            />
+            <Input
+              type="date"
+              value={statDateFrom}
+              onChange={(e) => setStatDateFrom(e.target.value)}
+              placeholder="Từ ngày"
+              style={{ minWidth: 140 }}
+              max={statDateTo || undefined}
+            />
+            <Input
+              type="date"
+              value={statDateTo}
+              onChange={(e) => setStatDateTo(e.target.value)}
+              placeholder="Đến ngày"
+              style={{ minWidth: 140 }}
+              min={statDateFrom || undefined}
+            />
+            <Button type="primary" onClick={handleStatistic}>
+              Thống kê
+            </Button>
+          </div>
+          <div style={{ marginTop: 24 }}>
+            {statLoading ? (
+              <Spin />
+            ) : statResult ? (
+              <div className="department-container">
+                <table className="table-department">
+                  <thead>
+                    <tr>
+                      <th>Tổng nhân sự</th>
+                      <th>Tổng ca làm</th>
+                      <th>Ca đã đặt</th>
+                      <th>Tỉ lệ đặt ca (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{statResult.totalStaff}</td>
+                      <td>{statResult.totalSlots}</td>
+                      <td>{statResult.bookedSlots}</td>
+                      <td>{statResult.bookingRate}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div style={{ color: "#888" }}>Chưa có dữ liệu thống kê</div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Modal create department */}

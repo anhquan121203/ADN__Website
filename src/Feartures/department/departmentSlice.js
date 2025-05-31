@@ -108,7 +108,47 @@ export const deleteDepartment = createAsyncThunk(
     }
   }
 );
+// Get department statistics
+export const getDepartmentStatistics = createAsyncThunk(
+  "department/getDepartmentStatistics",
+  async ({ departmentId, date_from, date_to }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/department/${departmentId}/statistics`,
+        {
+          params: { date_from, date_to },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
+// Get department count
+export const getDepartmentCount = createAsyncThunk(
+  "department/getDepartmentCount",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${API_BASE_URL}/api/department/count`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 // Slice
 const departmentSlice = createSlice({
   name: "DEPARTMENT",
@@ -117,6 +157,8 @@ const departmentSlice = createSlice({
     loading: false,
     error: null,
     total: 0,
+    count: 0,
+    statistics: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -153,6 +195,24 @@ const departmentSlice = createSlice({
         state.departments = state.departments.filter(
           (department) => department._id !== action.payload
         );
+      })
+
+      // Get department statistics
+      .addCase(getDepartmentStatistics.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getDepartmentStatistics.fulfilled, (state, action) => {
+        state.loading = false;
+        state.statistics = action.payload;
+      })
+      .addCase(getDepartmentStatistics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch statistics";
+      })
+      // Get department count
+      .addCase(getDepartmentCount.fulfilled, (state, action) => {
+        state.count = action.payload.count;
       });
   },
 });

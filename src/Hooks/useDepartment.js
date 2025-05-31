@@ -6,12 +6,13 @@ import {
   getDepartmentById,
   searchDepartment,
   updateDepartment,
+  getDepartmentStatistics,
 } from "../Feartures/department/departmentSlice";
 import { toast } from "react-toastify";
 
 const useDepartment = () => {
   const dispatch = useDispatch();
-  const { departments, loading, error, total } = useSelector(
+  const { departments, loading, error, total, statistics } = useSelector(
     (state) => state.department
   );
 
@@ -68,16 +69,34 @@ const useDepartment = () => {
     }
   };
 
+  const fetchDepartmentStatistics = async ({
+    departmentId,
+    date_from,
+    date_to,
+  }) => {
+    try {
+      const response = await dispatch(
+        getDepartmentStatistics({ departmentId, date_from, date_to })
+      ).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error fetching department statistics");
+      return { success: false };
+    }
+  };
+
   return {
     departments,
     loading,
     error,
     total,
+    statistics,
     searchListDepartment,
     addNewDepartment,
     departmentById,
     updateDepartmentById,
     deleteDepartmentById,
+    fetchDepartmentStatistics,
   };
 };
 
