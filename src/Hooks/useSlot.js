@@ -5,6 +5,7 @@ import {
   changeStatus,
   createSlot,
   getSlotById,
+  getSlotByStaffId,
   searchSlot,
   updateSlot,
 } from "../Feartures/slots/slotSlice";
@@ -13,6 +14,7 @@ const useSlot = () => {
   const dispatch = useDispatch();
   const { slots, loading, error, total } = useSelector((state) => state.slot);
 
+  // CRUD SLOT
   const searchListSlot = async (searchPayload) => {
     try {
       await dispatch(searchSlot(searchPayload));
@@ -61,6 +63,16 @@ const useSlot = () => {
     }
   };
 
+  // get slot by staff ID
+  const slotByStaffId = async (id) => {
+    try {
+      const response = await dispatch(getSlotByStaffId(id)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error create Staff");
+    }
+  };
+
   return {
     slots,
     loading,
@@ -71,6 +83,7 @@ const useSlot = () => {
     slotById,
     updateSlotById,
     changeStatusService,
+    slotByStaffId,
   };
 };
 

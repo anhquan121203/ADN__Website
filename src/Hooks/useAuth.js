@@ -18,7 +18,7 @@ const useAuth = () => {
     const fetchUserData = async () => {
       try {
         if (!token) {
-          console.log("No token found");
+          // console.log("No token found");
           return;
         }
         const response = await axiosInstance.get(`${API_BASE_URL}/api/auth`, {

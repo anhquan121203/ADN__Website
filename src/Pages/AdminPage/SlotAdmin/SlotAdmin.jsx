@@ -45,6 +45,7 @@ function SlotAdmin() {
     });
   }, [currentPage]);
 
+
   // validate time slot
   const formatSlotDate = (slot) => {
     const ts = slot.time_slots?.[0];
@@ -120,9 +121,15 @@ function SlotAdmin() {
       const result = await updateSlotById(editSlot._id, slotData);
       if (result.success) {
         setIsEditModalOpen(false);
-        toast.success("Cập nhật slot thành công");
+        searchListSlot({
+          is_active: true,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          sort_by: "start_time",
+          sort_order: "asc",
+        });
       } else {
-        toast.error(result.message || "Cập nhật slot không thành công!");
+        return { success: false, message: "Cập nhật slot không thành công" };
       }
       return result;
     } catch (error) {
@@ -156,6 +163,7 @@ function SlotAdmin() {
       </div>
 
       <div className="form-account">
+
         <div className="account-container">
           {slots.length > 0 ? (
             Object.entries(groupSlotsByDate(slots)).map(
@@ -261,9 +269,9 @@ function SlotAdmin() {
         />
 
         <ModalDetailSlot
-        isModalOpen={isDetailModalOpen}
-        handleCancel={() => setIsDetailModalOpen(false)}
-        selectedSlot={selectedSlot}/>
+          isModalOpen={isDetailModalOpen}
+          handleCancel={() => setIsDetailModalOpen(false)}
+          selectedSlot={selectedSlot} />
       </div>
     </div>
   );

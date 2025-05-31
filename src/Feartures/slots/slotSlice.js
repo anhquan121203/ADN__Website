@@ -112,6 +112,25 @@ export const changeStatus = createAsyncThunk(
   }
 );
 
+// get by ID
+export const getSlotByStaffId = createAsyncThunk(
+  "slot/getSlotByStaffId",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${API_BASE_URL}/api/slot/staff/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const slotSlice = createSlice({
   name: "SLOT",
   initialState: {
