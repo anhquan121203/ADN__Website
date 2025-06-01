@@ -17,12 +17,14 @@ function DepartmentAdmin() {
     loading,
     error,
     statistics,
+    count,
     searchListDepartment,
     addNewDepartment,
     departmentById,
     updateDepartmentById,
     deleteDepartmentById,
     fetchDepartmentStatistics,
+    getTotalDepartmentCount,
   } = useDepartment();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,6 +64,7 @@ function DepartmentAdmin() {
           sort_by: "created_at",
           sort_order: "desc",
         });
+        getTotalDepartmentCount();
       } else {
         toast.error("Thêm phòng ban không thành công!");
       }
@@ -126,6 +129,7 @@ function DepartmentAdmin() {
       const result = await deleteDepartmentById(selectedDepartment._id);
       if (result.success) {
         setIsDeleteModalOpen(false);
+        getTotalDepartmentCount();
       }
     } else {
       toast.error("Lỗi: ID phòng ban không hợp lệ!");
@@ -169,6 +173,9 @@ function DepartmentAdmin() {
       },
     });
   };
+  useEffect(() => {
+    getTotalDepartmentCount();
+  }, []);
 
   useEffect(() => {
     if (isAddModalOpen || isEditModalOpen) {
@@ -195,7 +202,9 @@ function DepartmentAdmin() {
           Tạo phòng ban mới
         </button>
       </div>
-
+      <span style={{ marginLeft: 16, fontWeight: 500 }}>
+        Tổng số phòng ban: {count ?? 0}
+      </span>
       {/* Table department */}
       <div className="form-department">
         <div className="department-container">

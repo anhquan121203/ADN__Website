@@ -7,12 +7,13 @@ import {
   searchDepartment,
   updateDepartment,
   getDepartmentStatistics,
+  getDepartmentCount,
 } from "../Feartures/department/departmentSlice";
 import { toast } from "react-toastify";
 
 const useDepartment = () => {
   const dispatch = useDispatch();
-  const { departments, loading, error, total, statistics } = useSelector(
+  const { departments, loading, error, total, statistics, count } = useSelector(
     (state) => state.department
   );
 
@@ -85,18 +86,29 @@ const useDepartment = () => {
     }
   };
 
+  const getTotalDepartmentCount = async () => {
+    try {
+      await dispatch(getDepartmentCount()).unwrap();
+      return { success: true };
+    } catch (error) {
+      console.error("Error get department count");
+    }
+  };
+
   return {
     departments,
     loading,
     error,
     total,
     statistics,
+    count,
     searchListDepartment,
     addNewDepartment,
     departmentById,
     updateDepartmentById,
     deleteDepartmentById,
     fetchDepartmentStatistics,
+    getTotalDepartmentCount,
   };
 };
 

@@ -17,12 +17,12 @@ const ModalCreateDepartment = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log("Dữ liệu gửi lên tạo phòng ban:", values);
-      console.log(
-        "manager_id gửi lên:",
-        values.manager_id,
-        typeof values.manager_id
-      );
+      // console.log("Dữ liệu gửi lên tạo phòng ban:", values);
+      // console.log(
+      //   "manager_id gửi lên:",
+      //   values.manager_id,
+      //   typeof values.manager_id
+      // );
       await handleAdd({
         name: values.name,
         description: values.description,

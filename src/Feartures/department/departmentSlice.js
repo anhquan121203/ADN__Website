@@ -212,7 +212,7 @@ const departmentSlice = createSlice({
       })
       // Get department count
       .addCase(getDepartmentCount.fulfilled, (state, action) => {
-        state.count = action.payload.count;
+        state.count = action.payload.data.totalDepartments;
       });
   },
 });
