@@ -134,29 +134,6 @@ export const changeStatus = createAsyncThunk(
   }
 );
 
-// Manager staff profile
-export const searchStaff = createAsyncThunk(
-  "admin/searchStaff",
-  async (searchPayload, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const response = await axios.get(
-        `${API_BASE_URL}/api/staff-profile/search`,
-        {
-          params: searchPayload,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response.data.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
-
 const adminSlice = createSlice({
   name: "ADMIN",
   initialState: {
@@ -218,21 +195,6 @@ const adminSlice = createSlice({
           state.accounts[idx] = action.payload.data;
         }
       })
-
-      // Staff profile data
-      .addCase(searchStaff.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(searchStaff.fulfilled, (state, action) => {
-        state.loading = false;
-        state.accounts = action.payload.pageData; // Lấy danh sách user
-        state.total = action.payload.pageInfo.totalItems; // Tổng số user
-      })
-      .addCase(searchStaff.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Failed to fetch accounts";
-      });
   },
 });
 

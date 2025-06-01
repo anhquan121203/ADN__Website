@@ -46,20 +46,16 @@ const ModalDetailSlot = ({ isModalOpen, handleCancel, selectedSlot }) => {
     return `${dateStr} (${start} - ${end})`;
   };
 
-    const renderStatus = (status) => {
-  switch (status) {
-    case "available":
-      return <Tag color="green">Còn trống</Tag>;
-    case "booked":
-      return <Tag color="red">Đã đặt</Tag>;
-    case "unavailable":
-      return <Tag color="pink">Không còn trống</Tag>;
-    default:
-      return <Tag>N/A</Tag>;
-  }
-};
-
-
+  const renderStatus = (status) => {
+    switch (status) {
+      case "available":
+        return <Tag color="green">Còn trống</Tag>;
+      case "booked":
+        return <Tag color="red">Đã đặt</Tag>;
+      default:
+        return <Tag color="pink">Không còn chỗ</Tag>;
+    }
+  };
 
   return (
     <Modal

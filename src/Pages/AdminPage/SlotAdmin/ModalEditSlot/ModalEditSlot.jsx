@@ -162,9 +162,9 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
 
         <Form.Item label="Giới hạn cuộc hẹn" name="status">
           <Select style={{ width: "100%" }} placeholder="Chọn trạng thái">
-            <Option value="available">Active</Option>
-            <Option value="booked">On Leave</Option>
-            <Option value="unavailable ">Terminated</Option>
+            <Option value="available">Còn trống</Option>
+            <Option value="booked">Đã đặt</Option>
+            <Option value="unavailable ">Hết chỗ</Option>
           </Select>
         </Form.Item>
       </Form>

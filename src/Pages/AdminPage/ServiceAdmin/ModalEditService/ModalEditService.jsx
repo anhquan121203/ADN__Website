@@ -23,24 +23,22 @@ const ModalEditService = ({
   const { services, searchListService } = useService();
 
   useEffect(() => {
-    searchListService({
+    if (editService) {
+      form.setFieldsValue({
+        ...editService,
+        
+        parent_service_id:
+          typeof editService.parent_service_id === "object"
+            ? editService.parent_service_id._id
+            : editService.parent_service_id ?? null,
+      });
+      searchListService({
       is_active: true,
       pageNum: 1,
       pageSize: 10,
       sort_by: "created_at",
       sort_order: "desc",
     });
-  });
-
-  useEffect(() => {
-    if (editService) {
-      form.setFieldsValue({
-        ...editService,
-        parent_service_id:
-          typeof editService.parent_service_id === "object"
-            ? editService.parent_service_id._id
-            : editService.parent_service_id ?? null,
-      });
     }
   }, [isModalOpen, editService]);
 

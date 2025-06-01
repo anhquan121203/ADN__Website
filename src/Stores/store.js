@@ -5,6 +5,7 @@ import serviceSlice from "../Feartures/services/serviceSlice";
 import slotSlice from "../Feartures/slots/slotSlice";
 import departmentSlice from "../Feartures/department/departmentSlice";
 import staffSlice from "../Feartures/staff/staffSlice";
+import staffProfileSlice from "../Feartures/staffProfile/staffProfileSlice";
 
 export const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
         slot: slotSlice.reducer,
         department: departmentSlice.reducer,
         staff: staffSlice.reducer,
+        staffProfile: staffProfileSlice.reducer,
     },
     
 })

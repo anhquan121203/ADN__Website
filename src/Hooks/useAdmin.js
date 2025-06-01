@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import {
   createUser,
   getUserById,
@@ -7,7 +7,6 @@ import {
   updateUser,
   deleteUser,
   changeStatus,
-  searchStaff,
 } from "../Feartures/admin/adminSlice";
 
 const useAdmin = () => {
@@ -16,13 +15,20 @@ const useAdmin = () => {
     (state) => state.account
   );
 
-  const searchUserPag = async (searchPayload) => {
-    try {
-      await dispatch(searchUser(searchPayload));
-    } catch (error) {
-      console.error("Error create Staff");
-    }
-  };
+  // const searchUserPag = async (searchPayload) => {
+  //   try {
+  //     await dispatch(searchUser(searchPayload));
+  //   } catch (error) {
+  //     console.error("Error create Staff");
+  //   }
+  // };
+
+   const searchUserPag = useCallback(
+      (searchPayload) => {
+        dispatch(searchUser(searchPayload));
+      },
+      [dispatch]
+    );
 
   const addNewUser = async (createNewUser) => {
     try {
@@ -70,14 +76,6 @@ const useAdmin = () => {
     }
   }
 
-  // get list staff profile
-  const getListStaff = async (searchPayload) => {
-    try {
-      await dispatch(searchStaff(searchPayload));
-    } catch (error) {
-      console.error("Error create Staff");
-    }
-  };
 
   return {
     accounts,
@@ -90,7 +88,6 @@ const useAdmin = () => {
     updateUserById,
     deleteUserById,
     changeStatusUser,
-    getListStaff
   };
 };
 

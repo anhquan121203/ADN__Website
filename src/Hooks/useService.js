@@ -8,6 +8,7 @@ import {
   searchService,
   updateService,
 } from "../Feartures/services/serviceSlice";
+import { useCallback } from "react";
 
 const useService = () => {
   const dispatch = useDispatch();
@@ -15,13 +16,12 @@ const useService = () => {
     (state) => state.service
   );
 
-  const searchListService = async (searchPayload) => {
-    try {
-      await dispatch(searchService(searchPayload));
-    } catch (error) {
-      console.error("Error create service");
-    }
-  };
+  const searchListService = useCallback(
+    (searchPayload) => {
+      dispatch(searchService(searchPayload));
+    },
+    [dispatch]
+  );
 
   const addNewService = async (createNewService) => {
     try {
@@ -64,9 +64,9 @@ const useService = () => {
   };
 
   // Change Status
-  const changeStatusService = async ({id, status}) => {
+  const changeStatusService = async ({ id, status }) => {
     try {
-      const response = await dispatch(changeStatus({id, status})).unwrap();
+      const response = await dispatch(changeStatus({ id, status })).unwrap();
       return { success: true, data: response };
     } catch (error) {
       return {

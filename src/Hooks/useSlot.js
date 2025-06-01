@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import { data } from "react-router-dom";
 import {
   changeStatus,
@@ -15,13 +15,16 @@ const useSlot = () => {
   const { slots, loading, error, total } = useSelector((state) => state.slot);
 
   // CRUD SLOT
-  const searchListSlot = async (searchPayload) => {
-    try {
-      await dispatch(searchSlot(searchPayload));
-    } catch (error) {
-      console.error("Error create service");
-    }
-  };
+  // const searchListSlot = (searchPayload) => {
+  //   dispatch(searchSlot(searchPayload));
+  // };
+
+  const searchListSlot = useCallback(
+    (searchPayload) => {
+      dispatch(searchSlot(searchPayload));
+    },
+    [dispatch]
+  );
 
   const addNewSlot = async (createNewSlot) => {
     try {

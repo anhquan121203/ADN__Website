@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Popconfirm } from "antd";
+import { Pagination, Popconfirm, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import "./SlotAdmin.css";
@@ -11,8 +11,7 @@ import ModalCreateSlot from "./ModalCreateSlot/ModalCreateSlot";
 import { CiEdit } from "react-icons/ci";
 import ModalEditSlot from "./ModalEditSlot/ModalEditSlot";
 import ModalDetailSlot from "./ModalDetailSlot/ModalDetailSlot";
-import { MdBlock } from "react-icons/md";
-import ModalChangeStatusSlot from "./ModalChangeStatusSlot/ModalChangeStatusSlot";
+import FilterSlotAdmin from "./FilterSlotAdmin/FilterSlotAdmin";
 
 function SlotAdmin() {
   const {
@@ -24,7 +23,6 @@ function SlotAdmin() {
     addNewSlot,
     updateSlotById,
     slotById,
-    changeStatusSlot,
   } = useSlot();
 
   const dispatch = useDispatch();
@@ -37,9 +35,6 @@ function SlotAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // detail slot
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  // change slot
-  const [isChangeStatusModal, setIsChangeStatusModal] = useState();
-  const [slotToChangeStatus, setSlotToChangeStatus] = useState(null);
 
   const cancel = (e) => {
     message.error("Click on No");
@@ -54,6 +49,30 @@ function SlotAdmin() {
       sort_order: "asc",
     });
   }, [currentPage]);
+
+  // Filter slot
+  const [filters, setFilters] = useState({
+    staff_profile_ids: "",
+    department_id: "",
+    appointment_id: "",
+    status: true,
+    date_from: "",
+    date_to: "",
+  });
+
+  const handleSearch = () => {
+    searchListSlot({
+      ...filters,
+      staff_profile_ids: Array.isArray(filters.staff_profile_ids)
+        ? filters.staff_profile_ids.join(",")
+        : filters.staff_profile_ids,
+      is_active: true,
+      pageNum: currentPage,
+      pageSize: pageSize,
+      sort_by: "start_time",
+      sort_order: "asc",
+    });
+  };
 
   // validate time slot
   const formatSlotDate = (slot) => {
@@ -162,28 +181,15 @@ function SlotAdmin() {
     }
   };
 
-  //change status slot
-  const openChangeStatusModal = (slot) => {
-    setIsChangeStatusModal(true);
-    setSlotToChangeStatus(slot);
-  };
-
-  const handleChangeStatus = async ({ id, status }) => {
-    try {
-      const result = await changeStatusSlot({ id, status });
-      if (result?.success) {
-        // Cập nhật danh sách sau khi đổi trạng thái
-        searchListSlot({
-          is_active: true,
-          pageNum: currentPage,
-          pageSize: pageSize,
-          sort_by: "start_time",
-          sort_order: "asc",
-        });
-      }
-      return result;
-    } catch (error) {
-      return { success: false, message: "Đã xảy ra lỗi" };
+  //Render Status slot
+  const renderStatus = (status) => {
+    switch (status) {
+      case "available":
+        return <Tag color="green">Còn trống</Tag>;
+      case "booked":
+        return <Tag color="red">Đã đặt</Tag>;
+      default:
+        return <Tag color="pink">Không còn chỗ</Tag>;
     }
   };
 
@@ -197,6 +203,17 @@ function SlotAdmin() {
       </div>
 
       <div className="form-account">
+        <h1 style={{ marginBottom: 20, fontSize: 30 }}>
+          Quản lý danh sách ca trực
+        </h1>
+        <div className="filter-slot">
+          <FilterSlotAdmin
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+            slots={slots} // truyền slots để lấy danh sách nhân viên
+          />
+        </div>
         <div className="account-container">
           {slots.length > 0 ? (
             Object.entries(groupSlotsByDate(slots)).map(
@@ -224,11 +241,6 @@ function SlotAdmin() {
                             <FaRegEye
                               className="icon-slot"
                               onClick={() => handleDetailSlot(slot._id)}
-                            />
-
-                            <MdBlock
-                              className="icon-slot"
-                              onClick={() => openChangeStatusModal(slot)}
                             />
                           </div>
                         </div>
@@ -261,9 +273,9 @@ function SlotAdmin() {
                                 <td>{end}</td>
                                 <td>
                                   <span
-                                    className={`status-badge ${slot.status}`}
+                                  // className={`status-badge ${slot.status}`}
                                   >
-                                    {slot.status.toUpperCase()}
+                                    {renderStatus(slot.status)}
                                   </span>
                                 </td>
                               </tr>
@@ -310,13 +322,6 @@ function SlotAdmin() {
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
           selectedSlot={selectedSlot}
-        />
-
-        <ModalChangeStatusSlot
-          isModalOpen={isChangeStatusModal}
-          handleCancel={() => setIsChangeStatusModal(false)}
-          handleChange={handleChangeStatus}
-          changeStatusSlot={slotToChangeStatus}
         />
       </div>
     </div>

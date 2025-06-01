@@ -1,7 +1,6 @@
-import React, { use, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Pagination, Popconfirm } from "antd";
 import "./ServiceAdmin.css";
-import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
 
 import { FaPlus, FaRegEye } from "react-icons/fa";
@@ -10,9 +9,7 @@ import ModalCreateService from "./ModalCreateService/ModalCreateService";
 import ModalDetailService from "./ModalDetailService/ModalDetailService";
 import ModalEditService from "./ModalEditService/ModalEditService";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
-import FilterService from "./FilterService/FilterService";
 import { CiEdit } from "react-icons/ci";
-import { debounce } from "lodash";
 
 function ServiceAdmin() {
   const {
@@ -50,48 +47,8 @@ function ServiceAdmin() {
       sort_by: "created_at",
       sort_order: "desc",
     });
-  }, [currentPage]);
+  }, [currentPage]); // hoặc chỉ [currentPage]
 
-  // Filter service
-  const [filters, setFilters] = useState({
-    type: "",
-    sample_method: "",
-    is_active: true,
-    min_price: "",
-    max_price: "",
-    keyword: "",
-    sort_by: "created_at",
-    sort_order: "desc",
-  });
-
-  // const handleSearch = () => {
-  //   searchListService({
-  //     ...filters,
-  //     pageNum: currentPage,
-  //     pageSize: pageSize,
-  //   });
-  // };
-
-  const handleSearch = useCallback(() => {
-    searchListService({
-      ...filters,
-      pageNum: currentPage,
-      pageSize: pageSize,
-    });
-  }, [filters, currentPage]);
-
-  // debounce 500ms
-  const debouncedSearch = useMemo(
-    () => debounce(handleSearch, 500),
-    [handleSearch]
-  );
-
-  useEffect(() => {
-    debouncedSearch();
-    return () => {
-      debouncedSearch.cancel(); // cleanup
-    };
-  }, [filters, currentPage]);
 
   // type Service
   const getType = (type) => {
@@ -132,7 +89,7 @@ function ServiceAdmin() {
         // toast.success("Thêm thiết bị thành công!")
         searchListService({
           is_active: true,
-          pageNum: currentPage,
+          pageNum: 1,
           pageSize: pageSize,
           sort_by: "created_at",
           sort_order: "desc",
@@ -204,7 +161,7 @@ function ServiceAdmin() {
         // reload lại danh sách nếu cần
         searchListService({
           is_active: true,
-          pageNum: currentPage,
+          pageNum: 1,
           pageSize: pageSize,
           sort_by: "created_at",
           sort_order: "desc",
@@ -227,12 +184,6 @@ function ServiceAdmin() {
       {/* Table account */}
       <div className="form-account">
         <div className="account-container">
-          <FilterService
-            filters={filters}
-            setFilters={setFilters}
-            onSearch={handleSearch}
-          />
-
           <table className="table-account">
             <thead>
               <tr>

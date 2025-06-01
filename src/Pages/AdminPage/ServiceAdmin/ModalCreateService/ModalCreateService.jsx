@@ -17,20 +17,18 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const { services, searchListService } = useService();
 
-  useEffect(() => {
-    searchListService({
-      is_active: true,
-      pageNum: 1,
-      pageSize: 10,
-      sort_by: "created_at",
-      sort_order: "desc",
-    });
-  });
 
   useEffect(() => {
     if (isModalOpen) {
       form.resetFields();
       setSelectedFile(null);
+      searchListService({
+        is_active: true,
+        pageNum: 1,
+        pageSize: 10,
+        sort_by: "created_at",
+        sort_order: "desc",
+      });
     }
   }, [isModalOpen]);
 

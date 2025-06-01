@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAdmin from "../../../../Hooks/useAdmin";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
 
 const { RangePicker } = DatePicker;
 
@@ -19,7 +20,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const { accounts, getListStaff } = useAdmin();
+  const { staffProfile, getListStaff } = useStaffProfile();
 
   useEffect(() => {
     getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
@@ -98,7 +99,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
         >
           <Select placeholder="Chọn nhân viên" mode="multiple">
-            {accounts?.map((staff) => (
+            {staffProfile?.map((staff) => (
               <Select.Option key={staff._id} value={staff._id}>
                 {`${staff.user_id?.first_name} ${staff.user_id?.last_name}`}
               </Select.Option>
