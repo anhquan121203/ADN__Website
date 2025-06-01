@@ -349,10 +349,10 @@ function DepartmentAdmin() {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{statResult.totalStaff}</td>
-                      <td>{statResult.totalSlots}</td>
-                      <td>{statResult.bookedSlots}</td>
-                      <td>{statResult.bookingRate}</td>
+                      <td>{statResult.data.totalStaff}</td>
+                      <td>{statResult.data.totalSlots}</td>
+                      <td>{statResult.data.bookedSlots}</td>
+                      <td>{statResult.data.bookingRate}</td>
                     </tr>
                   </tbody>
                 </table>
