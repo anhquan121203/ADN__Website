@@ -25,6 +25,7 @@ function DepartmentAdmin() {
     deleteDepartmentById,
     fetchDepartmentStatistics,
     getTotalDepartmentCount,
+    getDepartmentsByManagerId,
   } = useDepartment();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +44,11 @@ function DepartmentAdmin() {
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
   const [statResult, setStatResult] = useState(null);
-
+  // State cho danh sách quản lý
+  const [selectedManagerId, setSelectedManagerId] = useState(null);
+  const [managerDepartmentsList, setManagerDepartmentsList] = useState([]);
+  const [managerLoading, setManagerLoading] = useState(false);
+  const [managerDepartmentsCount, setManagerDepartmentsCount] = useState(0);
   // Open Add Modal
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -178,9 +183,9 @@ function DepartmentAdmin() {
   }, []);
 
   useEffect(() => {
-    if (isAddModalOpen || isEditModalOpen) {
-      fetchManagers();
-    }
+    // if (isAddModalOpen || isEditModalOpen) {
+    fetchManagers();
+    // }
   }, [isAddModalOpen, isEditModalOpen]);
 
   useEffect(() => {
@@ -284,6 +289,7 @@ function DepartmentAdmin() {
           }}
         />
 
+        {/* Dữ liệu thống kê phòng ban */}
         <div
           style={{
             marginTop: 40,
@@ -359,6 +365,92 @@ function DepartmentAdmin() {
               </div>
             ) : (
               <div style={{ color: "#888" }}>Chưa có dữ liệu thống kê</div>
+            )}
+          </div>
+        </div>
+
+        {/* Danh sách phòng ban của quản lý */}
+        <div style={{ marginTop: 24 }}>
+          <h3>Phòng ban do quản lý phụ trách</h3>
+
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <Select
+              showSearch
+              placeholder="Chọn quản lý"
+              optionFilterProp="label"
+              style={{ width: 240 }}
+              value={selectedManagerId}
+              onChange={async (managerId) => {
+                setSelectedManagerId(managerId);
+                setManagerLoading(true);
+                try {
+                  const res = await getDepartmentsByManagerId(managerId);
+                  const departments = res?.data?.data?.departments || [];
+                  const count = res?.data?.data?.count ?? departments.length;
+
+                  if (
+                    res?.success &&
+                    res?.data?.success &&
+                    Array.isArray(departments)
+                  ) {
+                    setManagerDepartmentsList(departments);
+                    setManagerDepartmentsCount(count);
+                  } else {
+                    throw new Error("Không thể lấy danh sách phòng ban.");
+                  }
+                } catch (error) {
+                  setManagerDepartmentsList([]);
+                  setManagerDepartmentsCount(0);
+                  toast.error(error.message || "Lỗi khi gọi API.");
+                  console.error(error);
+                }
+                setManagerLoading(false);
+              }}
+              options={accounts?.map(
+                ({ _id, first_name, last_name, email }) => ({
+                  value: _id,
+                  label: `${first_name} ${last_name} (${email})`,
+                })
+              )}
+            />
+          </div>
+
+          <div style={{ marginTop: 16 }}>
+            {selectedManagerId && !managerLoading && (
+              <div style={{ marginBottom: 8, color: "#555" }}>
+                Tổng số phòng ban: {managerDepartmentsCount}
+              </div>
+            )}
+
+            {managerLoading ? (
+              <Spin />
+            ) : managerDepartmentsList.length ? (
+              <table className="table-department">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Tên phòng ban</th>
+                    <th>Mô tả</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {managerDepartmentsList.map(
+                    ({ _id, name, description }, i) => (
+                      <tr key={_id}>
+                        <td>{i + 1}</td>
+                        <td>{name}</td>
+                        <td>{description}</td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              <div style={{ color: "#888" }}>
+                {selectedManagerId
+                  ? "Quản lý này chưa phụ trách phòng ban nào."
+                  : "Chọn một quản lý để xem phòng ban."}
+              </div>
             )}
           </div>
         </div>

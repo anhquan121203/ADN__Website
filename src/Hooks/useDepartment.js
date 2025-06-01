@@ -8,14 +8,21 @@ import {
   updateDepartment,
   getDepartmentStatistics,
   getDepartmentCount,
+  getDepartmentsByManager,
 } from "../Feartures/department/departmentSlice";
 import { toast } from "react-toastify";
 
 const useDepartment = () => {
   const dispatch = useDispatch();
-  const { departments, loading, error, total, statistics, count } = useSelector(
-    (state) => state.department
-  );
+  const {
+    departments,
+    loading,
+    error,
+    total,
+    statistics,
+    count,
+    managerDepartments,
+  } = useSelector((state) => state.department);
 
   const searchListDepartment = async (searchPayload) => {
     try {
@@ -95,6 +102,18 @@ const useDepartment = () => {
     }
   };
 
+  const getDepartmentsByManagerId = async (managerId) => {
+    try {
+      const response = await dispatch(
+        getDepartmentsByManager(managerId)
+      ).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error fetching departments by manager", error);
+      return { success: false };
+    }
+  };
+
   return {
     departments,
     loading,
@@ -102,6 +121,7 @@ const useDepartment = () => {
     total,
     statistics,
     count,
+    managerDepartments,
     searchListDepartment,
     addNewDepartment,
     departmentById,
@@ -109,6 +129,7 @@ const useDepartment = () => {
     deleteDepartmentById,
     fetchDepartmentStatistics,
     getTotalDepartmentCount,
+    getDepartmentsByManagerId,
   };
 };
 

@@ -149,6 +149,28 @@ export const getDepartmentCount = createAsyncThunk(
     }
   }
 );
+
+export const getDepartmentsByManager = createAsyncThunk(
+  "department/getDepartmentsByManager",
+  async (managerId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/department/manager/${managerId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 // Slice
 const departmentSlice = createSlice({
   name: "DEPARTMENT",
@@ -159,6 +181,7 @@ const departmentSlice = createSlice({
     total: 0,
     count: 0,
     statistics: null,
+    managerDepartments: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -213,6 +236,11 @@ const departmentSlice = createSlice({
       // Get department count
       .addCase(getDepartmentCount.fulfilled, (state, action) => {
         state.count = action.payload.data.totalDepartments;
+      })
+
+      //Get Departments By Manager
+      .addCase(getDepartmentsByManager.fulfilled, (state, action) => {
+        state.managerDepartments = action.payload.data.departments;
       });
   },
 });
