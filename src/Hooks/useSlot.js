@@ -51,7 +51,7 @@ const useSlot = () => {
   };
 
   // Change Status
-  const changeStatusService = async ({ id, status }) => {
+  const changeStatusSlot = async ({ id, status }) => {
     try {
       const response = await dispatch(changeStatus({ id, status })).unwrap();
       return { success: true, data: response };
@@ -82,7 +82,7 @@ const useSlot = () => {
     addNewSlot,
     slotById,
     updateSlotById,
-    changeStatusService,
+    changeStatusSlot,
     slotByStaffId,
   };
 };

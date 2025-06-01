@@ -10,10 +10,22 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import useService from "../../../../Hooks/useService";
 
 const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
+  const { services, searchListService } = useService();
+
+  useEffect(() => {
+    searchListService({
+      is_active: true,
+      pageNum: 1,
+      pageSize: 10,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
+  });
 
   useEffect(() => {
     if (isModalOpen) {
@@ -69,6 +81,18 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           rules={[{ required: true, message: "Vui lòng mô tả thiết bị!" }]}
         >
           <Input />
+        </Form.Item>
+
+        <Form.Item label="Dịch vụ cha" name="parent_service_id">
+          <Select placeholder="Chọn dịch vụ cha">
+            {services
+              ?.filter((service) => !service.parent_service_id)
+              .map((service) => (
+                <Select.Option key={service._id} value={service._id}>
+                  {service.name}
+                </Select.Option>
+              ))}
+          </Select>
         </Form.Item>
 
         <Form.Item
