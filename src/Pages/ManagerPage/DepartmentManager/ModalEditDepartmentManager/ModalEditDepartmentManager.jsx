@@ -1,29 +1,36 @@
 import React, { useEffect } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 
-const ModalCreateDepartment = ({
+const ModalEditDepartmentManager = ({
   isModalOpen,
   handleCancel,
-  handleAdd,
+  handleEdit,
+  editDepartment,
   managers = [],
   loadingManagers = false,
 }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (isModalOpen) form.resetFields();
-  }, [isModalOpen, form]);
+    if (isModalOpen && editDepartment) {
+      form.setFieldsValue({
+        name: editDepartment.name,
+        description: editDepartment.description,
+        manager_id:
+          typeof editDepartment.manager_id === "object"
+            ? editDepartment.manager_id._id
+            : editDepartment.manager_id,
+      });
+    }
+    if (!isModalOpen) {
+      form.resetFields();
+    }
+  }, [isModalOpen, editDepartment, form]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      // console.log("Dữ liệu gửi lên tạo phòng ban:", values);
-      // console.log(
-      //   "manager_id gửi lên:",
-      //   values.manager_id,
-      //   typeof values.manager_id
-      // );
-      await handleAdd({
+      await handleEdit({
         name: values.name,
         description: values.description,
         manager_id: values.manager_id,
@@ -34,7 +41,7 @@ const ModalCreateDepartment = ({
 
   return (
     <Modal
-      title="Tạo phòng ban mới"
+      title="Chỉnh sửa phòng ban"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -42,7 +49,7 @@ const ModalCreateDepartment = ({
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo phòng ban
+          Lưu thay đổi
         </Button>,
       ]}
     >
@@ -85,4 +92,4 @@ const ModalCreateDepartment = ({
   );
 };
 
-export default ModalCreateDepartment;
+export default ModalEditDepartmentManager;

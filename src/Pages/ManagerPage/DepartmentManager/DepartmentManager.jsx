@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import "./DepartmentManager.css";
+import React, { useEffect, useState, useMemo } from "react";
 import { Button, Input, Modal, Pagination, Select, Spin, Table } from "antd";
-import "./DepartmentAdmin.css";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
 import { FaPlus } from "react-icons/fa";
-import ModalCreateDepartment from "./ModalCreateDepartment/ModalCreateDepartment";
-import ModalEditDepartment from "./ModalEditDepartment/ModalEditDepartment";
-import ModalDetailDepartment from "./ModalDetailDepartment/ModalDetailDepartment";
-import useAdmin from "../../../Hooks/useAdmin";
-import FilterDepartment from "./FilterDepartment/FilterDepartment";
+import ModalEditDepartmentManager from "./ModalEditDepartmentManager/ModalEditDepartmentManager";
+import ModalDetailDepartmentManager from "./ModalDetailDepartmentManager/ModalDetailDepartmentManager";
+import FilterDepartmentManager from "./FilterDepartmentManager/FilterDepartmentManager";
 
-function DepartmentAdmin() {
-  const { accounts, searchUserPag } = useAdmin();
+function DepartmentManager() {
   const {
     departments,
     total,
@@ -20,10 +17,8 @@ function DepartmentAdmin() {
     statistics,
     count,
     searchListDepartment,
-    addNewDepartment,
     departmentById,
     updateDepartmentById,
-    deleteDepartmentById,
     fetchDepartmentStatistics,
     getTotalDepartmentCount,
     getDepartmentsByManagerId,
@@ -33,11 +28,9 @@ function DepartmentAdmin() {
   const pageSize = 10;
 
   const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editDepartment, setEditDepartment] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // State cho thống kê
   const [statDepartmentId, setStatDepartmentId] = useState(null);
@@ -45,22 +38,20 @@ function DepartmentAdmin() {
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
   const [statResult, setStatResult] = useState(null);
+
   // State cho danh sách quản lý
   const [selectedManagerId, setSelectedManagerId] = useState(null);
   const [managerDepartmentsList, setManagerDepartmentsList] = useState([]);
   const [managerLoading, setManagerLoading] = useState(false);
   const [managerDepartmentsCount, setManagerDepartmentsCount] = useState(0);
-  // Open Add Modal
-  const openAddModal = () => {
-    setIsAddModalOpen(true);
-    setSelectedDepartment(null);
-  };
+
   // filterDepartment
   const [filters, setFilters] = useState({
     keyword: "",
-    sort_by: "name",
+    sort_by: "name", // mặc định là name
     sort_order: "desc",
   });
+
   const handleSearch = () => {
     searchListDepartment({
       ...filters,
@@ -71,30 +62,19 @@ function DepartmentAdmin() {
     });
   };
 
-  // Handle Add Department
-  const handleAddDepartment = async (departmentData) => {
-    try {
-      const result = await addNewDepartment(departmentData);
-      if (result.success) {
-        setIsAddModalOpen(false);
-        toast.success("Thêm phòng ban thành công!");
-        searchListDepartment({
-          is_deleted: false,
-          is_active: true,
-          pageNum: currentPage,
-          pageSize: pageSize,
-          sort_by: "created_at",
-          sort_order: "desc",
-        });
-        getTotalDepartmentCount();
-      } else {
-        toast.error("Thêm phòng ban không thành công!");
+  // Lấy danh sách managers từ danh sách departments, loại bỏ trùng lặp
+  const managers = useMemo(() => {
+    if (!departments || !Array.isArray(departments)) return [];
+    const result = [];
+    const ids = new Set();
+    departments.forEach((d) => {
+      if (d.manager_id && d.manager_id._id && !ids.has(d.manager_id._id)) {
+        result.push(d.manager_id);
+        ids.add(d.manager_id._id);
       }
-      return result?.data;
-    } catch (error) {
-      toast.error("Thêm phòng ban không thành công!");
-    }
-  };
+    });
+    return result;
+  }, [departments]);
 
   // Get Department by ID
   const handleDetailDepartment = async (departmentId) => {
@@ -140,24 +120,6 @@ function DepartmentAdmin() {
     }
   };
 
-  // Delete Department
-  const openDeleteModal = (department) => {
-    setIsDeleteModalOpen(true);
-    setSelectedDepartment(department);
-  };
-
-  const handleDeleteDepartment = async () => {
-    if (selectedDepartment?._id) {
-      const result = await deleteDepartmentById(selectedDepartment._id);
-      if (result.success) {
-        setIsDeleteModalOpen(false);
-        getTotalDepartmentCount();
-      }
-    } else {
-      toast.error("Lỗi: ID phòng ban không hợp lệ!");
-    }
-  };
-
   // Xử lý thống kê
   const handleStatistic = async () => {
     if (!statDepartmentId) {
@@ -172,7 +134,6 @@ function DepartmentAdmin() {
     });
     setStatLoading(false);
     if (res.success) {
-      console.log("statResult:", res.data);
       setStatResult(res.data);
     } else {
       setStatResult(null);
@@ -180,30 +141,9 @@ function DepartmentAdmin() {
     }
   };
 
-  const fetchManagers = () => {
-    searchUserPag({
-      pageInfo: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-      searchCondition: {
-        keyword: "",
-        role: "manager",
-        is_verified: true,
-        status: true,
-        is_deleted: false,
-      },
-    });
-  };
   useEffect(() => {
     getTotalDepartmentCount();
   }, []);
-
-  useEffect(() => {
-    // if (isAddModalOpen || isEditModalOpen) {
-    fetchManagers();
-    // }
-  }, [isAddModalOpen, isEditModalOpen]);
 
   useEffect(() => {
     searchListDepartment({
@@ -218,13 +158,8 @@ function DepartmentAdmin() {
 
   return (
     <div className="manager-department">
-      <div className="header-manager-department">
-        <button className="button-add__department" onClick={openAddModal}>
-          <FaPlus style={{ marginRight: "8px" }} />
-          Tạo phòng ban mới
-        </button>
-      </div>
-      <FilterDepartment
+      <div className="header-manager-department"></div>
+      <FilterDepartmentManager
         filters={filters}
         setFilters={setFilters}
         onSearch={handleSearch}
@@ -278,14 +213,6 @@ function DepartmentAdmin() {
                         onClick={() => openEditModal(item)}
                       >
                         Sửa
-                      </button>
-
-                      <button
-                        className="delete-department"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => openDeleteModal(item)}
-                      >
-                        Xóa
                       </button>
                     </td>
                   </tr>
@@ -428,7 +355,7 @@ function DepartmentAdmin() {
                 }
                 setManagerLoading(false);
               }}
-              options={accounts?.map(
+              options={managers?.map(
                 ({ _id, first_name, last_name, email }) => ({
                   value: _id,
                   label: `${first_name} ${last_name} (${email})`,
@@ -478,48 +405,24 @@ function DepartmentAdmin() {
         </div>
       </div>
 
-      {/* Modal create department */}
-      <ModalCreateDepartment
-        isModalOpen={isAddModalOpen}
-        handleCancel={() => setIsAddModalOpen(false)}
-        handleAdd={handleAddDepartment}
-        managers={accounts}
-        loadingManagers={loading}
-      />
-
       {/* Update department */}
-      <ModalEditDepartment
+      <ModalEditDepartmentManager
         isModalOpen={isEditModalOpen}
         handleCancel={() => setIsEditModalOpen(false)}
         handleEdit={handleEditDepartment}
         editDepartment={editDepartment}
-        managers={accounts}
+        managers={managers}
         loadingManagers={loading}
       />
 
       {/* Modal details department */}
-      <ModalDetailDepartment
+      <ModalDetailDepartmentManager
         isModalOpen={isDetailModalOpen}
         handleCancel={() => setIsDetailModalOpen(false)}
         selectedDepartment={selectedDepartment}
       />
-
-      {/* Modal Delete */}
-      <Modal
-        title="Xác nhận xóa phòng ban"
-        open={isDeleteModalOpen}
-        onOk={handleDeleteDepartment}
-        onCancel={() => setIsDeleteModalOpen(false)}
-        okText="Xóa"
-        cancelText="Hủy"
-      >
-        <p>
-          Bạn có chắc chắn muốn xóa phòng ban{" "}
-          <strong>{selectedDepartment?.name}</strong>?
-        </p>
-      </Modal>
     </div>
   );
 }
 
-export default DepartmentAdmin;
+export default DepartmentManager;

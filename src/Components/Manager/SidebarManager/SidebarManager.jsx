@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './SidebarManger.css';
-import logo from '../../../assets/images/logo.png'; // Import the logo image
-import { 
-  FaHome, 
-  FaChartPie, 
-  FaUser, 
-  FaCog, 
-  FaCreditCard, 
-  FaInbox, 
-  FaAddressBook, 
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./SidebarManger.css";
+import logo from "../../../assets/images/logo.png"; // Import the logo image
+import {
+  FaHome,
+  FaChartPie,
+  FaUser,
+  FaCog,
+  FaCreditCard,
+  FaInbox,
+  FaAddressBook,
   FaProjectDiagram,
   FaHandshake,
-  FaQuestionCircle, 
+  FaQuestionCircle,
   FaSignOutAlt,
-  FaChevronRight
-} from 'react-icons/fa';
+  FaChevronRight,
+} from "react-icons/fa";
 
 function SidebarManager() {
   const [isCollapsed, setIsCollapsed] = useState(false); // Default to collapsed state
@@ -25,24 +25,24 @@ function SidebarManager() {
   };
 
   return (
-    <div className={`sidebar-manager ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`sidebar-manager ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
         <div className="logo">
           {isCollapsed ? (
-            <Link to= "/">
-            <img src={logo} alt="Logo" className="logo-image" />
+            <Link to="/">
+              <img src={logo} alt="Logo" className="logo-image" />
             </Link>
           ) : (
-            <Link to= "/">
-            <img src={logo} alt="Logo" className="logo-image" />
+            <Link to="/">
+              <img src={logo} alt="Logo" className="logo-image" />
             </Link>
           )}
         </div>
       </div>
-      
+
       <div className="sidebar-menu">
         <ul>
-          <li className='active'>
+          <li className="active">
             <Link to="/dashboard">
               <FaChartPie className="menu-icon" />
               <span className="menu-text">Dashboard</span>
@@ -67,9 +67,9 @@ function SidebarManager() {
             </Link>
           </li>
           <li>
-            <Link to="/contacts">
+            <Link to="/manager/department-manager">
               <FaAddressBook className="menu-icon" />
-              <span className="menu-text">Contacts</span>
+              <span className="menu-text">Phòng ban</span>
             </Link>
           </li>
           <li>
@@ -92,7 +92,7 @@ function SidebarManager() {
           </li>
         </ul>
       </div>
-      
+
       <div className="sidebar-footer">
         <ul>
           <li>

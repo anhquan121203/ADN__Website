@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Descriptions } from "antd";
 
-function ModalDetailDepartment({
+function ModalDetailDepartmentManager({
   isModalOpen,
   handleCancel,
   selectedDepartment,
@@ -44,4 +44,4 @@ function ModalDetailDepartment({
   );
 }
 
-export default ModalDetailDepartment;
+export default ModalDetailDepartmentManager;
