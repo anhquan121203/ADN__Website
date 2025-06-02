@@ -7,6 +7,9 @@ import { CiEdit } from "react-icons/ci";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import useStaffProfile from "../../../Hooks/useStaffProfile";
 import ModalCreateStaffProfile from "./ModalCreateStaffProfile/ModalCreateStaffProfile";
+import ModalEditStaffProfile from "./ModalEditStaffProfile/ModalEditStaffProfile";
+import ModalDetailStafProfile from "./ModalDetailStafProfile/ModalDetailStafProfile";
+import FilterStaffProfile from "./FilterStaffProfile/FilterStaffProfile";
 
 function ManagerStaffProfile() {
   const {
@@ -16,6 +19,8 @@ function ManagerStaffProfile() {
     error,
     getListStaff,
     addNewStaffProfile,
+    updateStaffById,
+    staffProfileById,
   } = useStaffProfile();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -23,6 +28,11 @@ function ManagerStaffProfile() {
   const [selectedStaff, setSelectedStaff] = useState(null);
   // modal thêm tài khoản
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // modal update
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editStaff, setEditStaff] = useState(null);
+  // modal detail
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
     getListStaff({
@@ -36,6 +46,32 @@ function ManagerStaffProfile() {
       },
     });
   }, [currentPage]);
+
+  // Filter slot
+  const [filters, setFilters] = useState({
+    keyword: "",
+    department_id: "",
+    status: "active",
+    hire_date_from: "",
+    hire_date_to: "",
+  });
+
+  const handleSearch = () => {
+    getListStaff({
+      ...filters,
+      pageInfo: {
+        pageNum: currentPage,
+        pageSize: pageSize,
+      },
+      searchCondition: {
+        keyword: "",
+        department_id: "",
+        status: "active",
+        hire_date_from: "",
+        hire_date_to: "",
+      },
+    });
+  };
 
   // create staff profile
   const openAddModal = () => {
@@ -59,6 +95,44 @@ function ManagerStaffProfile() {
     }
   };
 
+  // update staff by id
+  const openEditModal = (staffData) => {
+    setIsEditModalOpen(true);
+    setEditStaff(staffData);
+  };
+
+  const handleEditStaff = async (staffData) => {
+    try {
+      const result = await updateStaffById(staffData._id, staffData);
+      if (result.success) {
+        setIsEditModalOpen(false);
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: "Cập nhật tài khoản không thành công!",
+      };
+    }
+  };
+
+  // detail modal
+  const handleDetailStaff = async (staffId) => {
+    try {
+      const result = await staffProfileById(staffId);
+      if (result.success) {
+        setSelectedStaff(result.data.data);
+        setIsDetailModalOpen(true);
+      }
+      // return result;
+    } catch (error) {
+      // toast.error("Thêm tài khoản không thành công");
+      return {
+        success: false,
+        message: "Xem chi tiết không thành công!",
+      };
+    }
+  };
+
   return (
     <div className="manager-account">
       <div className="header-manager-account">
@@ -71,6 +145,13 @@ function ManagerStaffProfile() {
       {/* Table account */}
       <div className="form-account">
         <h2>Danh sách người dùng</h2>
+        <div>
+          <FilterStaffProfile
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+          />
+        </div>
         <div className="account-container">
           <table className="table-account">
             <thead>
@@ -110,7 +191,19 @@ function ManagerStaffProfile() {
                       </span>
                     </td>
 
-                    <td></td>
+                    <td>
+                      <div className="action-staffProfile">
+                        <CiEdit
+                          className="icon-service"
+                          onClick={() => openEditModal(item)}
+                        />
+
+                        <FaRegEye
+                          className="icon-service"
+                          onClick={() => handleDetailStaff(item._id)}
+                        />
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -139,6 +232,19 @@ function ManagerStaffProfile() {
           isModalOpen={isAddModalOpen}
           handleCancel={() => setIsAddModalOpen(false)}
           handleAdd={handleAddStaff}
+        />
+
+        <ModalEditStaffProfile
+          isModalOpen={isEditModalOpen}
+          handleCancel={() => setIsEditModalOpen(false)}
+          handleEdit={handleEditStaff}
+          editStaffProfile={editStaff}
+        />
+
+        <ModalDetailStafProfile
+          isModalOpen={isDetailModalOpen}
+          handleCancel={() => setIsDetailModalOpen(false)}
+          selectedStaff={selectedStaff}
         />
       </div>
     </div>

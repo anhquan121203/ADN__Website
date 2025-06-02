@@ -10,6 +10,7 @@ import ModalDetailService from "./ModalDetailService/ModalDetailService";
 import ModalEditService from "./ModalEditService/ModalEditService";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import FilterService from "./FilterService/FilterService";
 
 function ServiceAdmin() {
   const {
@@ -47,8 +48,27 @@ function ServiceAdmin() {
       sort_by: "created_at",
       sort_order: "desc",
     });
-  }, [currentPage]); // hoặc chỉ [currentPage]
+  }, [currentPage]);
 
+  // Filter service
+  const [filters, setFilters] = useState({
+    type: "",
+    sample_method: "",
+    is_active: true,
+    min_price: "",
+    max_price: "",
+    keyword: "",
+    sort_by: "created_at",
+    sort_order: "desc",
+  });
+
+  const handleSearch = () => {
+    searchListService({
+      ...filters,
+      pageNum: currentPage,
+      pageSize: pageSize,
+    });
+  };
 
   // type Service
   const getType = (type) => {
@@ -89,7 +109,7 @@ function ServiceAdmin() {
         // toast.success("Thêm thiết bị thành công!")
         searchListService({
           is_active: true,
-          pageNum: 1,
+          pageNum: currentPage,
           pageSize: pageSize,
           sort_by: "created_at",
           sort_order: "desc",
@@ -161,7 +181,7 @@ function ServiceAdmin() {
         // reload lại danh sách nếu cần
         searchListService({
           is_active: true,
-          pageNum: 1,
+          pageNum: currentPage,
           pageSize: pageSize,
           sort_by: "created_at",
           sort_order: "desc",
@@ -183,7 +203,14 @@ function ServiceAdmin() {
 
       {/* Table account */}
       <div className="form-account">
+        <h1>Danh sách dịch vụ</h1>
         <div className="account-container">
+          <FilterService
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+          />
+
           <table className="table-account">
             <thead>
               <tr>

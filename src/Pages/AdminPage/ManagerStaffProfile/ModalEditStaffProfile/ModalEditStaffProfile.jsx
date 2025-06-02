@@ -6,39 +6,24 @@ import {
   InputNumber,
   Modal,
   Select,
-  TimePicker,
-  Upload,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
-import useAdmin from "../../../../Hooks/useAdmin";
 import useDepartment from "../../../../Hooks/useDepartment";
+import moment from "moment";
 
-const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
+const ModalEditStaffProfile = ({
+  isModalOpen,
+  handleCancel,
+  handleEdit,
+  editStaffProfile,
+}) => {
   const [form] = Form.useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const { accounts, searchUserPag } = useAdmin();
   const { departments, searchListDepartment } = useDepartment();
 
   useEffect(() => {
     if (isModalOpen) {
-      form.resetFields();
-      setSelectedFile(null);
-      //   list staff
-      searchUserPag({
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 100,
-        },
-        searchCondition: {
-          role: "laboratory_technician",
-          is_verified: true,
-          status: true,
-          is_deleted: false,
-        },
-      });
-
-      //   list department
+      // danh sách phòng ban
       searchListDepartment({
         is_deleted: false,
         is_active: true,
@@ -47,36 +32,56 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
         sort_by: "created_at",
         sort_order: "desc",
       });
+
+      if (editStaffProfile) {
+        // fomat date
+        const formattedData = {
+          ...editStaffProfile,
+          //   id user
+          user_id:
+            editStaffProfile.user_id?._id || editStaffProfile.user_id || null,
+          // id depart
+          department_id:
+            editStaffProfile.department_id?._id ||
+            editStaffProfile.department_id,
+
+          hire_date: editStaffProfile.hire_date
+            ? moment(editStaffProfile.hire_date)
+            : null,
+
+          qualifications: editStaffProfile.qualifications?.map((q) => ({
+            ...q,
+            issue_date: q.issue_date ? moment(q.issue_date) : null,
+            expiry_date: q.expiry_date ? moment(q.expiry_date) : null,
+          })),
+        };
+        form.setFieldsValue(formattedData);
+      } else {
+        form.resetFields();
+      }
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, editStaffProfile]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-
-      // Ép chắc chắn về string, phòng trường hợp không phải string (nhưng thường không cần)
-      values.user_id = String(values.user_id);
-      values.department_id = String(values.department_id);
-
-      const response = await handleAdd(values);
+      const response = await handleEdit(values);
 
       if (response.success === true) {
         form.resetFields();
         handleCancel();
-        toast.success("Tạo hồ sơ nhân viên mới thành công");
+        toast.success("Cập nhật tài khoản thành công");
       } else {
-        toast.error(
-          response.message || "Tạo hồ sơ nhân viên mới không thành công!"
-        );
+        toast.error(response.message || "Cập nhật tài khoản không thành công!");
       }
     } catch (error) {
-      toast.error("Tạo hồ sơ nhân viên mới không thành công!");
+      toast.error("Cập nhật tài khoản không thành công!");
     }
   };
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Chỉnh sửa tài khoản"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -84,36 +89,24 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo tài khoản
+          Cập nhật tài khoản
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Nhân viên"
-          name="user_id"
-          rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
-        >
-          <Select placeholder="Chọn nhân viên">
-            {accounts?.map((staff) => (
-              <Select.Option key={staff._id} value={staff._id}>
-                {`${staff.first_name} ${staff.last_name}`}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        <Form.Item
           label="Phòng ban"
           name="department_id"
           rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
         >
-          <Select placeholder="Chọn phòng ban">
-            {departments?.map((depart) => (
-              <Select.Option key={depart._id} value={depart._id}>
-                {depart.name}
-              </Select.Option>
-            ))}
+          <Select placeholder="Chọn phòng ban" allowClear>
+            {departments
+              ?.filter((depart) => depart._id)
+              .map((depart) => (
+                <Select.Option key={depart._id} value={depart._id}>
+                  {depart.name}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
 
@@ -130,19 +123,17 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
           name="salary"
           rules={[{ required: true, message: "Vui lòng chọn tiền!" }]}
         >
-          <InputNumber />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
 
-        {/* Chọn ngày */}
         <Form.Item
           label="Ngày"
           name="hire_date"
           rules={[{ required: true, message: "Vui lòng chọn ngày!" }]}
         >
-          <DatePicker />
+          <DatePicker style={{ width: "100%" }} />
         </Form.Item>
 
-        {/* list chứng chỉ */}
         <Form.List name="qualifications">
           {(fields, { add, remove }) => (
             <>
@@ -189,7 +180,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
                       { required: true, message: "Vui lòng chọn ngày cấp!" },
                     ]}
                   >
-                    <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                    <DatePicker style={{ width: "100%" }} />
                   </Form.Item>
                   <Form.Item
                     {...restField}
@@ -202,7 +193,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
                       },
                     ]}
                   >
-                    <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+                    <DatePicker style={{ width: "100%" }} />
                   </Form.Item>
                   <Form.Item
                     {...restField}
@@ -229,4 +220,4 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
   );
 };
 
-export default ModalCreateStaffProfile;
+export default ModalEditStaffProfile;
