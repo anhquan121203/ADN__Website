@@ -8,6 +8,7 @@ import ModalCreateDepartment from "./ModalCreateDepartment/ModalCreateDepartment
 import ModalEditDepartment from "./ModalEditDepartment/ModalEditDepartment";
 import ModalDetailDepartment from "./ModalDetailDepartment/ModalDetailDepartment";
 import useAdmin from "../../../Hooks/useAdmin";
+import FilterDepartment from "./FilterDepartment/FilterDepartment";
 
 function DepartmentAdmin() {
   const { accounts, searchUserPag } = useAdmin();
@@ -54,7 +55,23 @@ function DepartmentAdmin() {
     setIsAddModalOpen(true);
     setSelectedDepartment(null);
   };
+  // filterDepartment
+  const [filters, setFilters] = useState({
+    keyword: "",
+    sort_by: "name",
+    sort_order: "desc",
+  });
+  const handleSearch = () => {
+    searchListDepartment({
+      ...filters,
+      is_deleted: false,
+      is_active: true,
+      pageNum: currentPage,
+      pageSize: pageSize,
+    });
+  };
 
+  // Handle Add Department
   const handleAddDepartment = async (departmentData) => {
     try {
       const result = await addNewDepartment(departmentData);
@@ -207,6 +224,11 @@ function DepartmentAdmin() {
           Tạo phòng ban mới
         </button>
       </div>
+      <FilterDepartment
+        filters={filters}
+        setFilters={setFilters}
+        onSearch={handleSearch}
+      />
       <span style={{ marginLeft: 16, fontWeight: 500 }}>
         Tổng số phòng ban: {count ?? 0}
       </span>

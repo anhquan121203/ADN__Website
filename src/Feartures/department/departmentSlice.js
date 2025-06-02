@@ -4,7 +4,7 @@ import { API_BASE_URL } from "../../Constants/apiConstants";
 
 // Search department
 export const searchDepartment = createAsyncThunk(
-  "department/searchDepartmen",
+  "department/searchDepartment",
   async (listDepartment, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
