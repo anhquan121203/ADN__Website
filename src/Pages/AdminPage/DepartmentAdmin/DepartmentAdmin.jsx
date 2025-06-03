@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, Pagination, Select, Spin, Table } from "antd";
+import { Button, Input, Modal, Pagination, Select, Spin } from "antd";
 import "./DepartmentAdmin.css";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
@@ -172,7 +172,6 @@ function DepartmentAdmin() {
     });
     setStatLoading(false);
     if (res.success) {
-      console.log("statResult:", res.data);
       setStatResult(res.data);
     } else {
       setStatResult(null);
@@ -218,23 +217,27 @@ function DepartmentAdmin() {
 
   return (
     <div className="manager-department">
-      <div className="header-manager-department">
+      <div className="department-toolbar">
         <button className="button-add__department" onClick={openAddModal}>
           <FaPlus style={{ marginRight: "8px" }} />
           Tạo phòng ban mới
         </button>
+        <div style={{ flex: 1 }}>
+          <FilterDepartment
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+          />
+        </div>
       </div>
-      <FilterDepartment
-        filters={filters}
-        setFilters={setFilters}
-        onSearch={handleSearch}
-      />
-      <span style={{ marginLeft: 16, fontWeight: 500 }}>
-        Tổng số phòng ban: {count ?? 0}
-      </span>
-      {/* Table department */}
+
+      {/* Danh sách phòng ban */}
       <div className="form-department">
         <div className="department-container">
+          <h2 className="table-title">Danh sách phòng ban</h2>
+          <span style={{ marginLeft: 16, fontWeight: 500 }}>
+            Tổng số phòng ban: {count ?? 0}
+          </span>
           <table className="table-department">
             <thead>
               <tr>
@@ -272,14 +275,13 @@ function DepartmentAdmin() {
                       >
                         Chi tiết
                       </button>
-
                       <button
                         className="edit-department"
                         onClick={() => openEditModal(item)}
+                        style={{ marginLeft: 8 }}
                       >
                         Sửa
                       </button>
-
                       <button
                         className="delete-department"
                         style={{ marginLeft: 8 }}
@@ -312,15 +314,8 @@ function DepartmentAdmin() {
         />
 
         {/* Dữ liệu thống kê phòng ban */}
-        <div
-          style={{
-            marginTop: 40,
-            padding: 24,
-            background: "#fff",
-            borderRadius: 8,
-          }}
-        >
-          <h2 style={{ marginBottom: 16 }}>Dữ liệu thống kê phòng ban</h2>
+        <div className="department-container" style={{ marginTop: 40 }}>
+          <h2 className="table-title">Dữ liệu thống kê phòng ban</h2>
           <div
             style={{
               display: "flex",
@@ -392,9 +387,8 @@ function DepartmentAdmin() {
         </div>
 
         {/* Danh sách phòng ban của quản lý */}
-        <div style={{ marginTop: 24 }}>
-          <h3>Phòng ban do quản lý phụ trách</h3>
-
+        <div className="department-container" style={{ marginTop: 24 }}>
+          <h2 className="table-title">Phòng ban do quản lý phụ trách</h2>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <Select
               showSearch
