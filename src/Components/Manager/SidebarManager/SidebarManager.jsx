@@ -45,25 +45,25 @@ function SidebarManager() {
           <li className="active">
             <Link to="/dashboard">
               <FaChartPie className="menu-icon" />
-              <span className="menu-text">Dashboard</span>
+              <span className="menu-text">Bảng điều khiển</span>
             </Link>
           </li>
           <li>
             <Link to="/settings">
               <FaCog className="menu-icon" />
-              <span className="menu-text">Account Settings</span>
+              <span className="menu-text">Cài đặt tài khoản</span>
             </Link>
           </li>
           <li>
             <Link to="/payments">
               <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Payments</span>
+              <span className="menu-text">Thanh toán</span>
             </Link>
           </li>
           <li>
             <Link to="/inbox">
               <FaInbox className="menu-icon" />
-              <span className="menu-text">Inbox</span>
+              <span className="menu-text">Hộp thư</span>
             </Link>
           </li>
           <li>
@@ -75,19 +75,19 @@ function SidebarManager() {
           <li>
             <Link to="/projects">
               <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Projects</span>
+              <span className="menu-text">Dự án</span>
             </Link>
           </li>
           <li>
             <Link to="/onboarding">
               <FaHandshake className="menu-icon" />
-              <span className="menu-text">Onboarding</span>
+              <span className="menu-text">Hội nhập</span>
             </Link>
           </li>
           <li>
             <Link to="/manager">
               <FaUser className="menu-icon" />
-              <span className="menu-text">User Profile</span>
+              <span className="menu-text">Hồ sơ cá nhân</span>
             </Link>
           </li>
         </ul>
@@ -98,13 +98,13 @@ function SidebarManager() {
           <li>
             <Link to="/help">
               <FaQuestionCircle className="menu-icon" />
-              <span className="menu-text">Help</span>
+              <span className="menu-text">Trợ giúp</span>
             </Link>
           </li>
           <li>
             <Link to="/logout">
               <FaSignOutAlt className="menu-icon" />
-              <span className="menu-text">Logout</span>
+              <span className="menu-text">Đăng xuất</span>
             </Link>
           </li>
         </ul>

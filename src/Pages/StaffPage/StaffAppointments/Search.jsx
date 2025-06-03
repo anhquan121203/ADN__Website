@@ -64,42 +64,42 @@ const Search = ({ onSearch }) => {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-6">
-      <h2 className="text-lg font-semibold mb-4">Search Appointments</h2>
+      <h2 className="text-lg font-semibold mb-4">Tìm kiếm lịch hẹn</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
           <Select
-            placeholder="Select status"
+            placeholder="Chọn trạng thái"
             className="w-full"
             value={searchParams.status || undefined}
             onChange={(value) => handleSelectChange(value, 'status')}
             allowClear
           >
-            <Option value="pending">Pending</Option>
-            <Option value="confirmed">Confirmed</Option>
-            <Option value="completed">Completed</Option>
-            <Option value="cancelled">Cancelled</Option>
+            <Option value="pending">Chờ xác nhận</Option>
+            <Option value="confirmed">Đã xác nhận</Option>
+            <Option value="completed">Hoàn thành</Option>
+            <Option value="cancelled">Đã hủy</Option>
           </Select>
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Loại lịch hẹn</label>
           <Select
-            placeholder="Select type"
+            placeholder="Chọn loại"
             className="w-full"
             value={searchParams.appointment_type || undefined}
             onChange={(value) => handleSelectChange(value, 'appointment_type')}
             allowClear
           >
-            <Option value="self">Self</Option>
-            <Option value="facility">Facility</Option>
-            <Option value="home">Home</Option>
+            <Option value="self">Tự đến</Option>
+            <Option value="facility">Tại cơ sở</Option>
+            <Option value="home">Tại nhà</Option>
           </Select>
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Khoảng ngày</label>
           <RangePicker 
             className="w-full" 
             value={searchParams.dateRange}
@@ -108,9 +108,9 @@ const Search = ({ onSearch }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Customer ID</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mã khách hàng</label>
           <Input
-            placeholder="Enter customer ID"
+            placeholder="Nhập mã khách hàng"
             name="customer_id"
             value={searchParams.customer_id}
             onChange={handleInputChange}
@@ -118,9 +118,9 @@ const Search = ({ onSearch }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Staff ID</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mã nhân viên</label>
           <Input
-            placeholder="Enter staff ID"
+            placeholder="Nhập mã nhân viên"
             name="staff_id"
             value={searchParams.staff_id}
             onChange={handleInputChange}
@@ -128,9 +128,9 @@ const Search = ({ onSearch }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Collection Address</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Địa chỉ lấy mẫu</label>
           <Input
-            placeholder="Enter collection address"
+            placeholder="Nhập địa chỉ lấy mẫu"
             name="collection_address"
             value={searchParams.collection_address}
             onChange={handleInputChange}
@@ -143,7 +143,7 @@ const Search = ({ onSearch }) => {
           icon={<ReloadOutlined />} 
           onClick={handleReset}
         >
-          Reset
+          Đặt lại
         </Button>
         <Button 
           type="primary" 
@@ -151,7 +151,7 @@ const Search = ({ onSearch }) => {
           onClick={handleSearch}
           className="bg-blue-500"
         >
-          Search
+          Tìm kiếm
         </Button>
       </div>
     </div>

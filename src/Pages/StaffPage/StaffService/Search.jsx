@@ -33,48 +33,48 @@ const Search = ({ onSearch }) => {
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Form.Item name="type" className="mb-0">
-            <Select placeholder="Service Type" allowClear>
-              <Option value="civil">Civil</Option>
-              <Option value="administrative">Administrative</Option>
+            <Select placeholder="Loại dịch vụ" allowClear>
+              <Option value="civil">Dân sự</Option>
+              <Option value="administrative">Hành chính</Option>
             </Select>
           </Form.Item>
         </Col>
         
         <Col span={6}>
           <Form.Item name="sample_method" className="mb-0">
-            <Select placeholder="Sample Method" allowClear>
-              <Option value="self_collected">Self Collected</Option>
-              <Option value="facility_collected">Facility Collected</Option>
-              <Option value="home_collected">Home Collected</Option>
+            <Select placeholder="Phương thức lấy mẫu" allowClear>
+              <Option value="self_collected">Tự lấy mẫu</Option>
+              <Option value="facility_collected">Lấy tại cơ sở</Option>
+              <Option value="home_collected">Lấy tại nhà</Option>
             </Select>
           </Form.Item>
         </Col>
         
         <Col span={6}>
           <Form.Item name="is_active" className="mb-0">
-            <Select placeholder="Status">
-              <Option value={true}>Active</Option>
-              <Option value={false}>Inactive</Option>
-              <Option value="">All</Option>
+            <Select placeholder="Trạng thái">
+              <Option value={true}>Đang hoạt động</Option>
+              <Option value={false}>Ngừng hoạt động</Option>
+              <Option value="">Tất cả</Option>
             </Select>
           </Form.Item>
         </Col>
         
         <Col span={6}>
           <Form.Item name="keyword" className="mb-0">
-            <Input placeholder="Search by..." />
+            <Input placeholder="Tìm kiếm theo..." />
           </Form.Item>
         </Col>
         
         <Col span={6}>
           <Form.Item name="min_price" className="mb-0">
-            <Input placeholder="Min price..." />
+            <Input placeholder="Giá tối thiểu..." />
           </Form.Item>
         </Col>
         
         <Col span={6}>
           <Form.Item name="max_price" className="mb-0">
-            <Input placeholder="Max price..." />
+            <Input placeholder="Giá tối đa..." />
           </Form.Item>
         </Col>
       </Row>
@@ -84,14 +84,14 @@ const Search = ({ onSearch }) => {
                 icon={<ReloadOutlined />} 
                 onClick={handleReset}
               >
-                Reset
+                Đặt lại
               </Button>
               <Button 
                 type="primary" 
                 htmlType="submit" 
                 icon={<SearchOutlined />}
               >
-                Search
+                Tìm kiếm
               </Button>
             </Space>
           </div>

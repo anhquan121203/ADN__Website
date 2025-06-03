@@ -45,49 +45,49 @@ function SidebarStaff() {
           <li className='active'>
             <Link to="/dashboard">
               <FaChartPie className="menu-icon" />
-              <span className="menu-text">Dashboard</span>
+              <span className="menu-text">Bảng điều khiển</span>
             </Link>
           </li>
           <li>
             <Link to="/staff/appointment">
               <FaCog className="menu-icon" />
-              <span className="menu-text">Appointment</span>
+              <span className="menu-text">Lịch hẹn</span>
             </Link>
           </li>
           <li>
             <Link to="/staff/service">
               <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Service</span>
+              <span className="menu-text">Dịch vụ</span>
             </Link>
           </li>
           <li>
             <Link to="/staff/department">
               <FaInbox className="menu-icon" />
-              <span className="menu-text">Department</span>
+              <span className="menu-text">Phòng ban</span>
             </Link>
           </li>
           <li>
             <Link to="/staff/slot">
               <FaAddressBook className="menu-icon" />
-              <span className="menu-text">Slot</span>
+              <span className="menu-text">Ca làm việc</span>
             </Link>
           </li>
           <li>
             <Link to="/projects">
               <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Projects</span>
+              <span className="menu-text">Dự án</span>
             </Link>
           </li>
           <li>
             <Link to="/onboarding">
               <FaHandshake className="menu-icon" />
-              <span className="menu-text">Onboarding</span>
+              <span className="menu-text">Hội nhập</span>
             </Link>
           </li>
           <li>
             <Link to="/staff">
               <FaUser className="menu-icon" />
-              <span className="menu-text">User Profile</span>
+              <span className="menu-text">Hồ sơ cá nhân</span>
             </Link>
           </li>
         </ul>
@@ -98,13 +98,13 @@ function SidebarStaff() {
           <li>
             <Link to="/help">
               <FaQuestionCircle className="menu-icon" />
-              <span className="menu-text">Help</span>
+              <span className="menu-text">Trợ giúp</span>
             </Link>
           </li>
           <li>
             <Link to="/logout">
               <FaSignOutAlt className="menu-icon" />
-              <span className="menu-text">Logout</span>
+              <span className="menu-text">Đăng xuất</span>
             </Link>
           </li>
         </ul>

@@ -77,25 +77,35 @@ const View = () => {
     setSelectedServiceId(null);
   };
 
+  const typeLabels = {
+    civil: 'Dân sự',
+    administrative: 'Hành chính'
+  };
+  const sampleMethodLabels = {
+    self_collected: 'Tự lấy mẫu',
+    facility_collected: 'Lấy tại cơ sở',
+    home_collected: 'Lấy tại nhà'
+  };
+  
   const columns = [
     {
-      title: 'Name',
+      title: 'Tên dịch vụ',
       dataIndex: 'name',
       key: 'name',
       render: (name) => <Text strong>{name}</Text>,
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       render: (type) => (
         <Tag color={type === 'civil' ? 'blue' : 'purple'}>
-          {type === 'civil' ? 'Civil' : 'Administrative'}
+          {typeLabels[type] || type}
         </Tag>
       ),
     },
     {
-      title: 'Sample Method',
+      title: 'Phương thức lấy mẫu',
       dataIndex: 'sample_method',
       key: 'sample_method',
       render: (method) => {
@@ -104,32 +114,27 @@ const View = () => {
           facility_collected: 'orange',
           home_collected: 'cyan'
         };
-        const labels = {
-          self_collected: 'Self Collected',
-          facility_collected: 'Facility Collected',
-          home_collected: 'Home Collected'
-        };
-        return <Tag color={colors[method]}>{labels[method]}</Tag>;
+        return <Tag color={colors[method]}>{sampleMethodLabels[method]}</Tag>;
       },
     },
     {
-      title: 'Price',
+      title: 'Giá',
       dataIndex: 'price',
       key: 'price',
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) => `${price.toFixed(2)}đ`,
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'is_active',
       key: 'is_active',
       render: (isActive) => (
         <Tag color={isActive ? 'success' : 'error'}>
-          {isActive ? 'Active' : 'Inactive'}
+          {isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
         </Tag>
       ),
     },
     {
-      title: 'Description',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
       ellipsis: {
@@ -142,7 +147,7 @@ const View = () => {
       ),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       width: 100,
       render: (_, record) => (
@@ -160,7 +165,7 @@ const View = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <Title level={2}>Service Management</Title>
+        <Title level={2}>Quản lý dịch vụ</Title>
       </div>
       
       <Search onSearch={handleSearch} />
@@ -180,7 +185,7 @@ const View = () => {
               pageSize: pagination.pageSize,
               total: services?.data?.pageInfo?.totalItems || 0,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} items`,
+              showTotal: (total) => `Tổng cộng ${total} mục`,
             }}
             onChange={handleTableChange}
             scroll={{ x: 'max-content' }}
@@ -189,7 +194,7 @@ const View = () => {
       </Card>
 
       <Modal
-        title="Service Details"
+        title="Chi tiết dịch vụ"
         open={isModalVisible}
         onCancel={handleModalClose}
         width={1000}

@@ -21,6 +21,17 @@ import moment from 'moment';
 
 const { Title, Text } = Typography;
 
+const typeLabels = {
+  civil: 'Dân sự',
+  administrative: 'Hành chính'
+};
+
+const sampleMethodLabels = {
+  self_collected: 'Tự lấy mẫu',
+  facility_collected: 'Lấy tại cơ sở',
+  home_collected: 'Lấy tại nhà'
+};
+
 const Detail = ({ id, isModal, onClose }) => {
   const { fetchServiceById, fetchChildServices, loading } = useStaff();
   const [service, setService] = useState(null);
@@ -65,79 +76,78 @@ const Detail = ({ id, isModal, onClose }) => {
 
   return (
     <div className={isModal ? '' : 'p-6'}>
-      {!isModal && <Title level={2}>Service Details</Title>}
+      {!isModal && <Title level={2}>Chi tiết dịch vụ</Title>}
       
       {service ? (
         <>
           <Card className="mb-6 shadow-sm">
             <Descriptions bordered column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}>
-              <Descriptions.Item label="Service ID" span={3}>
+              <Descriptions.Item label="Mã dịch vụ" span={3}>
                 {service._id}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Name">
+              <Descriptions.Item label="Tên dịch vụ">
                 {service.name}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Type">
+              <Descriptions.Item label="Loại">
                 <Tag color={service.type === 'civil' ? 'blue' : 'purple'}>
-                  {service.type === 'civil' ? 'Civil' : 'Administrative'}
+                  {typeLabels[service.type] || service.type}
                 </Tag>
               </Descriptions.Item>
               
-              <Descriptions.Item label="Status">
+              <Descriptions.Item label="Trạng thái">
                 {service.is_active ? (
-                  <Tag icon={<CheckCircleOutlined />} color="success">Active</Tag>
+                  <Tag icon={<CheckCircleOutlined />} color="success">Đang hoạt động</Tag>
                 ) : (
-                  <Tag icon={<CloseCircleOutlined />} color="error">Inactive</Tag>
+                  <Tag icon={<CloseCircleOutlined />} color="error">Ngừng hoạt động</Tag>
                 )}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Sample Method">
-                {service.sample_method === 'self_collected' && (
-                  <Tag color="green">Self Collected</Tag>
-                )}
-                {service.sample_method === 'facility_collected' && (
-                  <Tag color="orange">Facility Collected</Tag>
-                )}
-                {service.sample_method === 'home_collected' && (
-                  <Tag color="cyan">Home Collected</Tag>
+              <Descriptions.Item label="Phương thức lấy mẫu">
+                {service.sample_method && (
+                  <Tag color={
+                    service.sample_method === 'self_collected' ? 'green' :
+                    service.sample_method === 'facility_collected' ? 'orange' : 'cyan'
+                  }>
+                    {sampleMethodLabels[service.sample_method]}
+                  </Tag>
                 )}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Price">
-                ${service.price?.toFixed(2) || '0.00'}
+              <Descriptions.Item label="Giá">
+                {service.price ? `${service.price.toFixed(2)}đ` : '0.00đ'}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Estimated Time">
+              <Descriptions.Item label="Thời gian dự kiến">
                 {service.estimated_time ? (
                   <Tag icon={<ClockCircleOutlined />} color="processing">
-                    {service.estimated_time} minutes
+                    {service.estimated_time} phút
                   </Tag>
                 ) : (
-                  'Not specified'
+                  'Chưa xác định'
                 )}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Parent Service" span={3}>
-                {!service.parent_service_id ? 'None (This is a parent service)' : (service.parent_service_id.name || 'None (This is a parent service)')}
+              <Descriptions.Item label="Dịch vụ cha" span={3}>
+                {!service.parent_service_id ? 'Không (Đây là dịch vụ cha)' : (service.parent_service_id.name || 'Không (Đây là dịch vụ cha)')}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Description" span={3}>
-                {service.description || 'No description provided'}
+              <Descriptions.Item label="Mô tả" span={3}>
+                {service.description || 'Không có mô tả'}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Created At">
+              <Descriptions.Item label="Ngày tạo">
                 {moment(service.created_at).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
               
-              <Descriptions.Item label="Updated At">
+              <Descriptions.Item label="Ngày cập nhật">
                 {moment(service.updated_at).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
             </Descriptions>
           </Card>
           
-          <Divider orientation="left">Child Services</Divider>
+          <Divider orientation="left">Dịch vụ con</Divider>
           
           {loadingChild ? (
             <div className="flex justify-center items-center p-12">
@@ -146,14 +156,14 @@ const Detail = ({ id, isModal, onClose }) => {
           ) : childServices && childServices.length > 0 ? (
             <Card className="shadow-sm">
               <Table 
-                columns={childColumns} 
+                columns={childColumnsVi} 
                 dataSource={childServices} 
                 rowKey="_id"
                 pagination={false}
               />
             </Card>
           ) : (
-            <Empty description="No child services found" />
+            <Empty description="Không tìm thấy dịch vụ con" />
           )}
         </>
       ) : (
@@ -167,25 +177,26 @@ const Detail = ({ id, isModal, onClose }) => {
 
 export default Detail;
 
-const childColumns = [
+// Bảng dịch vụ con tiếng Việt
+const childColumnsVi = [
   {
-    title: 'Name',
+    title: 'Tên dịch vụ',
     dataIndex: 'name',
     key: 'name',
     render: (name) => <Text strong>{name}</Text>,
   },
   {
-    title: 'Type',
+    title: 'Loại',
     dataIndex: 'type',
     key: 'type',
     render: (type) => (
       <Tag color={type === 'civil' ? 'blue' : 'purple'}>
-        {type === 'civil' ? 'Civil' : 'Administrative'}
+        {typeLabels[type] || type}
       </Tag>
     ),
   },
   {
-    title: 'Sample Method',
+    title: 'Phương thức lấy mẫu',
     dataIndex: 'sample_method',
     key: 'sample_method',
     render: (method) => {
@@ -203,18 +214,18 @@ const childColumns = [
     },
   },
   {
-    title: 'Price',
+    title: 'Giá',
     dataIndex: 'price',
     key: 'price',
-    render: (price) => `$${price?.toFixed(2) || '0.00'}`,
+    render: (price) => `${price?.toFixed(2) || '0.00'}đ`,
   },
   {
-    title: 'Status',
+    title: 'Trạng thái',
     dataIndex: 'is_active',
     key: 'is_active',
     render: (isActive) => (
       <Tag color={isActive ? 'success' : 'error'}>
-        {isActive ? 'Active' : 'Inactive'}
+        {isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
       </Tag>
     ),
   },

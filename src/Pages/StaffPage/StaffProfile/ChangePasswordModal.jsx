@@ -63,10 +63,10 @@ const ChangePasswordModal = ({ onClose, userId }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Change Password</h2>
+        <h2>Đổi mật khẩu</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Current Password</label>
+            <label>Mật khẩu hiện tại</label>
             <input
               type="password"
               name="old_password"
@@ -76,7 +76,7 @@ const ChangePasswordModal = ({ onClose, userId }) => {
             />
           </div>
           <div className="form-group">
-            <label>New Password</label>
+            <label>Mật khẩu mới</label>
             <input
               type="password"
               name="new_password"
@@ -86,7 +86,7 @@ const ChangePasswordModal = ({ onClose, userId }) => {
             />
           </div>
           <div className="form-group">
-            <label>Confirm New Password</label>
+            <label>Xác nhận mật khẩu mới</label>
             <input
               type="password"
               name="confirm_password"
@@ -97,10 +97,10 @@ const ChangePasswordModal = ({ onClose, userId }) => {
           </div>
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>
-              Cancel
+              Hủy
             </button>
             <button type="submit" disabled={loading}>
-              {loading ? 'Changing...' : 'Change Password'}
+              {loading ? 'Đang đổi...' : 'Đổi mật khẩu'}
             </button>
           </div>
         </form>

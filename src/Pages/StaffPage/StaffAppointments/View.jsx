@@ -60,51 +60,63 @@ const View = () => {
       completed: 'green',
       cancelled: 'red'
     };
-    
+    const statusLabels = {
+      pending: 'Chờ xác nhận',
+      confirmed: 'Đã xác nhận',
+      completed: 'Hoàn thành',
+      cancelled: 'Đã hủy'
+    };
     return (
       <Tag color={statusColors[status] || 'default'}>
-        {status?.toUpperCase()}
+        {statusLabels[status] || status}
       </Tag>
     );
   };
 
   const columns = [
     {
-      title: 'ID',
+      title: 'Mã',
       dataIndex: '_id',
       key: '_id',
       render: (id) => <span className="text-xs">{id.substring(0, 8)}...</span>,
     },
     {
-      title: 'Customer',
+      title: 'Khách hàng',
       dataIndex: 'customer',
       key: 'customer',
       render: (customer) => (
         <div>
-          <div className="font-medium">{customer?.name || 'N/A'}</div>
-          <div className="text-xs text-gray-500">{customer?.email || 'N/A'}</div>
+          <div className="font-medium">{customer?.name || 'Không có'}</div>
+          <div className="text-xs text-gray-500">{customer?.email || 'Không có'}</div>
         </div>
       ),
     },
     {
-      title: 'Type',
+      title: 'Loại lịch hẹn',
       dataIndex: 'appointment_type',
       key: 'appointment_type',
-      render: (type) => <span className="capitalize">{type || 'N/A'}</span>,
+      render: (type) => {
+        const typeLabels = {
+          self: 'Tự đến',
+          facility: 'Tại cơ sở',
+          home: 'Tại nhà'
+        };
+        return <span className="capitalize">{typeLabels[type] || 'Không có'}</span>;
+      },
     },
     {
-      title: 'Date & Time',
+      title: 'Ngày & Giờ',
       dataIndex: 'appointment_date',
       key: 'appointment_date',
       render: (date) => (
         <div>
-          <div>{moment(date).format('MMM DD, YYYY')}</div>
-          <div className="text-xs text-gray-500">{moment(date).format('hh:mm A')}</div>
+          <div>{moment(date).format('DD/MM/YYYY')}</div>
+          <div className="text-xs text-gray-500">{moment(date).format('HH:mm')}</div>
         </div>
       ),
     },
     {
-      title: 'Address',
+      title: 'Địa chỉ lấy mẫu',
       dataIndex: 'collection_address',
       key: 'collection_address',
       ellipsis: {
@@ -112,18 +124,18 @@ const View = () => {
       },
       render: (address) => (
         <Tooltip title={address}>
-          <span>{address || 'N/A'}</span>
+          <span>{address || 'Không có'}</span>
         </Tooltip>
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status) => getStatusTag(status),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       render: (_, record) => (
         <div className="flex space-x-2">
@@ -150,7 +162,7 @@ const View = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Appointment Management</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Quản lý lịch hẹn</h1>
       </div>
       
       <Search onSearch={handleSearch} />
@@ -174,7 +186,7 @@ const View = () => {
               pageSize: pagination.pageSize,
               total: appointments?.data?.pageInfo?.totalItems || 0,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} items`,
+              showTotal: (total) => `Tổng cộng ${total} mục`,
             }}
             onChange={handleTableChange}
             className="w-full"
