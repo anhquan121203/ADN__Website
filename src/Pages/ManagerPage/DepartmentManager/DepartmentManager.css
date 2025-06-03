@@ -1,0 +1,115 @@
+/* Tổng quan */
+.manager-department {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* Header */
+.header-manager-department {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.button-add__department {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.button-add__department:hover {
+  background-color: #45a049;
+}
+
+/* Table */
+.table-department {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-department th,
+.table-department td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-department th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  color: #333;
+}
+
+.table-department tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table-department td {
+  color: #555;
+}
+
+/* Hành động */
+.detail-department,
+.edit-department,
+.delete-department {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.detail-department:hover {
+  background-color: #e7f3ff;
+  color: #0056b3;
+}
+
+.edit-department:hover {
+  background-color: #fff4e5;
+  color: #d39e00;
+}
+
+.delete-department:hover {
+  background-color: #ffe5e5;
+  color: #c82333;
+}
+
+/* Pagination */
+.ant-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ant-pagination-item-active {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+.ant-pagination-item-active a {
+  color: white;
+}
+
+.ant-pagination-item:hover {
+  border-color: #4caf50;
+}
+
+.ant-pagination-item:hover a {
+  color: #4caf50;
+}

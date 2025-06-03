@@ -1,15 +1,15 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Pagination, Popconfirm } from "antd";
 import "./ServiceAdmin.css";
-import useAdmin from "../../../Hooks/useAdmin";
 import { toast } from "react-toastify";
 
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import useService from "../../../Hooks/useService";
 import ModalCreateService from "./ModalCreateService/ModalCreateService";
 import ModalDetailService from "./ModalDetailService/ModalDetailService";
 import ModalEditService from "./ModalEditService/ModalEditService";
-import { MdBlock } from "react-icons/md";
+import { MdBlock, MdDeleteOutline } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 import FilterService from "./FilterService/FilterService";
 
 function ServiceAdmin() {
@@ -203,6 +203,7 @@ function ServiceAdmin() {
 
       {/* Table account */}
       <div className="form-account">
+        <h1>Danh sách dịch vụ</h1>
         <div className="account-container">
           <FilterService
             filters={filters}
@@ -243,38 +244,33 @@ function ServiceAdmin() {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="detail-account"
-                        onClick={() => handleDetailService(item._id)}
-                      >
-                        Chi tiết
-                      </button>
+                      <div className="action-service">
+                        <CiEdit
+                          className="icon-service"
+                          onClick={() => openEditModal(item)}
+                        />
 
-                      <button
-                        className="edit-account"
-                        onClick={() => openEditModal(item)}
-                      >
-                        Sửa
-                      </button>
+                        <MdDeleteOutline
+                          className="icon-service"
+                          onClick={() => openDeleteModal(item)}
+                        />
 
-                      <button
-                        className="delete-account"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => openDeleteModal(item)}
-                      >
-                        Xóa
-                      </button>
+                        <FaRegEye
+                          className="icon-service"
+                          onClick={() => handleDetailService(item._id)}
+                        />
 
-                      <Popconfirm
-                        title="Khóa tài khoản"
-                        description="Bạn có muốn khóa tài khoản này không?"
-                        onConfirm={() => handleChangeStatus(item)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <MdBlock className="icon-actionAdmin" />
-                      </Popconfirm>
+                        <Popconfirm
+                          title="Khóa tài khoản"
+                          description="Bạn có muốn khóa tài khoản này không?"
+                          onConfirm={() => handleChangeStatus(item)}
+                          onCancel={cancel}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <MdBlock className="icon-service" />
+                        </Popconfirm>
+                      </div>
                     </td>
                   </tr>
                 ))

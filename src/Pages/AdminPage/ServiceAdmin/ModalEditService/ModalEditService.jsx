@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import useService from "../../../../Hooks/useService";
 
 const ModalEditService = ({
   isModalOpen,
@@ -19,11 +20,25 @@ const ModalEditService = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { services, searchListService } = useService();
+
   useEffect(() => {
     if (editService) {
       form.setFieldsValue({
         ...editService,
+        
+        parent_service_id:
+          typeof editService.parent_service_id === "object"
+            ? editService.parent_service_id._id
+            : editService.parent_service_id ?? null,
       });
+      searchListService({
+      is_active: true,
+      pageNum: 1,
+      pageSize: 10,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
     }
   }, [isModalOpen, editService]);
 
@@ -58,10 +73,7 @@ const ModalEditService = ({
         </Button>,
       ]}
     >
-      <Form
-        form={form}
-        layout="vertical">
-
+      <Form form={form} layout="vertical">
         <Form.Item
           label="Tên"
           name="name"
@@ -76,6 +88,18 @@ const ModalEditService = ({
           rules={[{ required: true, message: "Vui lòng mô tả thiết bị!" }]}
         >
           <Input />
+        </Form.Item>
+
+        <Form.Item label="Dịch vụ cha" name="parent_service_id">
+          <Select placeholder="Chọn dịch vụ cha">
+            {services
+              ?.filter((service) => !service.parent_service_id)
+              .map((service) => (
+                <Select.Option key={service._id} value={service._id}>
+                  {service.name}
+                </Select.Option>
+              ))}
+          </Select>
         </Form.Item>
 
         <Form.Item

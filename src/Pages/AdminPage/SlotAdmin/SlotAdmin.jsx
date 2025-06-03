@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pagination } from "antd";
+import { Pagination, Popconfirm, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import "./SlotAdmin.css";
@@ -11,6 +11,7 @@ import ModalCreateSlot from "./ModalCreateSlot/ModalCreateSlot";
 import { CiEdit } from "react-icons/ci";
 import ModalEditSlot from "./ModalEditSlot/ModalEditSlot";
 import ModalDetailSlot from "./ModalDetailSlot/ModalDetailSlot";
+import FilterSlotAdmin from "./FilterSlotAdmin/FilterSlotAdmin";
 
 function SlotAdmin() {
   const {
@@ -35,6 +36,10 @@ function SlotAdmin() {
   // detail slot
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  const cancel = (e) => {
+    message.error("Click on No");
+  };
+
   useEffect(() => {
     searchListSlot({
       is_active: true,
@@ -45,6 +50,29 @@ function SlotAdmin() {
     });
   }, [currentPage]);
 
+  // Filter slot
+  const [filters, setFilters] = useState({
+    staff_profile_ids: "",
+    department_id: "",
+    appointment_id: "",
+    status: true,
+    date_from: "",
+    date_to: "",
+  });
+
+  const handleSearch = () => {
+    searchListSlot({
+      ...filters,
+      staff_profile_ids: Array.isArray(filters.staff_profile_ids)
+        ? filters.staff_profile_ids.join(",")
+        : filters.staff_profile_ids,
+      is_active: true,
+      pageNum: currentPage,
+      pageSize: pageSize,
+      sort_by: "start_time",
+      sort_order: "asc",
+    });
+  };
 
   // validate time slot
   const formatSlotDate = (slot) => {
@@ -153,6 +181,18 @@ function SlotAdmin() {
     }
   };
 
+  //Render Status slot
+  const renderStatus = (status) => {
+    switch (status) {
+      case "available":
+        return <Tag color="green">Còn trống</Tag>;
+      case "booked":
+        return <Tag color="red">Đã đặt</Tag>;
+      default:
+        return <Tag color="pink">Không còn chỗ</Tag>;
+    }
+  };
+
   return (
     <div className="manager-account">
       <div className="header-manager-account">
@@ -163,7 +203,17 @@ function SlotAdmin() {
       </div>
 
       <div className="form-account">
-
+        <h1 style={{ marginBottom: 20, fontSize: 30 }}>
+          Quản lý danh sách ca trực
+        </h1>
+        <div className="filter-slot">
+          <FilterSlotAdmin
+            filters={filters}
+            setFilters={setFilters}
+            onSearch={handleSearch}
+            slots={slots} // truyền slots để lấy danh sách nhân viên
+          />
+        </div>
         <div className="account-container">
           {slots.length > 0 ? (
             Object.entries(groupSlotsByDate(slots)).map(
@@ -223,9 +273,9 @@ function SlotAdmin() {
                                 <td>{end}</td>
                                 <td>
                                   <span
-                                    className={`status-badge ${slot.status}`}
+                                  // className={`status-badge ${slot.status}`}
                                   >
-                                    {slot.status.toUpperCase()}
+                                    {renderStatus(slot.status)}
                                   </span>
                                 </td>
                               </tr>
@@ -271,7 +321,8 @@ function SlotAdmin() {
         <ModalDetailSlot
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
-          selectedSlot={selectedSlot} />
+          selectedSlot={selectedSlot}
+        />
       </div>
     </div>
   );

@@ -53,6 +53,7 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
         staff_profile_ids: editSlot.staff_profile_ids.map((s) => s._id),
         date,
         time_range: [startTime, endTime],
+        status: editSlot.status
       });
     }
   }, [isModalOpen, editSlot]);
@@ -99,7 +100,6 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
       toast.error("Cập nhật slot không thành công!");
     }
   };
-
 
   return (
     <Modal
@@ -158,6 +158,14 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
           ]}
         >
           <InputNumber />
+        </Form.Item>
+
+        <Form.Item label="Giới hạn cuộc hẹn" name="status">
+          <Select style={{ width: "100%" }} placeholder="Chọn trạng thái">
+            <Option value="available">Còn trống</Option>
+            <Option value="booked">Đã đặt</Option>
+            <Option value="unavailable ">Hết chỗ</Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>
