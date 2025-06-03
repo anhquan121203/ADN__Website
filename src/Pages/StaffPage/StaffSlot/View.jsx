@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Tag, Card, Typography, Spin, message } from 'antd';
+import { Table, Tag, Card, Typography, Spin, message, Button } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 import useStaff from '../../../Hooks/useStaff';
 import Search from './Search';
 import moment from 'moment';
+import ModalDetails from './ModalDetails';
 
 const { Title, Text } = Typography;
 
@@ -15,6 +17,8 @@ const View = () => {
     pageSize: 10,
     total: 0
   });
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   const statusColors = {
     available: 'success',
@@ -22,19 +26,50 @@ const View = () => {
     unavailable: 'error'
   };
 
+  const statusLabels = {
+    available: 'Có sẵn',
+    booked: 'Đã đặt',
+    unavailable: 'Không khả dụng'
+  };
+
   const columns = [
     {
-      title: 'Staff Members',
+      title: 'Nhân viên',
       dataIndex: 'staff_profile_ids',
       key: 'staff',
       render: (staff) => (
         <div>
           {staff.map((member) => (
-            <div key={member._id}>
-              {`${member.user_id.first_name} ${member.user_id.last_name}`}
-              <br />
+            <div key={member._id} className="mb-2">
+              <div>
+                <Text strong>{`${member.user_id.first_name} ${member.user_id.last_name}`}</Text>
+              </div>
               <Text type="secondary" style={{ fontSize: '12px' }}>
                 {member.employee_id} - {member.job_title}
+              </Text>
+              <div>
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {member.user_id.email}
+                </Text>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: 'Khung giờ',
+      dataIndex: 'time_slots',
+      key: 'time_slots',
+      render: (slots) => (
+        <div>
+          {slots?.map((slot) => (
+            <div key={slot._id} className="mb-2">
+              <Text>{`${slot.year}-${String(slot.month).padStart(2, '0')}-${String(slot.day).padStart(2, '0')}`}</Text>
+              <br />
+              <Text type="secondary">
+                {`${String(slot.start_time.hour).padStart(2, '0')}:${String(slot.start_time.minute).padStart(2, '0')} - 
+                  ${String(slot.end_time.hour).padStart(2, '0')}:${String(slot.end_time.minute).padStart(2, '0')}`}
               </Text>
             </div>
           ))}
@@ -42,48 +77,44 @@ const View = () => {
       ),
     },
     {
-      title: 'Time Period',
-      key: 'time_period',
-      render: (_, record) => (
-        <>
-          <div>{moment(record.start_time).format('YYYY-MM-DD')}</div>
-          <div>to</div>
-          <div>{moment(record.end_time).format('YYYY-MM-DD')}</div>
-        </>
-      ),
-    },
-    {
-      title: 'Pattern',
-      dataIndex: 'pattern',
-      key: 'pattern',
-      render: (pattern) => (
-        <Tag color="blue">
-          {pattern.charAt(0).toUpperCase() + pattern.slice(1)}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Days',
-      dataIndex: 'days_of_week',
-      key: 'days',
-      render: (days) => {
-        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        return days.map(day => dayNames[day - 1]).join(', ');
-      },
-    },
-    {
-      title: 'Appointment Limit',
+      title: 'Giới hạn lịch hẹn',
       dataIndex: 'appointment_limit',
       key: 'limit',
+      width: 150,
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      width: 120,
       render: (status) => (
         <Tag color={statusColors[status]}>
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+          {statusLabels[status]}
         </Tag>
+      ),
+    },
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      width: 180,
+      render: (date) => moment(date).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: 'Hành động',
+      key: 'actions',
+      width: 100,
+      render: (_, record) => (
+        <Button
+          className='bg-black text-white'
+          icon={<EyeOutlined />}
+          onClick={() => {
+            setSelectedSlot(record);
+            setIsDetailModalOpen(true);
+          }}
+          size='large'
+        >
+        </Button>
       ),
     },
   ];
@@ -131,8 +162,8 @@ const View = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <Title level={2}>Slot Management</Title>
-        <Text type="secondary">View and manage staff time slots</Text>
+        <Title level={2}>Quản lý ca làm việc</Title>
+        <Text type="secondary">Xem và quản lý khung giờ làm việc của nhân viên</Text>
       </div>
       
       <Search onSearch={handleSearch} />
@@ -151,13 +182,21 @@ const View = () => {
               ...pagination,
               total: slots?.data?.pageInfo?.totalItems || 0,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} items`,
+              showTotal: (total) => `Tổng cộng ${total} mục`,
             }}
             onChange={handleTableChange}
             scroll={{ x: 'max-content' }}
           />
         )}
       </Card>
+      <ModalDetails
+        visible={isDetailModalOpen}
+        onCancel={() => {
+          setIsDetailModalOpen(false);
+          setSelectedSlot(null);
+        }}
+        slot={selectedSlot}
+      />
     </div>
   );
 };

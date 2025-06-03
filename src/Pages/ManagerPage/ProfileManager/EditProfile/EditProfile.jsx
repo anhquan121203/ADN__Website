@@ -127,7 +127,7 @@ const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
           <div className="avatar-upload">
             <label htmlFor="avatar-input" className="upload-label">
               <FaUpload />
-              <span>{uploading ? 'Uploading...' : 'Change Photo'}</span>
+              <span>{uploading ? 'Đang tải lên...' : 'Đổi ảnh'}</span>
             </label>
             <input
               id="avatar-input"
@@ -148,29 +148,29 @@ const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
       <div className="profile-edit-form">
         <div className="form-row">
           <div className="form-group">
-            <label>First Name</label>
+            <label>Họ</label>
             <input 
               type="text" 
               name="first_name" 
               value={formData.first_name} 
               onChange={handleChange} 
-              placeholder="First name"
+              placeholder="Họ"
             />
           </div>
           <div className="form-group">
-            <label>Last Name</label>
+            <label>Tên</label>
             <input 
               type="text" 
               name="last_name" 
               value={formData.last_name} 
               onChange={handleChange} 
-              placeholder="Last name"
+              placeholder="Tên"
             />
           </div>
         </div>
 
         <div className="form-group">
-          <label>Email address</label>
+          <label>Email</label>
           <div className="email-input">
             <FaEnvelope className="input-icon" />
             <input 
@@ -178,28 +178,28 @@ const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
               name="email" 
               value={formData.email} 
               onChange={handleChange} 
-              placeholder="Email address"
+              placeholder="Địa chỉ email"
             />
           </div>
           <div className="verified-badge">
             <FaCheck className="verified-icon" />
-            <span>VERIFIED {formatDate(user?.updated_at)}</span>
+            <span>ĐÃ XÁC THỰC {formatDate(user?.updated_at)}</span>
           </div>
         </div>
 
         <div className="form-group">
-          <label>Phone Number</label>
+          <label>Số điện thoại</label>
           <input 
             type="text" 
             name="phone_number" 
             value={formData.phone_number} 
             onChange={handleChange} 
-            placeholder="Phone number"
+            placeholder="Số điện thoại"
           />
         </div>
 
         <div className="form-group">
-          <label>Date of Birth</label>
+          <label>Ngày sinh</label>
           <input 
             type="date" 
             name="dob" 
@@ -209,9 +209,9 @@ const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
         </div>
 
         <div className="form-actions">
-          <button className="btn-cancel" onClick={onCancel} disabled={loading}>Cancel</button>
+          <button className="btn-cancel" onClick={onCancel} disabled={loading}>Hủy</button>
           <button className="btn-save" onClick={handleSave} disabled={loading}>
-            {loading ? 'Saving...' : 'Save changes'}
+            {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
           </button>
         </div>
       </div>

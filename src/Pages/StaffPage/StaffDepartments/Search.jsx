@@ -45,34 +45,34 @@ const Search = ({ onSearch, currentParams }) => {
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Form.Item name="keyword" className="mb-0">
-            <Input placeholder="Search by name or description..." />
+            <Input placeholder="Tìm kiếm theo tên hoặc mô tả..." />
           </Form.Item>
         </Col>
 
         <Col span={6}>
           <Form.Item name="sort_by" className="mb-0">
-            <Select placeholder="Sort by">
-              <Option value="name">Name</Option>
-              <Option value="created_at">Created Date</Option>
-              <Option value="updated_at">Updated Date</Option>
+            <Select placeholder="Sắp xếp theo">
+              <Option value="name">Tên phòng ban</Option>
+              <Option value="created_at">Ngày tạo</Option>
+              <Option value="updated_at">Ngày cập nhật</Option>
             </Select>
           </Form.Item>
         </Col>
 
         <Col span={6}>
           <Form.Item name="sort_order" className="mb-0">
-            <Select placeholder="Sort order">
-              <Option value="asc">Ascending</Option>
-              <Option value="desc">Descending</Option>
+            <Select placeholder="Thứ tự">
+              <Option value="asc">Tăng dần</Option>
+              <Option value="desc">Giảm dần</Option>
             </Select>
           </Form.Item>
         </Col>
 
         <Col span={6}>
           <Form.Item name="is_deleted" className="mb-0">
-            <Select placeholder="Status">
-              <Option value={false}>Active</Option>
-              <Option value={true}>Deleted</Option>
+            <Select placeholder="Trạng thái">
+              <Option value={false}>Đang hoạt động</Option>
+              <Option value={true}>Đã xóa</Option>
             </Select>
           </Form.Item>
         </Col>
@@ -84,14 +84,14 @@ const Search = ({ onSearch, currentParams }) => {
                 icon={<ReloadOutlined />} 
                 onClick={handleReset}
               >
-                Reset
+                Đặt lại
               </Button>
               <Button 
                 type="primary" 
                 htmlType="submit" 
                 icon={<SearchOutlined />}
               >
-                Search
+                Tìm kiếm
               </Button>
             </Space>
           </div>

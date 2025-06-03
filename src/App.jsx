@@ -37,6 +37,9 @@ import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
 import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerStaffProfile";
 import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentManager";
 
+// LABORATORY TECHNICIAN PAGE
+import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
+import LaboratoryTechnicianProfile from "./Pages/LaboratoryTechnicianPage/LaboratoryTechnicianProfile/ViewProfileLaboratoryTechnician";
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -117,7 +120,12 @@ function App() {
           <Route index element={<ManagerProfile />} />
           <Route path="department-manager" element={<DepartmentManager />} />
         </Route>
-      </Routes>
+
+        {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
+          <Route path="/laboratory_technician" element={<LaboratoryTechnicianLayout/>}>
+          <Route index element={<LaboratoryTechnicianProfile />} />
+          </Route>
+        </Routes>
 
       {/* Setup toast */}
       <ToastContainer

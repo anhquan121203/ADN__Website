@@ -215,6 +215,14 @@ function Header() {
                           </li>
                         </ul>
                       </>
+                    ) : role === "laboratory_technician" ? (
+                      <>
+                        <ul>
+                          <li>
+                            <Link to="/laboratory_technician">Ky thuat vien</Link>
+                          </li>
+                        </ul>
+                      </>
                     ) : (
                       <>
                         <ul>

@@ -90,18 +90,18 @@ const View = () => {
 
   const columns = [
     {
-      title: 'Name',
+      title: 'Tên phòng ban',
       dataIndex: 'name',
       key: 'name',
       render: (name) => <Text strong>{name}</Text>,
     },
     {
-      title: 'Description',
+      title: 'Mô tả',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: 'Manager',
+      title: 'Quản lý',
       dataIndex: 'manager_id',
       key: 'manager',
       render: (manager) => (
@@ -109,19 +109,19 @@ const View = () => {
       ),
     },
     {
-      title: 'Created At',
+      title: 'Ngày tạo',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (date) => moment(date).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Updated At',
+      title: 'Ngày cập nhật',
       dataIndex: 'updated_at',
       key: 'updated_at',
       render: (date) => moment(date).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       render: (_, record) => (
         <Button
@@ -138,7 +138,7 @@ const View = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <Title level={2}>Department Management</Title>
+        <Title level={2}>Quản lý phòng ban</Title>
       </div>
       
       <Search onSearch={handleSearch} />
@@ -158,7 +158,7 @@ const View = () => {
               pageSize: pagination.pageSize,
               total: departments?.data?.pageInfo?.totalItems || 0,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} items`,
+              showTotal: (total) => `Tổng cộng ${total} mục`,
             }}
             onChange={handleTableChange}
             scroll={{ x: 'max-content' }}
