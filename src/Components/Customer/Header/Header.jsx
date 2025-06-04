@@ -144,7 +144,7 @@ function Header() {
           </li>
           <li>
             <Link
-              to="/booking"
+              to="/service"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               Xét nghiệm DNA
