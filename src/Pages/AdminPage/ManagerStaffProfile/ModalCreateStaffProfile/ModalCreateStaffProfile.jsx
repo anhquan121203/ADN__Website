@@ -31,7 +31,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
           pageSize: 100,
         },
         searchCondition: {
-          role: "laboratory_technician",
+          role: ["staff", "laboratory_technician"],
           is_verified: true,
           status: true,
           is_deleted: false,
@@ -96,7 +96,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
         >
           <Select placeholder="Chọn nhân viên">
             {accounts?.map((staff) => (
-              <Select.Option key={staff._id} value={staff._id}>
+              <Select.Option key={staff._id} value={String(staff._id)}>
                 {`${staff.first_name} ${staff.last_name}`}
               </Select.Option>
             ))}
@@ -110,7 +110,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
         >
           <Select placeholder="Chọn phòng ban">
             {departments?.map((depart) => (
-              <Select.Option key={depart._id} value={depart._id}>
+              <Select.Option key={depart._id} value={String(depart._id)}>
                 {depart.name}
               </Select.Option>
             ))}

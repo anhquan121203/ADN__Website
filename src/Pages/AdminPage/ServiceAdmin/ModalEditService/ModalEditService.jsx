@@ -6,11 +6,13 @@ import {
   InputNumber,
   Modal,
   Select,
+  Upload,
 } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import useService from "../../../../Hooks/useService";
+import { FaPlus } from "react-icons/fa";
 
 const ModalEditService = ({
   isModalOpen,
@@ -19,6 +21,8 @@ const ModalEditService = ({
   editService,
 }) => {
   const [form] = Form.useForm();
+  const [previewImage, setPreviewImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const { services, searchListService } = useService();
 
@@ -26,34 +30,56 @@ const ModalEditService = ({
     if (editService) {
       form.setFieldsValue({
         ...editService,
-        
+
         parent_service_id:
           typeof editService.parent_service_id === "object"
             ? editService.parent_service_id._id
             : editService.parent_service_id ?? null,
       });
+
+      setPreviewImage(editService.image_url || null);
+      setSelectedFile(null);
+
       searchListService({
-      is_active: true,
-      pageNum: 1,
-      pageSize: 10,
-      sort_by: "created_at",
-      sort_order: "desc",
-    });
+        is_active: true,
+        pageNum: 1,
+        pageSize: 10,
+        sort_by: "created_at",
+        sort_order: "desc",
+      });
     }
   }, [isModalOpen, editService]);
+
+  const handleUploadImage = ({ file }) => {
+    setSelectedFile(file);
+    setPreviewImage(URL.createObjectURL(file));
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      const formData = new FormData();
 
-      const response = await handleEdit(values);
+      Object.keys(values).forEach((key) => {
+        if (key !== "service_image") {
+          formData.append(key, values[key]);
+        }
+      });
+
+      if (selectedFile) {
+        formData.append("service_image", selectedFile);
+      } else if (editService?.service_image) {
+        // ảnh cũ → giữ nguyên nếu ko upload
+        formData.append("service_image", editService.service_image);
+      }
+
+      const response = await handleEdit(formData);
+
       if (response.success === true) {
         form.resetFields();
         handleCancel();
         toast.success("Cập nhật dịch vụ thành công");
-      } else {
-        toast.error(response.message || "Cập nhật dịch vụ không thành công!");
-      }
+      } 
     } catch (error) {
       toast.error("Cập nhật dịch vụ không thành công!");
     }
@@ -83,11 +109,18 @@ const ModalEditService = ({
         </Form.Item>
 
         <Form.Item
+          label="Link slug"
+          name="slug"
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
           label="Mô tả"
           name="description"
           rules={[{ required: true, message: "Vui lòng mô tả thiết bị!" }]}
         >
-          <Input />
+          <Input.TextArea />
         </Form.Item>
 
         <Form.Item label="Dịch vụ cha" name="parent_service_id">
@@ -145,6 +178,29 @@ const ModalEditService = ({
           ]}
         >
           <InputNumber style={{ width: "100%" }} />
+        </Form.Item>
+
+        <Form.Item label="Hình ảnh">
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Preview"
+              style={{
+                width: 100,
+                height: 100,
+                objectFit: "cover",
+                marginBottom: 10,
+              }}
+            />
+          )}
+          <Upload
+            beforeUpload={() => false}
+            showUploadList={false}
+            accept="image/*"
+            onChange={handleUploadImage}
+          >
+            <Button icon={<FaPlus />}>Chọn ảnh</Button>
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>

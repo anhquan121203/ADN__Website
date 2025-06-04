@@ -117,7 +117,7 @@ function ServiceAdmin() {
       }
       return result.data;
     } catch (error) {
-      toast.error("Thêm thiết bị không thành công!");
+      toast.error("Thêm dịch vụ không thành công!");
     }
   };
 
@@ -134,7 +134,7 @@ function ServiceAdmin() {
       // toast.error("Thêm tài khoản không thành công");
       return {
         success: false,
-        message: "Xem chi tiết tài khoản không thành công!",
+        message: "Xem chi tiết không thành công!",
       };
     }
   };
@@ -239,7 +239,7 @@ function ServiceAdmin() {
                     <td> {getType(item.type)} </td>
                     <td>{getSampleMethod(item.sample_method)} </td>
                     <td>{item.estimated_time} </td>
-                    <td>{item.price.toLocaleString()} VND </td>
+                    <td>{item.price?.toLocaleString()} VND </td>
                     <td><Image width={100} src={item.image_url || "N/A" }/></td>
                     <td>
                       <span

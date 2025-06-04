@@ -6,12 +6,14 @@ import {
   Empty,
   Divider,
   Space,
+  Image,
 } from "antd";
 import dayjs from "dayjs";
 
 const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
   const {
     _id,
+    slug,
     name,
     type,
     is_active,
@@ -20,6 +22,7 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
     estimated_time,
     parent_service_id,
     description,
+    image_url,
     created_at,
     updated_at,
   } = selectedService || {};
@@ -73,7 +76,7 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
         contentStyle={{ width: "70%" }}
         size="middle"
       >
-        <Descriptions.Item label="ID Dịch vụ">{_id}</Descriptions.Item>
+        <Descriptions.Item label="ID Dịch vụ">{slug}</Descriptions.Item>
         <Descriptions.Item label="Loại">{renderType(type)}</Descriptions.Item>
 
         <Descriptions.Item label="Tên">{name || "N/A"}</Descriptions.Item>
@@ -105,6 +108,10 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
 
         <Descriptions.Item label="Mô tả" span={2}>
           {description || "N/A"}
+        </Descriptions.Item>
+        <Descriptions.Item label="Hình ảnh" span={2}>
+          <Image width={200} src={image_url || "N/A"}/>
+          
         </Descriptions.Item>
 
         <Descriptions.Item label="Ngày tạo">

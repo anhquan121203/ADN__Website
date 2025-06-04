@@ -11,12 +11,13 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useService from "../../../../Hooks/useService";
+import { Editor } from "@tinymce/tinymce-react";
+import { FaPlus } from "react-icons/fa";
 
 const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
   const { services, searchListService } = useService();
-
 
   useEffect(() => {
     if (isModalOpen) {
@@ -32,19 +33,35 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
     }
   }, [isModalOpen]);
 
+  const handleUploadImage = ({ file }) => {
+    setSelectedFile(file);
+  };
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      const formData = new FormData();
 
-      const response = await handleAdd(values);
+      // Append all normal fields
+      Object.keys(values).forEach((key) => {
+        // xử lý ảnh ở dưới
+        if (key !== "service_image") {
+          formData.append(key, values[key]);
+        }
+      });
+
+      // Append image file nếu có
+      if (selectedFile) {
+        formData.append("service_image", selectedFile);
+      }
+
+      const response = await handleAdd(formData);
 
       if (response.success === true) {
         form.resetFields();
         handleCancel();
         toast.success("Tạo thiết bị mới thành công");
-      } else {
-        toast.error(response.message || "Tạo thiết bị mới không thành công!");
-      }
+      } 
     } catch (error) {
       toast.error("Tạo thiết bị mới không thành công!");
     }
@@ -73,12 +90,19 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           <Input />
         </Form.Item>
 
+         <Form.Item
+          label="Link slug"
+          name="slug"
+        >
+          <Input />
+        </Form.Item>
+
         <Form.Item
           label="Mô tả"
           name="description"
           rules={[{ required: true, message: "Vui lòng mô tả thiết bị!" }]}
         >
-          <Input />
+          <Input.TextArea />
         </Form.Item>
 
         <Form.Item label="Dịch vụ cha" name="parent_service_id">
@@ -136,6 +160,23 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           ]}
         >
           <InputNumber style={{ width: "100%" }} />
+        </Form.Item>
+
+        <Form.Item
+          label="Ảnh sản phẩm"
+          name="service_image"
+          rules={[
+            { required: true, message: "Vui lòng tải lên ảnh sản phẩm!" },
+          ]}
+        >
+          <Upload
+            beforeUpload={() => false}
+            showUploadList={true}
+            accept="image/*"
+            onChange={handleUploadImage}
+          >
+            <Button icon={<FaPlus />}> Chọn ảnh </Button>
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>

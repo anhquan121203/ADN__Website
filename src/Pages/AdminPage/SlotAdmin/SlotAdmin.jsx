@@ -196,16 +196,24 @@ function SlotAdmin() {
   return (
     <div className="manager-account">
       <div className="header-manager-account">
-        <button className="button-add__account" onClick={openAddModal}>
-          <FaPlus style={{ marginRight: "8px" }} />
-          Tạo thiết bị mới
-        </button>
+        <div className="title--managerAccount">
+          <h5>Danh sách ca trực</h5>
+        </div>
+
+        <div className="btn-managerAccount">
+          <button
+            className="button-add__account"
+            onClick={openAddModal}
+            style={{ width: 180, height: 45 }}
+          >
+            <FaPlus style={{ marginRight: 10 }} />
+            Thêm ca trực mới
+          </button>
+        </div>
+       
       </div>
 
       <div className="form-account">
-        <h1 style={{ marginBottom: 20, fontSize: 30 }}>
-          Quản lý danh sách ca trực
-        </h1>
         <div className="filter-slot">
           <FilterSlotAdmin
             filters={filters}
