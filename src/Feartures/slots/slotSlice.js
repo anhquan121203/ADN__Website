@@ -131,10 +131,29 @@ export const getSlotByStaffId = createAsyncThunk(
   }
 );
 
+// get available slots
+export const getAvailableSlots = createAsyncThunk(
+  "slot/getAvailableSlots",
+  async (params, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/slot/available`, {
+        params,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const slotSlice = createSlice({
   name: "SLOT",
   initialState: {
     slots: [],
+    availableSlots: [],
     loading: false,
     error: null,
     total: 0,
@@ -169,7 +188,6 @@ const slotSlice = createSlice({
         );
       })
 
-
       // Change status
       .addCase(changeStatus.fulfilled, (state, action) => {
         state.loading = false;
@@ -179,6 +197,20 @@ const slotSlice = createSlice({
         if (idx !== -1) {
           state.slots[idx] = action.payload.data;
         }
+      })
+
+      // Get available slots
+      .addCase(getAvailableSlots.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAvailableSlots.fulfilled, (state, action) => {
+        state.loading = false;
+        state.availableSlots = action.payload;
+      })
+      .addCase(getAvailableSlots.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
