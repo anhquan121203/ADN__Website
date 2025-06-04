@@ -24,6 +24,7 @@ function UserFilter({ filters, setFilters, onSearch }) {
 
       <Select
         placeholder="Chọn vai trò"
+        mode="multiple"
         value={filters.role}
         onChange={(value) => setFilters({ ...filters, role: value })}
         style={{ width: 160 }}

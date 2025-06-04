@@ -29,7 +29,7 @@ function Sidebar() {
           <nav className="nav-admin">
             <div className="nav-group">
               <Link to="/admin/dashboard-admin" className="nav-item active">
-                <MdOutlineDashboard /> Dashboard
+                <MdOutlineDashboard /> Doanh số
               </Link>
 
               {/* Quản lý người dùng */}
@@ -73,7 +73,7 @@ function Sidebar() {
               >
                 <div className="dropdown-left">
                   <MdOutlineMiscellaneousServices />
-                  <span>Quản lý thiết bị</span>
+                  <span>Quản lý dịch vụ</span>
                 </div>
                 <IoIosArrowDown
                   className={`dropdown-icon ${
@@ -85,13 +85,13 @@ function Sidebar() {
               {serviceDropdownOpen && (
                 <div className="submenu">
                   <Link to="/admin/service-admin" className="submenu-item">
-                    Danh sách thiết bị
+                    Danh sách dịch vụ
                   </Link>
                   <Link
                     to="/admin/service-admin/device-b"
                     className="submenu-item"
                   >
-                    Đặt lịch theo thiết bị
+                    Đặt lịch theo dịch vụ
                   </Link>
                 </div>
               )}

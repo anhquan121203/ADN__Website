@@ -1,9 +1,23 @@
+
 .form-account {
   width: 100%;
   /* height: 100%; */
-  margin-top: 20px;
+  margin-top: 40px;
   background-color: #ffffff;
   padding: 20px;
+}
+
+/* header manager */
+.header-manager-account{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title--managerAccount h5{
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .button-add__account {
@@ -29,6 +43,11 @@
   width: 100%;
   flex-direction: column;
   /* margin-left: 120px; */
+}
+
+/* filter account */
+.filter-account{
+  margin: 0 5px;
 }
 
 .table-account {

@@ -134,17 +134,19 @@ function ManagerStaffProfile() {
   };
 
   return (
-    <div className="manager-account">
+    <div className="manager-staffProfile">
       <div className="header-manager-account">
-        <button className="button-add__account" onClick={openAddModal}>
+        <div className="title--managerAccount"> <h5>Danh sách nhân viên</h5></div>
+        <div className="btn-managerAccount"><button className="button-add__account" onClick={openAddModal}>
           <FaPlus style={{ marginRight: "8px" }} />
           Tạo tài khoản
-        </button>
+        </button></div>
+
       </div>
 
       {/* Table account */}
       <div className="form-account">
-        <h2>Danh sách người dùng</h2>
+
         <div>
           <FilterStaffProfile
             filters={filters}
@@ -183,9 +185,8 @@ function ManagerStaffProfile() {
                     <td>{item.salary.toLocaleString()} VNĐ</td>
                     <td>
                       <span
-                        className={`status-badge ${
-                          item.status === "active" ? "active" : "inactive"
-                        }`}
+                        className={`status-badge ${item.status === "active" ? "active" : "inactive"
+                          }`}
                       >
                         {item.status}
                       </span>

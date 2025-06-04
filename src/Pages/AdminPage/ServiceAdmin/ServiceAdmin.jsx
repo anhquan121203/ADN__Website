@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Pagination, Popconfirm } from "antd";
+import { Image, Modal, Pagination, Popconfirm } from "antd";
 import "./ServiceAdmin.css";
 import { toast } from "react-toastify";
 
@@ -195,15 +195,20 @@ function ServiceAdmin() {
   return (
     <div className="manager-account">
       <div className="header-manager-account">
-        <button className="button-add__account" onClick={openAddModal}>
-          <FaPlus style={{ marginRight: "8px" }} />
-          Tạo thiết bị mới
-        </button>
+        <div className="title--managerAccount">
+          <h5>Danh sách dịch vụ</h5>
+        </div>
+
+        <div className="btn-managerAccount">
+          <button className="button-add__account" onClick={openAddModal} style={{ width: 180, height: 45 }}>
+            <FaPlus style={{ marginRight: 10 }} />
+            Tạo dịch vụ mới
+          </button>
+        </div>
       </div>
 
       {/* Table account */}
       <div className="form-account">
-        <h1>Danh sách dịch vụ</h1>
         <div className="account-container">
           <FilterService
             filters={filters}
@@ -220,6 +225,7 @@ function ServiceAdmin() {
                 <th>Phương thức</th>
                 <th>Thời gian</th>
                 <th>Giá tiền</th>
+                <th>Hình ảnh</th>
                 <th>Trạng thái</th>
                 <th>Hành động</th>
               </tr>
@@ -234,11 +240,11 @@ function ServiceAdmin() {
                     <td>{getSampleMethod(item.sample_method)} </td>
                     <td>{item.estimated_time} </td>
                     <td>{item.price.toLocaleString()} VND </td>
+                    <td><Image width={100} src={item.image_url || "N/A" }/></td>
                     <td>
                       <span
-                        className={`status-badge ${
-                          item.is_active ? "active" : "inactive"
-                        }`}
+                        className={`status-badge ${item.is_active ? "active" : "inactive"
+                          }`}
                       >
                         {item.is_active ? "ACTIVE" : "INACTIVE"}
                       </span>

@@ -39,10 +39,26 @@ function ManagerUser() {
     message.error("Click on No");
   };
 
+  useEffect(() => {
+    searchUserPag({
+      pageInfo: {
+        pageNum: currentPage,
+        pageSize: pageSize,
+      },
+      searchCondition: {
+        keyword: "",
+        role: [],
+        is_verified: true,
+        status: true,
+        is_deleted: false,
+      },
+    });
+  }, [currentPage]);
+
   // filter  user
   const [filters, setFilters] = useState({
     keyword: "",
-    role: "",
+    role: [],
     is_verified: "",
     status: true,
     is_deleted: false,
@@ -51,14 +67,14 @@ function ManagerUser() {
   const handleSearch = () => {
     const condition = {
       ...(filters.keyword && { keyword: filters.keyword }),
-      ...(filters.role && { role: filters.role }),
+      ...(filters.role.length > 0 && { role: filters.role }),
       ...(filters.status !== "" && { status: filters.status }),
       ...(filters.is_verified !== "" && { is_verified: filters.is_verified }),
       ...(filters.is_deleted !== "" && { is_deleted: filters.is_deleted }),
     };
 
     if (Object.keys(condition).length === 0) {
-      condition.keyword = " "; // fallback để tránh object rỗng
+      condition.keyword = " "; 
     }
 
     searchUserPag({
@@ -86,21 +102,7 @@ function ManagerUser() {
     }
   };
 
-  useEffect(() => {
-    searchUserPag({
-      pageInfo: {
-        pageNum: currentPage,
-        pageSize: pageSize,
-      },
-      searchCondition: {
-        keyword: "",
-        role: "",
-        is_verified: true,
-        status: true,
-        is_deleted: false,
-      },
-    });
-  }, [currentPage]);
+
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -212,21 +214,31 @@ function ManagerUser() {
   return (
     <div className="manager-account">
       <div className="header-manager-account">
-        <button className="button-add__account" onClick={openAddModal}>
-          <FaPlus style={{ marginRight: "8px" }} />
-          Tạo tài khoản
-        </button>
+        <div className="title--managerAccount">
+          <h5>Danh sách người dùng</h5>
+        </div>
+        <div className="btn--managerAccount">
+          <button className="button-add__account" onClick={openAddModal}>
+            <FaPlus style={{ marginRight: "8px" }} />
+            Tạo tài khoản
+          </button>
+        </div>
+
       </div>
 
       {/* Table account */}
       <div className="form-account">
-        <h5>Danh sách người dùng</h5>
+
         <div className="account-container">
-          <UserFilter
-            filters={filters}
-            setFilters={setFilters}
-            onSearch={handleSearch}
-          />
+          <div className="filter-account">
+            <UserFilter
+              filters={filters}
+              setFilters={setFilters}
+              onSearch={handleSearch}
+
+            />
+          </div>
+
 
           <table className="table-account">
             <thead>
@@ -250,9 +262,8 @@ function ManagerUser() {
                     <td>{getRoleName(item.role)} </td>
                     <td>
                       <span
-                        className={`status-badge ${
-                          item.status ? "active" : "inactive"
-                        }`}
+                        className={`status-badge ${item.status ? "active" : "inactive"
+                          }`}
                       >
                         {item.status ? "Hoạt động" : "Bị khóa"}
                       </span>
