@@ -41,11 +41,12 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
   }, [startDate, endDate]);
 
   useEffect(() => {
-    // Auto set type for administrative
-    if (serviceType === 'administrative') {
+    if (serviceType === 'administrative' || serviceType === 'civil') {
       setType('facility');
+    } else {
+      setType('');
     }
-  }, [serviceType]);
+  }, [serviceType, isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,7 +128,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
               moveRangeOnFirstSelection={false}
               ranges={range}
               minDate={new Date()}
-              maxDate={addDays(new Date(), 30)} // hoặc tuỳ ý
+              // maxDate={addDays(new Date(), 30)} // hoặc tuỳ ý
               showDateDisplay={false}
               rangeColors={['#00a9a4']}
               showMonthAndYearPickers={true}

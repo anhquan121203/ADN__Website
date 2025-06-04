@@ -14,6 +14,7 @@ import ForgotPassword from "./Pages/LoginRegister/ForgotPassword/ForgotPassword"
 import CustomerSideBarLayout from "./Layouts/CustomerSideBarLayout";
 import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 import CustomerService from "./Pages/CustomerPage/ServicePage/ServicePage";
+import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointment";
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
@@ -91,8 +92,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/service" element={<CustomerService />} />
         </Route>
+
         <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
+          <Route path="appointment" element={<ViewAppointment />} />
         </Route>
 
         {/* ADMIN ROUTES*********************************** */}

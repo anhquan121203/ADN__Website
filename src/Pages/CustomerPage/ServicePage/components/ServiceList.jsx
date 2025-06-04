@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AppointmentModal from "../../Appointment/AppointmentModal";
+import AppointmentModal from "../../CreateAppointment/AppointmentModal";
 
 const ServiceList = ({ services, loading }) => {
   const [selectedService, setSelectedService] = useState(null);
@@ -7,7 +7,15 @@ const ServiceList = ({ services, loading }) => {
   
   // Lọc chỉ những service có parent_service_id
   const filteredServices = services.filter(service => service.parent_service_id);
-  
+
+  // Pagination logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const servicesPerPage = 6;
+  const indexOfLastService = currentPage * servicesPerPage;
+  const indexOfFirstService = indexOfLastService - servicesPerPage;
+  const currentServices = filteredServices.slice(indexOfFirstService, indexOfLastService);
+  const totalPages = Math.ceil(filteredServices.length / servicesPerPage);
+
   return (
     <div className="flex-1 p-6">
       {loading ? (
@@ -15,8 +23,9 @@ const ServiceList = ({ services, loading }) => {
           <div className="text-xl text-gray-600">Đang tải...</div>
         </div>
       ) : (
+        <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
+          {currentServices.map((service) => (
             <div 
               key={service._id} 
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -59,7 +68,23 @@ const ServiceList = ({ services, loading }) => {
               </div>
             </div>
           ))}
-        </div>      )}
+        </div>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-[#00a9a4] text-white' : 'bg-gray-200 text-gray-700'}`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        )}
+        </>
+      )}
 
       {/* Appointment Modal */}
       {selectedService && (

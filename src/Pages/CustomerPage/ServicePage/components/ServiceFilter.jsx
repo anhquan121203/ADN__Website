@@ -2,7 +2,7 @@ import React from "react";
 
 const ServiceFilter = ({ activeCategory, onCategoryChange }) => {
   return (
-    <div className="w-80 bg-white shadow-lg p-6 max-h-full w-auto">
+    <div className=" bg-white shadow-lg p-6 max-h-full w-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Dịch vụ xét nghiệm</h2>
       <ul className="space-y-4">
         <li
