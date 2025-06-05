@@ -38,6 +38,7 @@ const ModalEditStaffProfile = ({
         const formattedData = {
           ...editStaffProfile,
           //   id user
+          _id: editStaffProfile._id,
           user_id:
             editStaffProfile.user_id?._id || editStaffProfile.user_id || null,
           // id depart
@@ -94,6 +95,10 @@ const ModalEditStaffProfile = ({
       ]}
     >
       <Form form={form} layout="vertical">
+        <Form.Item name="_id">
+          <Input />
+        </Form.Item>
+
         <Form.Item
           label="Phòng ban"
           name="department_id"

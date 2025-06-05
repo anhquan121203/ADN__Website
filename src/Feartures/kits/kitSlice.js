@@ -3,13 +3,13 @@ import axios from "axios";
 import { API_BASE_URL } from "../../Constants/apiConstants";
 
 // Async thunks
-export const searchService = createAsyncThunk(
-  "service/searchService",
-  async (listService, { rejectWithValue }) => {
+export const searchKit = createAsyncThunk(
+  "kits/searchKit",
+  async (listKit, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/api/service/search`, {
-        params: listService,
+      const response = await axios.get(`${API_BASE_URL}/api/kit/search`, {
+        params: listKit,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -22,19 +22,19 @@ export const searchService = createAsyncThunk(
   }
 );
 
-// create service
-export const createService = createAsyncThunk(
-  "service/createService",
-  async (createNewService, { rejectWithValue }) => {
+// // create kit
+export const createKit = createAsyncThunk(
+  "kits/createKit",
+  async (createNewKit, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.post(
-        `${API_BASE_URL}/api/service/create`,
-        createNewService,
+        `${API_BASE_URL}/api/kit/create`,
+        createNewKit,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -46,12 +46,12 @@ export const createService = createAsyncThunk(
 );
 
 // get by ID
-export const getServiceById = createAsyncThunk(
-  "service/getServiceById",
+export const getKitById = createAsyncThunk(
+  "kits/getKitById",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API_BASE_URL}/api/service/${id}`, {
+      const response = await axios.get(`${API_BASE_URL}/api/kit/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -65,18 +65,18 @@ export const getServiceById = createAsyncThunk(
 );
 
 // update service
-export const updateService = createAsyncThunk(
-  "service/updateService",
+export const updateKit = createAsyncThunk(
+  "kits/updateKit",
   async ({ id, updateData }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.put(
-        `${API_BASE_URL}/api/service/${id}`,
+        `${API_BASE_URL}/api/kit/${id}`,
         updateData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         }
       );
@@ -88,12 +88,12 @@ export const updateService = createAsyncThunk(
 );
 
 // Delete service
-export const deleteService = createAsyncThunk(
-  "service/deleteService",
+export const deleteKit = createAsyncThunk(
+  "kits/deleteKit",
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${API_BASE_URL}/api/service/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/kit/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -108,14 +108,14 @@ export const deleteService = createAsyncThunk(
 
 // changle status
 export const changeStatus = createAsyncThunk(
-  "service/changeStatus",
+  "kits/changeStatus",
   async ({ id, status }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.patch(
-        `${API_BASE_URL}/api/service/${id}/status`,
+        `${API_BASE_URL}/api/kit/${id}/status`,
         {
-          is_active: status,
+          status: status,
         },
         {
           headers: {
@@ -131,10 +131,10 @@ export const changeStatus = createAsyncThunk(
   }
 );
 
-const serviceSlice = createSlice({
-  name: "SERVICE",
+const kitSlice = createSlice({
+  name: "KIT",
   initialState: {
-    services: [],
+    kits: [],
     loading: false,
     error: null,
     total: 0,
@@ -142,37 +142,37 @@ const serviceSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(searchService.pending, (state) => {
+      .addCase(searchKit.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchService.fulfilled, (state, action) => {
+      .addCase(searchKit.fulfilled, (state, action) => {
         state.loading = false;
-        state.services = action.payload.pageData; // Lấy danh sách service
+        state.kits = action.payload.pageData; // Lấy danh sách service
         state.total = action.payload.pageInfo.totalItems; // Tổng số service
       })
-      .addCase(searchService.rejected, (state, action) => {
+      .addCase(searchKit.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch accounts";
       })
 
       //  createService
-      .addCase(createService.fulfilled, (state, action) => {
+      .addCase(createKit.fulfilled, (state, action) => {
         state.loading = false;
-        state.services.push(action.payload);
+        state.kits.push(action.payload);
       })
 
       // Update service
-      .addCase(updateService.fulfilled, (state, action) => {
-        state.services = state.services.map((service) =>
-          service._id === action.payload._id ? action.payload : service
+      .addCase(updateKit.fulfilled, (state, action) => {
+        state.kits = state.kits.map((kit) =>
+          kit._id === action.payload._id ? action.payload : kit
         );
       })
 
       // delete service
-      .addCase(deleteService.fulfilled, (state, action) => {
-        state.services = state.services.filter(
-          (service) => service._id !== action.payload
+      .addCase(deleteKit.fulfilled, (state, action) => {
+        state.kits = state.kits.filter(
+          (kit) => kit._id !== action.payload
         );
       })
 
@@ -183,10 +183,10 @@ const serviceSlice = createSlice({
           (u) => u._id === action.payload.data?._id
         );
         if (idx !== -1) {
-          state.services[idx] = action.payload.data;
+          state.kits[idx] = action.payload.data;
         }
       });
   },
 });
 
-export default serviceSlice;
+export default kitSlice;

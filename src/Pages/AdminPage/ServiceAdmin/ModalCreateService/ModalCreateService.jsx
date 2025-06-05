@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useService from "../../../../Hooks/useService";
-import { Editor } from "@tinymce/tinymce-react";
 import { FaPlus } from "react-icons/fa";
 
 const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {

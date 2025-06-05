@@ -90,32 +90,33 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Nhân viên"
-          name="user_id"
-          rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
-        >
-          <Select placeholder="Chọn nhân viên">
-            {accounts?.map((staff) => (
-              <Select.Option key={staff._id} value={String(staff._id)}>
-                {`${staff.first_name} ${staff.last_name}`}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
+  label="Nhân viên"
+  name="user_id"
+  rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
+>
+  <Select placeholder="Chọn nhân viên" optionFilterProp="children">
+    {accounts?.map((staff) => (
+      <Select.Option key={staff._id} value={staff._id.toString()}>
+        {`${staff.first_name} ${staff.last_name}`}
+      </Select.Option>
+    ))}
+  </Select>
+</Form.Item>
 
-        <Form.Item
-          label="Phòng ban"
-          name="department_id"
-          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
-        >
-          <Select placeholder="Chọn phòng ban">
-            {departments?.map((depart) => (
-              <Select.Option key={depart._id} value={String(depart._id)}>
-                {depart.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
+<Form.Item
+  label="Phòng ban"
+  name="department_id"
+  rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+>
+  <Select placeholder="Chọn phòng ban" optionFilterProp="children">
+    {departments?.map((depart) => (
+      <Select.Option key={depart._id} value={depart._id.toString()}>
+        {depart.name}
+      </Select.Option>
+    ))}
+  </Select>
+</Form.Item>
+
 
         <Form.Item
           label="Công việc"

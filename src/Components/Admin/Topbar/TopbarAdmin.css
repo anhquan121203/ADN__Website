@@ -195,3 +195,10 @@
   border: none;
   border-top: 2px solid #787a7e;
 }
+
+.profile-link{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}

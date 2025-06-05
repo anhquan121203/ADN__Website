@@ -21,6 +21,7 @@ import ManagerUser from "./Pages/AdminPage/ManagerUser/ManagerUser";
 import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
 import DepartmentAdmin from "./Pages/AdminPage/DepartmentAdmin/DepartmentAdmin";
 import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
+import KitAdmin from "./Pages/AdminPage/KitAdmin/KitAdmin";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
@@ -40,6 +41,7 @@ import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentM
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
 import LaboratoryTechnicianProfile from "./Pages/LaboratoryTechnicianPage/LaboratoryTechnicianProfile/ViewProfileLaboratoryTechnician";
+
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -104,6 +106,7 @@ function App() {
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
           <Route path="manager-staff-profile" element={<ManagerStaffProfile />} />
+          <Route path="kit-admin" element={<KitAdmin />} />
         </Route>
 
         {/* STAFF ROUTES*********************************** */}

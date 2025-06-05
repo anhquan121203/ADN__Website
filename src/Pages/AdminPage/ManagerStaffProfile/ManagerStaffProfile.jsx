@@ -180,9 +180,9 @@ function ManagerStaffProfile() {
                         </span>
                       </div>
                     </td>
-                    <td>{item.department_id.name}</td>
+                    <td>{item.department_id?.name}</td>
                     <td>{item.job_title}</td>
-                    <td>{item.salary.toLocaleString()} VNĐ</td>
+                    <td>{item.salary} VNĐ</td>
                     <td>
                       <span
                         className={`status-badge ${item.status === "active" ? "active" : "inactive"
