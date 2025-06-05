@@ -8,11 +8,14 @@ import {
   getSlotByStaffId,
   searchSlot,
   updateSlot,
+  getAvailableSlots,
 } from "../Feartures/slots/slotSlice";
 
 const useSlot = () => {
   const dispatch = useDispatch();
-  const { slots, loading, error, total } = useSelector((state) => state.slot);
+  const { slots, loading, error, total } = useSelector(
+    (state) => state.slot
+  );
 
   // CRUD SLOT
   // const searchListSlot = (searchPayload) => {
@@ -74,7 +77,18 @@ const useSlot = () => {
     } catch (error) {
       console.error("Error create Staff");
     }
-  };
+  };  
+  const fetchAvailableSlots = useCallback(
+    async (params) => {
+      try {
+        const response = await dispatch(getAvailableSlots(params)).unwrap();
+        return { success: true, data: response };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    },
+    [dispatch]
+  );
 
   return {
     slots,
@@ -86,7 +100,8 @@ const useSlot = () => {
     slotById,
     updateSlotById,
     changeStatusSlot,
-    slotByStaffId,
+    slotByStaffId,   
+    fetchAvailableSlots,
   };
 };
 

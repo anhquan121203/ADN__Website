@@ -39,6 +39,12 @@ function Sidebarcus() {
               >
                 <FaUserAlt /> Dịch vụ đã đăng ký
               </Link>
+              <Link
+                to="/customer/appointment"
+                className="customer-nav-item"
+              >
+                <FaUserAlt />Đặt lịch
+              </Link>
             </div>
           </nav>
         </div>
