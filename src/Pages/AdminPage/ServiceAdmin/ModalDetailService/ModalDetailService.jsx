@@ -110,7 +110,7 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
           {description || "N/A"}
         </Descriptions.Item>
         <Descriptions.Item label="Hình ảnh" span={2}>
-          <Image width={200} src={image_url || "N/A"}/>
+          <Image width={200} height={150} src={image_url || "https://coffective.com/wp-content/uploads/2018/06/default-featured-image.png.jpg"}/>
           
         </Descriptions.Item>
 

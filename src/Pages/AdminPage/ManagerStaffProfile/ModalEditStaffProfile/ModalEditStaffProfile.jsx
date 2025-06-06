@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import useDepartment from "../../../../Hooks/useDepartment";
 import moment from "moment";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
+import { get } from "lodash";
 
 const ModalEditStaffProfile = ({
   isModalOpen,
@@ -19,10 +21,12 @@ const ModalEditStaffProfile = ({
   editStaffProfile,
 }) => {
   const [form] = Form.useForm();
+  const { staffLabTech, getListStaffLabTech } = useStaffProfile();
   const { departments, searchListDepartment } = useDepartment();
 
   useEffect(() => {
     if (isModalOpen) {
+      getListStaffLabTech();
       // danh sách phòng ban
       searchListDepartment({
         is_deleted: false,
@@ -38,9 +42,9 @@ const ModalEditStaffProfile = ({
         const formattedData = {
           ...editStaffProfile,
           //   id user
-          _id: editStaffProfile._id,
-          user_id:
-            editStaffProfile.user_id?._id || editStaffProfile.user_id || null,
+          _id: String(
+            editStaffProfile.user_id?._id || editStaffProfile.user_id || ""
+          ),
           // id depart
           department_id:
             editStaffProfile.department_id?._id ||

@@ -2,16 +2,21 @@ import React, { useEffect } from "react";
 import { Select, InputNumber, Button } from "antd";
 import Search from "antd/es/input/Search";
 
-function FilterService({ filters, setFilters, onSearch }) {
+function FilterService({ filters, setFilters, onSearch, setIsFiltering  }) {
 
   const defaultFilters = {
     keyword: "",
-    type: undefined,
     sample_method: undefined,
     is_active: true,
     min_price: undefined,
     max_price: undefined,
   };
+
+  const handleReset = () => {
+    setFilters(defaultFilters);
+    setIsFiltering(false);  // reset trạng thái lọc
+  };
+
 
   return (
     <div
@@ -37,13 +42,13 @@ function FilterService({ filters, setFilters, onSearch }) {
         value={filters.type}
         onChange={(value) => setFilters({ ...filters, type: value })}
         style={{ width: 160 }}
-        allowClear
+        
       >
         <Select.Option value="civil">Dân sự</Select.Option>
         <Select.Option value="administrative">Hành chính</Select.Option>
       </Select>
 
-      <Select
+      {/* <Select
         placeholder="Phương thức lấy mẫu"
         value={filters.sample_method}
         onChange={(value) => setFilters({ ...filters, sample_method: value })}
@@ -53,14 +58,14 @@ function FilterService({ filters, setFilters, onSearch }) {
         <Select.Option value="self_collected">Tự lấy mẫu</Select.Option>
         <Select.Option value="facility_collected">Tại cơ sở</Select.Option>
         <Select.Option value="home_collected">Tại nhà</Select.Option>
-      </Select>
+      </Select> */}
 
       <Select
         placeholder="Trạng thái"
         value={filters.is_active}
         onChange={(value) => setFilters({ ...filters, is_active: value })}
         style={{ width: 140 }}
-        allowClear
+        
       >
         <Select.Option value={true}>Hoạt động</Select.Option>
         <Select.Option value={false}>Không hoạt động</Select.Option>
@@ -97,7 +102,11 @@ function FilterService({ filters, setFilters, onSearch }) {
         Tìm kiếm
       </Button>
 
-      <Button color="cyan" variant="solid" onClick={() => setFilters(defaultFilters)}>
+      {/* <Button color="cyan" variant="solid" onClick={() => setFilters(defaultFilters)}>
+        Reset
+      </Button> */}
+
+      <Button color="cyan" variant="solid" onClick={handleReset}>
         Reset
       </Button>
     </div>

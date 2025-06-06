@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createStaffProfile,
   getStaffById,
+  listStaffLabTech,
   searchStaff,
   updateStaffProfile,
 } from "../Feartures/staffProfile/staffProfileSlice";
@@ -12,6 +13,9 @@ const useStaffProfile = () => {
   const { staffProfile, loading, error, total } = useSelector(
     (state) => state.staffProfile
   );
+
+  const { staffLabTech } = useSelector((state) => state.staffProfile);
+
 
   // get list staff profile
   //   const getListStaff = (searchPayload) => {
@@ -56,8 +60,13 @@ const useStaffProfile = () => {
     }
   };
 
+  const getListStaffLabTech = useCallback(() => {
+    dispatch(listStaffLabTech());
+  }, [dispatch]);
+
   return {
     staffProfile,
+    staffLabTech,
     loading,
     error,
     total,
@@ -65,6 +74,7 @@ const useStaffProfile = () => {
     addNewStaffProfile,
     staffProfileById,
     updateStaffById,
+    getListStaffLabTech,
   };
 };
 

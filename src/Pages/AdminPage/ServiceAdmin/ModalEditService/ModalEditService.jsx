@@ -61,15 +61,24 @@ const ModalEditService = ({
       const formData = new FormData();
 
       Object.keys(values).forEach((key) => {
+        const value = values[key];
+
+        //nếu là parent_service_id null -> undefined
+        if (
+          key === "parent_service_id" &&
+          (value === null || value === undefined)
+        ) {
+          return;
+        }
+
         if (key !== "service_image") {
-          formData.append(key, values[key]);
+          formData.append(key, value);
         }
       });
 
       if (selectedFile) {
         formData.append("service_image", selectedFile);
       } else if (editService?.service_image) {
-        // ảnh cũ → giữ nguyên nếu ko upload
         formData.append("service_image", editService.service_image);
       }
 
@@ -79,7 +88,9 @@ const ModalEditService = ({
         form.resetFields();
         handleCancel();
         toast.success("Cập nhật dịch vụ thành công");
-      } 
+      } else {
+        toast.error(response.message || "Cập nhật dịch vụ không thành công!");
+      }
     } catch (error) {
       toast.error("Cập nhật dịch vụ không thành công!");
     }
@@ -108,10 +119,7 @@ const ModalEditService = ({
           <Input />
         </Form.Item>
 
-        <Form.Item
-          label="Link slug"
-          name="slug"
-        >
+        <Form.Item label="Link slug" name="slug">
           <Input />
         </Form.Item>
 
