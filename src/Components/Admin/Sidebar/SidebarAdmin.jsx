@@ -98,17 +98,20 @@ function Sidebar() {
 
               {/* Quản lý slot */}
               <Link to="/admin/slot-admin" className="nav-item">
-                <CiCalendar  /> Lịch làm việc
+                <CiCalendar /> Lịch làm việc
               </Link>
 
-{/* Quản lý phòng ban */}
+              {/* Quản lý phòng ban */}
               <Link to="/admin/department-admin" className="nav-item">
                 <HiOutlineOfficeBuilding /> Quản lý phòng ban
               </Link>
 
               {/*  */}
               <Link to="/admin/kit-admin" className="nav-item">
-                <IoIosMedkit  /> Quản lý dụng cụ Y tế
+                <IoIosMedkit /> Quản lý dụng cụ Y tế
+              </Link>
+              <Link to="/admin/blog" className="nav-item">
+                <MdOutlineMiscellaneousServices /> Quản lý blog
               </Link>
             </div>
           </nav>

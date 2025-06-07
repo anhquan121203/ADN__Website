@@ -1,0 +1,31 @@
+.blog-admin {
+  padding: 24px 0;
+}
+.admin-table-container {
+  padding: 24px;
+  margin-bottom: 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+.table-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1890ff;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f9f9f9;
+}
+.admin-table th,
+.admin-table td {
+  border: 1px solid #e7e7e7;
+  padding: 8px 12px;
+  text-align: left;
+}
+.admin-table th {
+  background: #e6f7ff;
+  font-weight: bold;
+}

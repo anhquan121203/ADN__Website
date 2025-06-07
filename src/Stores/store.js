@@ -8,19 +8,20 @@ import staffSlice from "../Feartures/staff/staffSlice";
 import staffProfileSlice from "../Feartures/staffProfile/staffProfileSlice";
 import kitSlice from "../Feartures/kits/kitSlice";
 import appointmentSlice from "../Feartures/appoinment/appoimentSlice";
+import blogsSlice from "../Feartures/blog/blogSlice";
 
 export const store = configureStore({
-    reducer: {
-        // Add your reducers here
-        auth: authSlice.reducer,
-        account: adminSlice.reducer,
-        service: serviceSlice.reducer,
-        slot: slotSlice.reducer,
-        department: departmentSlice.reducer,
-        staff: staffSlice.reducer,
-        staffProfile: staffProfileSlice.reducer,
-        kit: kitSlice.reducer,
-        appointment: appointmentSlice.reducer,
-    },
-    
-})
+  reducer: {
+    // Add your reducers here
+    auth: authSlice.reducer,
+    account: adminSlice.reducer,
+    service: serviceSlice.reducer,
+    slot: slotSlice.reducer,
+    department: departmentSlice.reducer,
+    staff: staffSlice.reducer,
+    staffProfile: staffProfileSlice.reducer,
+    kit: kitSlice.reducer,
+    appointment: appointmentSlice.reducer,
+    blog: blogsSlice.reducer,
+  },
+});
