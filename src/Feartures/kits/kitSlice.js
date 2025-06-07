@@ -131,6 +131,29 @@ export const changeStatus = createAsyncThunk(
   }
 );
 
+// return service
+export const returnKit = createAsyncThunk(
+  "kits/returnKit",
+  async ({ id, returnData }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.post(
+        `${API_BASE_URL}/api/kit/${id}/return`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const kitSlice = createSlice({
   name: "KIT",
   initialState: {
@@ -171,9 +194,7 @@ const kitSlice = createSlice({
 
       // delete service
       .addCase(deleteKit.fulfilled, (state, action) => {
-        state.kits = state.kits.filter(
-          (kit) => kit._id !== action.payload
-        );
+        state.kits = state.kits.filter((kit) => kit._id !== action.payload);
       })
 
       // Change status
@@ -185,6 +206,13 @@ const kitSlice = createSlice({
         if (idx !== -1) {
           state.kits[idx] = action.payload.data;
         }
+      })
+
+      // return kit
+      .addCase(returnKit.fulfilled, (state, action) => {
+        state.kits = state.kits.map((kit) => {
+          kit._id === action.payload._id ? action.payload : kit;
+        });
       });
   },
 });

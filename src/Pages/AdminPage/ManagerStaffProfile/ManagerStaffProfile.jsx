@@ -117,7 +117,12 @@ function ManagerStaffProfile() {
       const result = await updateStaffById(staffData._id, staffData);
       if (result.success) {
         setIsEditModalOpen(false);
+        getListStaff({
+          pageNum: currentPage,
+          pageSize: pageSize,
+        });
       }
+      return result.data;
     } catch (error) {
       return {
         success: false,
@@ -196,7 +201,7 @@ function ManagerStaffProfile() {
                     </td>
                     <td>{item.department_id?.name}</td>
                     <td>{item.job_title}</td>
-                    <td>{item.salary} VNĐ</td>
+                    <td>{item.salary.toLocaleString()} VNĐ</td>
                     <td>{renderStatus(item.status)}</td>
 
                     <td>

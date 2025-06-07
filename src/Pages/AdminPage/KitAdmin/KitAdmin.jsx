@@ -1,5 +1,6 @@
 import React, { use, useEffect, useState } from "react";
 import { Modal, Pagination, Popconfirm, Select, Switch, Tag } from "antd";
+import "./KitAdmin.css";
 
 import { FaPlus, FaRegEye } from "react-icons/fa";
 
@@ -10,6 +11,8 @@ import { format } from "date-fns";
 import { toast } from "react-toastify";
 import ModalEditKit from "./ModalEditKit/ModalEditKit";
 import ModalDetailKit from "./ModalDetailKit/ModalDetailKit";
+import FilterKit from "./FilterKit/FilterKit";
+import ModalReturnKit from "./ModalReturnKit/ModalReturnKit";
 
 function KitAdmin() {
   const {
@@ -22,6 +25,7 @@ function KitAdmin() {
     kitById,
     deletekitById,
     changeStatusKit,
+    returnKitById,
     total,
   } = useKit();
 
@@ -32,12 +36,28 @@ function KitAdmin() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
 
-  const cancel = (e) => {
-    console.log(e);
-    message.error("Click on No");
+
+  // trang thái xác nhận thay đổi dụng cụ
+  const [confirmChangeKit, setConfirmChangeKit] = useState(null);
+  const [pendingStatus, setPendingStatus] = useState(null);
+
+  const confirmChangeStatus = async () => {
+    if (confirmChangeKit && pendingStatus) {
+      await handleChangeStatus(confirmChangeKit, pendingStatus);
+      setConfirmChangeKit(null);
+      setPendingStatus(null);
+    }
   };
 
+  const cancelChangeStatus = () => {
+    setConfirmChangeKit(null);
+    setPendingStatus(null);
+  };
+
+
+  // danh sách dụng cụ 
   useEffect(() => {
     searchListKit({
       pageNum: currentPage,
@@ -46,10 +66,20 @@ function KitAdmin() {
     });
   }, [currentPage]);
 
-  //   assigned
-  // used
-  // returned
-  // damaged
+  const [filters, setFilters] = useState({
+    code: "",
+    status: "available",
+    appointment_id: "",
+    assigned_to_user_id: "",
+  });
+
+  const handleSearch = () => {
+    searchListKit({
+      ...filters,
+      pageNum: currentPage,
+      pageSize: pageSize,
+    })
+  }
 
   const renderStatus = (status) => {
     switch (status) {
@@ -75,10 +105,11 @@ function KitAdmin() {
       if (result.success) {
         toast.success("Tạo dụng cụ thành công!");
         searchListKit({
+          ...filters,
           pageNum: currentPage,
           pageSize: pageSize,
-          status: "available",
         });
+        return { success: true };
       } else {
         toast.error("Tạo dụng cụ không thành công!");
       }
@@ -179,6 +210,31 @@ function KitAdmin() {
     }
   };
 
+  // return kit
+  const openReturnModal = (kitData) => {
+    setSelectedKit(kitData);
+    setIsReturnModalOpen(true);
+  }
+
+  const handleReturnKit = async (returnData) => {
+    try {
+      const result = await returnKitById(selectedKit._id, returnData);
+      if (result.success) {
+        setIsReturnModalOpen(false);
+        toast.success("Trả dụng cụ thành công!");
+        searchListKit({
+          pageNum: currentPage,
+          
+          pageSize: pageSize,
+          status: "available",
+        });
+        return { success: true };
+      }
+    } catch (error) {
+      return { success: false, message: "Trả dụng cụ không thành công!" };
+    }
+  }
+
   return (
     <div className="manager-account">
       <div className="header-manager-account">
@@ -199,6 +255,13 @@ function KitAdmin() {
 
       {/* Table account */}
       <div className="form-account">
+
+        <div className="filter-kitAdmin">
+          <FilterKit filters={filters}
+            onSearch={handleSearch}
+            setFilters={setFilters} />
+        </div>
+
         <div className="account-container">
           <div className="filter-account"></div>
 
@@ -220,21 +283,40 @@ function KitAdmin() {
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item.code}</td>
                     <td>
-                      <Select
-                        value={item.status}
-                        style={{ width: 120 }}
-                        onChange={(value) => handleChangeStatus(item, value)}
-                      >
-                        <Select.Option value="available">
-                          Còn hàng
-                        </Select.Option>
-                        <Select.Option value="assigned">Đã gắn</Select.Option>
-                        <Select.Option value="used">Đã sử dụng</Select.Option>
-                        <Select.Option value="returned">
-                          Đã trả hàng
-                        </Select.Option>
-                        <Select.Option value="damaged">Đã hỏng</Select.Option>
-                      </Select>
+                      {confirmChangeKit?._id === item._id ? (
+                        <Popconfirm
+                          title="Xác nhận thay đổi trạng thái"
+                          description={`Bạn có chắc chắn muốn đổi trạng thái sang "${renderStatus(pendingStatus)?.props?.children}"?`}
+                          onConfirm={confirmChangeStatus}
+                          onCancel={cancelChangeStatus}
+                          okText="Đồng ý"
+                          cancelText="Hủy"
+                          open
+                        >
+                          <Select
+                            value={item.status}
+                            style={{ width: 120 }}
+                            open={false}
+                          />
+                        </Popconfirm>
+                      ) : (
+                        <Select
+                          value={item.status}
+                          style={{ width: 120 }}
+                          onChange={(value) => {
+                            setPendingStatus(value);
+                            setConfirmChangeKit(item);
+                          }}
+                        >
+                          <Select.Option value="available">Còn hàng</Select.Option>
+                          <Select.Option value="assigned">Đã gắn</Select.Option>
+                          <Select.Option value="used">Đã sử dụng</Select.Option>
+                          <Select.Option value="returned">Đã trả hàng</Select.Option>
+                          <Select.Option value="damaged">Đã hỏng</Select.Option>
+                        </Select>
+                      )}
+
+
                     </td>
 
                     <td>
@@ -273,16 +355,8 @@ function KitAdmin() {
                           onClick={() => handleDetailKit(item._id)}
                         />
 
-                        <Popconfirm
-                          title="Khóa tài khoản"
-                          description="Bạn có muốn khóa tài khoản này không?"
-                          // onConfirm={() => handleChangeStatus(item)}
-                          onCancel={cancel}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <MdBlock className="icon-admin" />
-                        </Popconfirm>
+                        <span className="action-returnKit" onClick={() => openReturnModal(item)}>Trả hàng</span>
+
                       </div>
                     </td>
                   </tr>
@@ -321,6 +395,14 @@ function KitAdmin() {
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
           selectedKit={selectedKit}
+        />
+
+        {/* Return Kit */}
+        <ModalReturnKit
+          isModalOpen={isReturnModalOpen}
+          handleCancel={() => setIsReturnModalOpen(false)}
+          handleReturn={handleReturnKit}
+          editKit={selectedKit}
         />
 
         {/* Modal delete kit */}

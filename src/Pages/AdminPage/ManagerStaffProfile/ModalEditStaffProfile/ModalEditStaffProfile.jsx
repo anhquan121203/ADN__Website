@@ -42,9 +42,8 @@ const ModalEditStaffProfile = ({
         const formattedData = {
           ...editStaffProfile,
           //   id user
-          _id: String(
-            editStaffProfile.user_id?._id || editStaffProfile.user_id || ""
-          ),
+          _id: editStaffProfile._id || "",
+          
           // id depart
           department_id:
             editStaffProfile.department_id?._id ||
@@ -70,7 +69,10 @@ const ModalEditStaffProfile = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const response = await handleEdit(values);
+      const staffId = values._id;
+      const { _id, ...updateData } = values;
+
+      const response = await handleEdit({ _id: staffId, ...updateData });
 
       if (response.success === true) {
         form.resetFields();

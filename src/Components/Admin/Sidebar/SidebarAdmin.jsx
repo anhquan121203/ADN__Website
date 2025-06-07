@@ -11,10 +11,12 @@ import { IoIosArrowDown, IoIosMedkit } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { CiCalendar } from "react-icons/ci";
+import { IoDocumentAttachOutline } from "react-icons/io5";
 
 function Sidebar() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const [blogDropdownOpen, setBlogDropdownOpen] = useState(false);
 
   return (
     <div>
@@ -34,9 +36,8 @@ function Sidebar() {
 
               {/* Quản lý người dùng */}
               <div
-                className={`nav-item dropdown-service ${
-                  accountDropdownOpen ? "open" : ""
-                }`}
+                className={`nav-item dropdown-service ${accountDropdownOpen ? "open" : ""
+                  }`}
                 onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
               >
                 <div className="dropdown-left">
@@ -44,9 +45,8 @@ function Sidebar() {
                   <span>Quản lý tài khoản</span>
                 </div>
                 <IoIosArrowDown
-                  className={`dropdown-icon ${
-                    accountDropdownOpen ? "rotate" : ""
-                  }`}
+                  className={`dropdown-icon ${accountDropdownOpen ? "rotate" : ""
+                    }`}
                 />
               </div>
 
@@ -66,9 +66,8 @@ function Sidebar() {
 
               {/*Quản lý thiết bị */}
               <div
-                className={`nav-item dropdown-service ${
-                  serviceDropdownOpen ? "open" : ""
-                }`}
+                className={`nav-item dropdown-service ${serviceDropdownOpen ? "open" : ""
+                  }`}
                 onClick={() => setServiceDropdownOpen(!serviceDropdownOpen)}
               >
                 <div className="dropdown-left">
@@ -76,9 +75,8 @@ function Sidebar() {
                   <span>Quản lý dịch vụ</span>
                 </div>
                 <IoIosArrowDown
-                  className={`dropdown-icon ${
-                    serviceDropdownOpen ? "rotate" : ""
-                  }`}
+                  className={`dropdown-icon ${serviceDropdownOpen ? "rotate" : ""
+                    }`}
                 />
               </div>
 
@@ -98,18 +96,48 @@ function Sidebar() {
 
               {/* Quản lý slot */}
               <Link to="/admin/slot-admin" className="nav-item">
-                <CiCalendar  /> Lịch làm việc
+                <CiCalendar /> Lịch làm việc
               </Link>
 
-{/* Quản lý phòng ban */}
+              {/* Quản lý phòng ban */}
               <Link to="/admin/department-admin" className="nav-item">
                 <HiOutlineOfficeBuilding /> Quản lý phòng ban
               </Link>
 
               {/*  */}
               <Link to="/admin/kit-admin" className="nav-item">
-                <IoIosMedkit  /> Quản lý dụng cụ Y tế
+                <IoIosMedkit /> Quản lý dụng cụ Y tế
               </Link>
+
+              {/*Quản lý thiết bị */}
+              <div
+                className={`nav-item dropdown-service ${blogDropdownOpen ? "open" : ""
+                  }`}
+                onClick={() => setBlogDropdownOpen(!blogDropdownOpen)}
+              >
+                <div className="dropdown-left">
+                  <IoDocumentAttachOutline   />
+                  <span>Quản lý blogger</span>
+                </div>
+                <IoIosArrowDown
+                  className={`dropdown-icon ${blogDropdownOpen ? "rotate" : ""
+                    }`}
+                />
+              </div>
+
+              {blogDropdownOpen && (
+                <div className="submenu">
+                  <Link to="#" className="submenu-item">
+                    Danh sách blogger
+                  </Link>
+                  <Link
+                    to="#"
+                    className="submenu-item"
+                  >
+                    Các loại blogger
+                  </Link>
+                </div>
+              )}
             </div>
           </nav>
         </div>
