@@ -11,12 +11,12 @@ import {
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import useAdmin from "../../../../Hooks/useAdmin";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
 
 const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
   const [form] = Form.useForm();
 
-  const { accounts, getListStaff } = useAdmin();
+  const { staffProfile, getListStaff } = useStaffProfile();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -122,7 +122,7 @@ const ModalEditSlot = ({ isModalOpen, handleCancel, handleEdit, editSlot }) => {
           rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
         >
           <Select placeholder="Chọn nhân viên" mode="multiple">
-            {accounts?.map((staff) => (
+            {staffProfile?.map((staff) => (
               <Select.Option key={staff._id} value={staff._id}>
                 {`${staff.user_id?.first_name} ${staff.user_id?.last_name}`}
               </Select.Option>
