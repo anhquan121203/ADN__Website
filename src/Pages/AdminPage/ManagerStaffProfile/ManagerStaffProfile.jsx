@@ -1,6 +1,6 @@
 import React, { use, useEffect, useState } from "react";
 import "./ManagerStaffProfile.css";
-import { Modal, Pagination, Popconfirm, Select, Switch } from "antd";
+import { Modal, Pagination, Popconfirm, Select, Switch, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
@@ -33,6 +33,17 @@ function ManagerStaffProfile() {
   const [editStaff, setEditStaff] = useState(null);
   // modal detail
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const renderStatus = (status) => {
+    switch (status) {
+      case "active":
+        return <Tag color="green">Hoạt động</Tag>;
+      case "inactive":
+        return <Tag color="red">Không hoạt động</Tag>;
+      default:
+        return <Tag color="gray">Không xác định</Tag>;
+    }
+  };
 
   useEffect(() => {
     getListStaff({
@@ -76,7 +87,7 @@ function ManagerStaffProfile() {
   // create staff profile
   const openAddModal = () => {
     setIsAddModalOpen(true);
-    selectedStaff(null);
+    // selectedStaff(null);
   };
 
   const handleAddStaff = async (staffData) => {
@@ -106,7 +117,12 @@ function ManagerStaffProfile() {
       const result = await updateStaffById(staffData._id, staffData);
       if (result.success) {
         setIsEditModalOpen(false);
+        getListStaff({
+          pageNum: currentPage,
+          pageSize: pageSize,
+        });
       }
+      return result.data;
     } catch (error) {
       return {
         success: false,
@@ -136,17 +152,20 @@ function ManagerStaffProfile() {
   return (
     <div className="manager-staffProfile">
       <div className="header-manager-account">
-        <div className="title--managerAccount"> <h5>Danh sách nhân viên</h5></div>
-        <div className="btn-managerAccount"><button className="button-add__account" onClick={openAddModal}>
-          <FaPlus style={{ marginRight: "8px" }} />
-          Tạo tài khoản
-        </button></div>
-
+        <div className="title--managerAccount">
+          {" "}
+          <h5>Danh sách nhân viên</h5>
+        </div>
+        <div className="btn-managerAccount">
+          <button className="button-add__account" onClick={openAddModal}>
+            <FaPlus style={{ marginRight: "8px" }} />
+            Tạo tài khoản
+          </button>
+        </div>
       </div>
 
       {/* Table account */}
       <div className="form-account">
-
         <div>
           <FilterStaffProfile
             filters={filters}
@@ -182,15 +201,8 @@ function ManagerStaffProfile() {
                     </td>
                     <td>{item.department_id?.name}</td>
                     <td>{item.job_title}</td>
-                    <td>{item.salary} VNĐ</td>
-                    <td>
-                      <span
-                        className={`status-badge ${item.status === "active" ? "active" : "inactive"
-                          }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+                    <td>{item.salary.toLocaleString()} VNĐ</td>
+                    <td>{renderStatus(item.status)}</td>
 
                     <td>
                       <div className="action-staffProfile">

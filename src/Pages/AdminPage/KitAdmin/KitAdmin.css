@@ -1,0 +1,11 @@
+.action-returnKit{
+    color: red;
+    font-weight: bold;
+    transition: ease-in-out 0.3s;
+    cursor: pointer;
+}
+
+.action-returnKit:hover{
+    color: darkred;
+    transform: scale(1.1);
+}

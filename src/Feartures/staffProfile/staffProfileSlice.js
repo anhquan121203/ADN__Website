@@ -93,10 +93,34 @@ export const updateStaffProfile = createAsyncThunk(
   }
 );
 
+// Staff lab tech
+export const listStaffLabTech = createAsyncThunk(
+  "staffProfile/listStaffLabTech",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/users/staff-lab-tech`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
 const staffProfileSlice = createSlice({
   name: "STAFF_PROFILE",
   initialState: {
     staffProfile: [],
+    staffLabTech: [],
     loading: false,
     error: null,
     total: 0,
@@ -128,6 +152,20 @@ const staffProfileSlice = createSlice({
         state.staffProfile = state.staffProfile.map((staff) =>
           staff._id === action.payload._id ? action.payload : staff
         );
+      })
+
+      // Staff lab tech
+      .addCase(listStaffLabTech.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(listStaffLabTech.fulfilled, (state, action) => {
+        state.loading = false;
+        state.staffLabTech = action.payload;
+      })
+      .addCase(listStaffLabTech.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch accounts";
       });
   },
 });

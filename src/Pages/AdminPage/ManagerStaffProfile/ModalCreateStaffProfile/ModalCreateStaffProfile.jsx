@@ -11,32 +11,29 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useAdmin from "../../../../Hooks/useAdmin";
 import useDepartment from "../../../../Hooks/useDepartment";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
+import { get } from "lodash";
 
 const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
-  const { accounts, searchUserPag } = useAdmin();
   const { departments, searchListDepartment } = useDepartment();
+  const { staffLabTech, getListStaffLabTech } = useStaffProfile();
+
+  const filterStaff = staffLabTech.filter(
+    (staff) =>
+      staff.staff_profile === null &&
+      staff.role === "staff" &&
+      staff.role === "laboratory_technician"
+  );
 
   useEffect(() => {
     if (isModalOpen) {
       form.resetFields();
       setSelectedFile(null);
-      //   list staff
-      searchUserPag({
-        pageInfo: {
-          pageNum: 1,
-          pageSize: 100,
-        },
-        searchCondition: {
-          role: ["staff", "laboratory_technician"],
-          is_verified: true,
-          status: true,
-          is_deleted: false,
-        },
-      });
+
+      getListStaffLabTech();
 
       //   list department
       searchListDepartment({
@@ -90,33 +87,34 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
     >
       <Form form={form} layout="vertical">
         <Form.Item
-  label="Nhân viên"
-  name="user_id"
-  rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
->
-  <Select placeholder="Chọn nhân viên" optionFilterProp="children">
-    {accounts?.map((staff) => (
-      <Select.Option key={staff._id} value={staff._id.toString()}>
-        {`${staff.first_name} ${staff.last_name}`}
-      </Select.Option>
-    ))}
-  </Select>
-</Form.Item>
+          label="Nhân viên"
+          name="user_id"
+          rules={[{ required: true, message: "Vui lòng chọn nhân viên!" }]}
+        >
+          <Select placeholder="Chọn nhân viên" optionFilterProp="children">
+            {staffLabTech
+              ?.filter((staff) => staff.staff_profile === null)
+              .map((staff) => (
+                <Select.Option key={staff._id} value={staff._id}>
+                  {`${staff.first_name || ""} ${staff.last_name || ""}`}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
 
-<Form.Item
-  label="Phòng ban"
-  name="department_id"
-  rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
->
-  <Select placeholder="Chọn phòng ban" optionFilterProp="children">
-    {departments?.map((depart) => (
-      <Select.Option key={depart._id} value={depart._id.toString()}>
-        {depart.name}
-      </Select.Option>
-    ))}
-  </Select>
-</Form.Item>
-
+        <Form.Item
+          label="Phòng ban"
+          name="department_id"
+          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+        >
+          <Select placeholder="Chọn phòng ban" optionFilterProp="children">
+            {departments?.map((depart) => (
+              <Select.Option key={depart._id} value={depart._id.toString()}>
+                {depart.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
 
         <Form.Item
           label="Công việc"

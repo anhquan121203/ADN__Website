@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import useDepartment from "../../../../Hooks/useDepartment";
 import moment from "moment";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
+import { get } from "lodash";
 
 const ModalEditStaffProfile = ({
   isModalOpen,
@@ -19,10 +21,12 @@ const ModalEditStaffProfile = ({
   editStaffProfile,
 }) => {
   const [form] = Form.useForm();
+  const { staffLabTech, getListStaffLabTech } = useStaffProfile();
   const { departments, searchListDepartment } = useDepartment();
 
   useEffect(() => {
     if (isModalOpen) {
+      getListStaffLabTech();
       // danh sách phòng ban
       searchListDepartment({
         is_deleted: false,
@@ -38,9 +42,8 @@ const ModalEditStaffProfile = ({
         const formattedData = {
           ...editStaffProfile,
           //   id user
-          _id: editStaffProfile._id,
-          user_id:
-            editStaffProfile.user_id?._id || editStaffProfile.user_id || null,
+          _id: editStaffProfile._id || "",
+          
           // id depart
           department_id:
             editStaffProfile.department_id?._id ||
@@ -66,7 +69,10 @@ const ModalEditStaffProfile = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const response = await handleEdit(values);
+      const staffId = values._id;
+      const { _id, ...updateData } = values;
+
+      const response = await handleEdit({ _id: staffId, ...updateData });
 
       if (response.success === true) {
         form.resetFields();

@@ -76,6 +76,15 @@ const useKit = () => {
     }
   };
 
+  const returnKitById = async (id, returnData) => {
+    try {
+      const response = await dispatch(updateKit({ id, updateData: returnData })).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: "Trả hàng không thành công!" };
+    }
+  }
+
   return {
     kits,
     loading,
@@ -87,6 +96,7 @@ const useKit = () => {
     updateKitById,
     deletekitById,
     changeStatusKit,
+    returnKitById,
   };
 };
 

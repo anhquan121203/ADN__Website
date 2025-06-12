@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const ModalEditKit = ({ isModalOpen, handleCancel, handleEdit, editKit }) => {
+const ModalReturnKit = ({ isModalOpen, handleCancel, handleReturn, editKit }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const ModalEditKit = ({ isModalOpen, handleCancel, handleEdit, editKit }) => {
     try {
       const values = await form.validateFields();
 
-      const response = await handleEdit(values);
+      const response = await handleReturn(values);
 
       if (response.success === true) {
         form.resetFields();
@@ -40,7 +40,7 @@ const ModalEditKit = ({ isModalOpen, handleCancel, handleEdit, editKit }) => {
 
   return (
     <Modal
-      title="Chỉnh sửa dụng cụ"
+      title="Trả hàng dụng cụ"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -56,7 +56,7 @@ const ModalEditKit = ({ isModalOpen, handleCancel, handleEdit, editKit }) => {
         <Form.Item
           label="Lưu ý"
           name="note"
-          rules={[{ required: true, message: "Vui lòng nhập lưu ý khi cập nhật!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập lưu ý khi trả hàng!" }]}
         >
           <Input />
         </Form.Item>
@@ -65,4 +65,4 @@ const ModalEditKit = ({ isModalOpen, handleCancel, handleEdit, editKit }) => {
   );
 };
 
-export default ModalEditKit;
+export default ModalReturnKit;

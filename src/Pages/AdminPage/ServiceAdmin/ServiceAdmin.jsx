@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, Modal, Pagination, Popconfirm } from "antd";
+import { Image, Modal, Pagination, Popconfirm, Tag } from "antd";
 import "./ServiceAdmin.css";
 import { toast } from "react-toastify";
 
@@ -36,11 +36,24 @@ function ServiceAdmin() {
   const [editService, setEditService] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const cancel = (e) => {
-    message.error("Click on No");
+  // state để quản lý dịch vụ con
+  const [expandedServiceId, setExpandedServiceId] = useState(null);
+
+  const toggleExpandService = (serviceId) => {
+    setExpandedServiceId((prev) => (prev === serviceId ? null : serviceId));
   };
 
+  const parentServices = services.filter(
+    (service) => !service.parent_service_id
+  );
+  const childServices = services.filter((service) => service.parent_service_id);
+
+  // state filter khi tìm kiếm
+  const [isFiltering, setIsFiltering] = useState(false);
+
+  // Hiển thị danh sách dịch vụ
   useEffect(() => {
+    setIsFiltering(false);
     searchListService({
       is_active: true,
       pageNum: currentPage,
@@ -63,6 +76,7 @@ function ServiceAdmin() {
   });
 
   const handleSearch = () => {
+    setIsFiltering(true);
     searchListService({
       ...filters,
       pageNum: currentPage,
@@ -74,9 +88,9 @@ function ServiceAdmin() {
   const getType = (type) => {
     switch (type) {
       case "civil":
-        return "Dân sự";
+        return <Tag color="blue">Dân sự</Tag>;
       case "administrative":
-        return "Hành chính";
+        return <Tag color="purple">Hành chính</Tag>;
       default:
         return type;
     }
@@ -200,7 +214,11 @@ function ServiceAdmin() {
         </div>
 
         <div className="btn-managerAccount">
-          <button className="button-add__account" onClick={openAddModal} style={{ width: 180, height: 45 }}>
+          <button
+            className="button-add__account"
+            onClick={openAddModal}
+            style={{ width: 180, height: 45 }}
+          >
             <FaPlus style={{ marginRight: 10 }} />
             Tạo dịch vụ mới
           </button>
@@ -214,6 +232,7 @@ function ServiceAdmin() {
             filters={filters}
             setFilters={setFilters}
             onSearch={handleSearch}
+            setIsFiltering={setIsFiltering}
           />
 
           <table className="table-account">
@@ -222,7 +241,6 @@ function ServiceAdmin() {
                 <th>STT</th>
                 <th>Tên</th>
                 <th>Loại</th>
-                <th>Phương thức</th>
                 <th>Thời gian</th>
                 <th>Giá tiền</th>
                 <th>Hình ảnh</th>
@@ -231,58 +249,221 @@ function ServiceAdmin() {
               </tr>
             </thead>
             <tbody>
-              {services?.length > 0 ? (
-                services.map((item, index) => (
-                  <tr key={item._id}>
-                    <td>{(currentPage - 1) * pageSize + index + 1}</td>
-                    <td>{item.name}</td>
-                    <td> {getType(item.type)} </td>
-                    <td>{getSampleMethod(item.sample_method)} </td>
-                    <td>{item.estimated_time} </td>
-                    <td>{item.price?.toLocaleString()} VND </td>
-                    <td><Image width={100} src={item.image_url || "N/A" }/></td>
-                    <td>
-                      <span
-                        className={`status-badge ${item.is_active ? "active" : "inactive"
+              {isFiltering ? (
+                // Hiển thị phẳng danh sách services khi filter
+                services.length > 0 ? (
+                  services.map((service, index) => (
+                    <tr key={service._id}>
+                      <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                      <td>{service.name}</td>
+                      <td>{getType(service.type)}</td>
+                      <td>{service.estimated_time}</td>
+                      <td>{service.price?.toLocaleString()} VND</td>
+                      <td>
+                        <Image
+                          width={120}
+                          height={100}
+                          src={
+                            service.image_url ||
+                            "https://coffective.com/wp-content/uploads/2018/06/default-featured-image.png.jpg"
+                          }
+                        />
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${
+                            service.is_active ? "active" : "inactive"
                           }`}
-                      >
-                        {item.is_active ? "ACTIVE" : "INACTIVE"}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-service">
-                        <CiEdit
-                          className="icon-service"
-                          onClick={() => openEditModal(item)}
-                        />
-
-                        <MdDeleteOutline
-                          className="icon-service"
-                          onClick={() => openDeleteModal(item)}
-                        />
-
-                        <FaRegEye
-                          className="icon-service"
-                          onClick={() => handleDetailService(item._id)}
-                        />
-
-                        <Popconfirm
-                          title="Khóa tài khoản"
-                          description="Bạn có muốn khóa tài khoản này không?"
-                          onConfirm={() => handleChangeStatus(item)}
-                          onCancel={cancel}
-                          okText="Yes"
-                          cancelText="No"
                         >
-                          <MdBlock className="icon-service" />
-                        </Popconfirm>
-                      </div>
-                    </td>
+                          {service.is_active ? "Hoạt động" : "Bị khóa"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-service">
+                          <CiEdit
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(service);
+                            }}
+                          />
+                          <MdDeleteOutline
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteModal(service);
+                            }}
+                          />
+                          <FaRegEye
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDetailService(service._id);
+                            }}
+                          />
+                          <Popconfirm
+                            title="Khóa dịch vụ"
+                            description="Bạn có muốn khóa dịch vụ này không?"
+                            onConfirm={() => handleChangeStatus(service)}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <MdBlock
+                              className="icon-service"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </Popconfirm>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8">Không có dữ liệu</td>
                   </tr>
+                )
+              ) : // Hiển thị cha/con khi không lọc
+              parentServices.length > 0 ? (
+                parentServices.map((parent, index) => (
+                  <React.Fragment key={parent._id}>
+                    {/* Dịch vụ cha */}
+                    <tr onClick={() => toggleExpandService(parent._id)}>
+                      <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                      <td>{parent.name}</td>
+                      <td>{getType(parent.type)}</td>
+                      <td>{parent.estimated_time}</td>
+                      <td>{parent.price?.toLocaleString()} VND</td>
+                      <td>
+                        <Image
+                          width={120}
+                          height={100}
+                          src={
+                            parent.image_url ||
+                            "https://coffective.com/wp-content/uploads/2018/06/default-featured-image.png.jpg"
+                          }
+                        />
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${
+                            parent.is_active ? "active" : "inactive"
+                          }`}
+                        >
+                          {parent.is_active ? "Hoạt động" : "Bị khóa"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-service">
+                          <CiEdit
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(parent);
+                            }}
+                          />
+                          <MdDeleteOutline
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteModal(parent);
+                            }}
+                          />
+                          <FaRegEye
+                            className="icon-service"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDetailService(parent._id);
+                            }}
+                          />
+                          <Popconfirm
+                            title="Khóa dịch vụ"
+                            description="Bạn có muốn khóa dịch vụ này không?"
+                            onConfirm={() => handleChangeStatus(parent)}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <MdBlock
+                              className="icon-service"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </Popconfirm>
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Dịch vụ con nếu cha được mở rộng */}
+                    {expandedServiceId === parent._id &&
+                      childServices
+                        .filter(
+                          (child) => child.parent_service_id?._id === parent._id
+                        )
+                        .map((child) => (
+                          <tr key={child._id} className="child-row">
+                            <td>→</td>
+                            <td>{child.name}</td>
+                            <td>{getType(child.type)}</td>
+                            <td>{child.estimated_time}</td>
+                            <td>{child.price?.toLocaleString()} VND</td>
+                            <td>
+                              <Image
+                                width={120}
+                                height={100}
+                                src={child.image_url || "N/A"}
+                              />
+                            </td>
+                            <td>
+                              <span
+                                className={`status-badge ${
+                                  child.is_active ? "active" : "inactive"
+                                }`}
+                              >
+                                {child.is_active ? "Hoạt động" : "Bị khóa"}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="action-service">
+                                <CiEdit
+                                  className="icon-service"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditModal(child);
+                                  }}
+                                />
+                                <MdDeleteOutline
+                                  className="icon-service"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openDeleteModal(child);
+                                  }}
+                                />
+                                <FaRegEye
+                                  className="icon-service"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDetailService(child._id);
+                                  }}
+                                />
+                                <Popconfirm
+                                  title="Khóa dịch vụ con"
+                                  description="Bạn có muốn khóa dịch vụ con này không?"
+                                  onConfirm={() => handleChangeStatus(child)}
+                                  okText="Yes"
+                                  cancelText="No"
+                                >
+                                  <MdBlock
+                                    className="icon-service"
+                                    onClick={(e) => e.stopPropagation()}
+                                  />
+                                </Popconfirm>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                  </React.Fragment>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6">Không có dữ liệu</td>
+                  <td colSpan="8">Không có dữ liệu</td>
                 </tr>
               )}
             </tbody>
