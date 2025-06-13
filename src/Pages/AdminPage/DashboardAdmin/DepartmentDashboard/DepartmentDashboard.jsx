@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -11,17 +11,53 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./DepartmentDashboard.css";
+import useDepartment from "../../../../Hooks/useDepartment";
 
 function DepartmentDashboard() {
-  const data = [
-    { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-    { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-    { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-    { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-    { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-    { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-    { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
-  ];
+
+  const { departments, searchListDepartment, fetchDepartmentStatistics } = useDepartment();
+
+  console.log(departments)
+
+  useEffect(() => {
+    const fetchAllStatistics = async () => {
+      try {
+        // Lấy danh sách phòng ban
+        await searchListDepartment({
+          is_deleted: false,
+          is_active: true,
+          pageNum: 1,
+          pageSize: 100,
+          sort_by: "created_at",
+          sort_order: "desc",
+        });
+
+        // Sau khi danh sách được lấy xong
+        for (const dept of departments) {
+          await fetchDepartmentStatistics({
+            departmentId: dept.departmentId,
+            date_from: null,
+            date_to: null,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching department statistics:", error);
+      }
+    };
+
+    fetchAllStatistics();
+  }, []);
+
+
+
+  const data = departments.map((dept) => ({
+    name: dept.name || dept.departmentId,
+    st: dept.statistics?.totalStaff || 0,
+    sl: dept.statistics?.totalSlots || 0,
+    bs: dept.statistics?.bookedSlots || 0,
+    br: dept.statistics?.bookingRate || 0,
+  }));
+
 
   return (
     <div className="department-dashboard">
@@ -44,12 +80,22 @@ function DepartmentDashboard() {
             <Tooltip />
             <Legend />
             <Bar
-              dataKey="pv"
+              dataKey="st"
               fill="#8884d8"
               activeBar={<Rectangle fill="pink" stroke="blue" />}
             />
             <Bar
-              dataKey="uv"
+              dataKey="sl"
+              fill="#82ca9d"
+              activeBar={<Rectangle fill="gold" stroke="purple" />}
+            />
+            <Bar
+              dataKey="bs"
+              fill="#82ca9d"
+              activeBar={<Rectangle fill="gold" stroke="purple" />}
+            />
+            <Bar
+              dataKey="br"
               fill="#82ca9d"
               activeBar={<Rectangle fill="gold" stroke="purple" />}
             />
