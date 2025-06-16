@@ -9,6 +9,7 @@ import {
 } from "antd";
 import moment from "moment";
 import useDepartment from "../../../../Hooks/useDepartment";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
 
 const { RangePicker } = DatePicker;
 
@@ -29,8 +30,10 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
   };
 
   const { departments, searchListDepartment } = useDepartment();
+  const { staffProfile, getListStaff } = useStaffProfile();
 
   useEffect(() => {
+    getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
     searchListDepartment({
       is_deleted: false,
       is_active: true,
@@ -41,13 +44,13 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
     });
   }, [currentPage]);
 
-  const staffOptions = Array.from(
-    new Map(
-      slots
-        .flatMap((slot) => slot.staff_profile_ids || [])
-        .map((profile) => [profile._id, profile])
-    ).values()
-  );
+  // const staffOptions = Array.from(
+  //   new Map(
+  //     slots
+  //       .flatMap((slot) => slot.staff_profile_ids || [])
+  //       .map((profile) => [profile._id, profile])
+  //   ).values()
+  // );
 
   const handleDateChange = (dates) => {
     setFilters({
@@ -80,7 +83,7 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         showSearch
         optionFilterProp="label"
       >
-        {staffOptions.map((staff) => (
+        {staffProfile.map((staff) => (
           <Select.Option
             key={staff._id}
             value={staff._id}
