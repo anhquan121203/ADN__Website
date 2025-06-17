@@ -73,9 +73,9 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/projects">
+            <Link to="/staff/confirm-slots">
               <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Dự án</span>
+              <span className="menu-text">Xác nhận lịch làm việc</span>
             </Link>
           </li>
           <li>
