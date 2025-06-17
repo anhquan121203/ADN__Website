@@ -24,6 +24,7 @@ const authSlice = createSlice({
       state.token = null;
 
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     },
 
     setUser(state, action) {
