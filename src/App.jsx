@@ -33,12 +33,15 @@ import AppointmentStaff from "./Pages/StaffPage/StaffAppointments/View";
 import StaffService from "./Pages/StaffPage/StaffService/View";
 import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View";
 import StaffSlot from "./Pages/StaffPage/StaffSlot/View";
-
+import StaffConfirmSlots from "./Pages/StaffPage/StaffConfirmSlots/StaffConfirmSlots";
+import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/AppointmentViewDetail";
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
 import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerStaffProfile";
 import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentManager";
+import AppointmentManager from "./Pages/ManagerPage/AppointmentManager/AppointmentManager";
+import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/AppointmentDetail";
 
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
@@ -123,12 +126,16 @@ function App() {
           <Route path="service" element={<StaffService />} />
           <Route path="department" element={<StaffDepartment />} />
           <Route path="slot" element={<StaffSlot />} />
+          <Route path="confirm-slots" element={<StaffConfirmSlots />} />
+          <Route path="appointment/view/:id" element={<AppointmentViewDetail />} />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}
         <Route path="/manager" element={<ManagerLayout />}>
           <Route index element={<ManagerProfile />} />
           <Route path="department-manager" element={<DepartmentManager />} />
+          <Route path="appointments" element={<AppointmentManager />} />
+          <Route path="appointments/:id" element={<AppointmentDetail />} />
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}

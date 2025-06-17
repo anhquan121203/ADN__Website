@@ -50,10 +50,10 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
+    try {      
       await createAppointment({
         service_id: serviceId,
-        slot_id: selectedSlot,
+        ...(selectedSlot && { slot_id: selectedSlot }),
         appointment_date: startDate,
         type: type,
         collection_address: type === 'home' ? collection_address : null
@@ -215,9 +215,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
               Hủy
             </button>
             <button
-              type="submit"
-              className="px-4 py-2 bg-[#00a9a4] text-white rounded-md hover:bg-[#1c6b68]"
-              disabled={!selectedSlot}
+              type="submit"              className="px-4 py-2 bg-[#00a9a4] text-white rounded-md hover:bg-[#1c6b68]"
             >
               Xác nhận đặt lịch
             </button>

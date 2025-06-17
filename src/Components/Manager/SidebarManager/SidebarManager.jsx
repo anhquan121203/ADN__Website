@@ -49,9 +49,9 @@ function SidebarManager() {
             </Link>
           </li>
           <li>
-            <Link to="/settings">
+            <Link to="/manager/appointments">
               <FaCog className="menu-icon" />
-              <span className="menu-text">Cài đặt tài khoản</span>
+              <span className="menu-text">Quản lý đặt lịch</span>
             </Link>
           </li>
           <li>
