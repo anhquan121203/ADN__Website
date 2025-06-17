@@ -1,0 +1,35 @@
+.ant-table-custom {
+  @apply rounded-lg overflow-hidden;
+}
+
+.ant-table-custom .ant-table-thead > tr > th {
+  @apply bg-gray-50 text-gray-700 font-semibold;
+}
+
+.ant-table-custom .ant-table-tbody > tr > td {
+  @apply border-b border-gray-100;
+}
+
+.ant-table-custom .ant-table-tbody > tr:last-child > td {
+  @apply border-b-0;
+}
+
+.ant-table-custom .ant-table-cell {
+  @apply py-4;
+}
+
+.ant-pagination {
+  @apply flex justify-end items-center mt-4;
+}
+
+.ant-pagination-total-text {
+  @apply mr-4 text-gray-600;
+}
+
+.ant-table-custom .ant-table-container {
+  @apply border-0;
+}
+
+.ant-table-custom .ant-table {
+  @apply border-0;
+}
