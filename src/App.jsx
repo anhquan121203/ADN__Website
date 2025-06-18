@@ -15,6 +15,8 @@ import CustomerSideBarLayout from "./Layouts/CustomerSideBarLayout";
 import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 import CustomerService from "./Pages/CustomerPage/ServicePage/ServicePage";
 import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointment";
+import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSampleAppointment/ViewSampleAppointment";
+
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
 import DashboardAdmin from "./Pages/AdminPage/DashboardAdmin/DashboardAdmin";
@@ -34,6 +36,9 @@ import StaffDepartment from "./Pages/StaffPage/StaffDepartments/View";
 import StaffSlot from "./Pages/StaffPage/StaffSlot/View";
 import StaffConfirmSlots from "./Pages/StaffPage/StaffConfirmSlots/StaffConfirmSlots";
 import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/AppointmentViewDetail";
+import StaffSample from "./Pages/StaffPage/StaffSample/StaffSample";
+import ViewSampleAppoinment from "./Pages/StaffPage/StaffSample/ViewSampleAppoinment/ViewSampleAppoinment";
+
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
@@ -101,6 +106,7 @@ function App() {
         <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
           <Route path="appointment" element={<ViewAppointment />} />
+          <Route path="appointment/sample/:appointmentId" element={<ViewSampleAppointment />}/>
         </Route>
 
         {/* ADMIN ROUTES*********************************** */}
@@ -125,6 +131,8 @@ function App() {
           <Route path="slot" element={<StaffSlot />} />
           <Route path="confirm-slots" element={<StaffConfirmSlots />} />
           <Route path="appointment/view/:id" element={<AppointmentViewDetail />} />
+          <Route path="sample" element={<StaffSample />} />
+          <Route path="samples/appointment/:appointmentId" element={<ViewSampleAppoinment />} />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}

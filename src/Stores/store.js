@@ -8,7 +8,7 @@ import staffSlice from "../Feartures/staff/staffSlice";
 import staffProfileSlice from "../Feartures/staffProfile/staffProfileSlice";
 import kitSlice from "../Feartures/kits/kitSlice";
 import appointmentSlice from "../Feartures/appoinment/appoimentSlice";
-
+import sampleSlice from "../Feartures/sample/sampleSlice";
 export const store = configureStore({
     reducer: {
         // Add your reducers here
@@ -21,6 +21,7 @@ export const store = configureStore({
         staffProfile: staffProfileSlice.reducer,
         kit: kitSlice.reducer,
         appointment: appointmentSlice.reducer,
+        sample: sampleSlice.reducer,
     },
     
 })
