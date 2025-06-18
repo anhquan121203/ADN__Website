@@ -3,6 +3,8 @@ import { Table, Tag } from "antd";
 import AppointmentFilter from "./AppointmentFilter";
 import { useAppointment } from "../../../Hooks/useAppoinment";
 import useAuth from "../../../Hooks/useAuth";
+import ModalApplyKit from "./ModalApplyKit/ModalApplyKit";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
@@ -33,18 +35,33 @@ const columns = [
     key: "collection_address",
   },
   {
-    title: "Nhân viên phụ trách",
-    dataIndex: ["slot_id", "staff_profile_ids"],
-    key: "staff",
-    render: (staffs) =>
-      staffs && staffs.length > 0
-        ? staffs.map((s) => (
-            <div key={s._id}>
-              {s.user_id.first_name} {s.user_id.last_name}
-            </div>
-          ))
-        : "",
-  },
+      title: "Nhân viên phụ trách",
+      key: "staff",
+      render: (_, record) => {
+        const staff = record.staff_id;
+        return staff ? (
+          <div>
+            {staff.first_name} {staff.last_name} – {staff.email}
+          </div>
+        ) : (
+          <Tag color="red">Chưa phân công</Tag>
+        );
+      },
+    },
+    {
+      title: "Kỹ thuật viên xét nghiệm",
+      key: "labtech",
+      render: (_, record) => {
+        const tech = record.laboratory_technician_id;
+        return tech ? (
+          <div>
+            {tech.first_name} {tech.last_name} – {tech.email}
+          </div>
+        ) : (
+          <Tag color="red">Chưa phân công</Tag>
+        );
+      },
+    },
 ];
 
 export default function ViewAppointment() {
@@ -52,6 +69,9 @@ export default function ViewAppointment() {
   const { userId } = useAuth();
   const [filters, setFilters] = useState({});
   const [pageNum, setPageNum] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) return;
@@ -69,11 +89,37 @@ export default function ViewAppointment() {
     setFilters(filterValues);
   };
 
+  const columnsWithKit = [
+    ...columns,
+    {
+      title: "Hành động",
+      key: "requestKit",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => {
+              setSelectedAppointmentId(record._id);
+              setShowModal(true);
+            }}
+          >
+            Request Kit
+          </button>
+          <button
+            onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}
+            style={{ marginLeft: 8 }}
+          >
+            View Sample
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div>
       <AppointmentFilter onFilter={handleFilter} />
       <Table
-        columns={columns}
+        columns={columnsWithKit}
         dataSource={appointments}
         rowKey="_id"
         loading={loading}
@@ -83,6 +129,11 @@ export default function ViewAppointment() {
           total: pageInfo?.totalItems || 0,
           onChange: (page) => setPageNum(page),
         }}
+      />
+      <ModalApplyKit
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        appointmentId={selectedAppointmentId}
       />
     </div>
   );

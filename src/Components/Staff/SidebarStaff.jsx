@@ -79,9 +79,9 @@ function SidebarStaff() {
             </Link>
           </li>
           <li>
-            <Link to="/onboarding">
+            <Link to="/staff/sample">
               <FaHandshake className="menu-icon" />
-              <span className="menu-text">Hội nhập</span>
+              <span className="menu-text">Vật mẫu</span>
             </Link>
           </li>
           <li>
