@@ -130,7 +130,7 @@ useEffect(() => {
   // If appointment is collected AND kit is used, hide all batch controls
   const appointmentStatus = sampleArray[0].appointment_id?.status;
   const kitStatus = sampleArray[0].kit_id?.status;
-  const isBatchCompleted = appointmentStatus === 'sample_collected' && kitStatus === 'used';
+  const isBatchCompleted = appointmentStatus === 'sample_collected' || appointmentStatus === 'sample_received' && kitStatus === 'used';
 
   return (
     <div className="p-6 relative">
@@ -147,12 +147,31 @@ useEffect(() => {
         </div>
       )}
 
+    <div className="mb-6 flex items-center gap-4">
       <button
-        className="mb-6 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
         onClick={() => navigate(-1)}
       >
         Return
       </button>
+
+      {appointmentStatus === "sample_received" && (
+        <button
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          onClick={() =>
+            navigate("/payment", {
+              state: {
+                appointmentId,
+                sampleIds: sampleArray.map((s) => s._id),
+              },
+            })
+          }
+        >
+          Thanh toán
+        </button>
+      )}
+    </div>
+
       <h2 className="text-2xl font-semibold mb-6">Sample List for Appointment</h2>
 
       {/* Batch submit controls */}

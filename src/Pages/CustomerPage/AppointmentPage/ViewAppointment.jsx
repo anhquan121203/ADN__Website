@@ -102,13 +102,13 @@ export default function ViewAppointment() {
               setShowModal(true);
             }}
           >
-            Request Kit
+            Nhận bộ dụng cụ
           </button>
           <button
             onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}
             style={{ marginLeft: 8 }}
           >
-            View Sample
+            Xem Mẫu
           </button>
         </div>
       ),
