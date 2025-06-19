@@ -16,6 +16,8 @@ import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfil
 import CustomerService from "./Pages/CustomerPage/ServicePage/ServicePage";
 import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointment";
 import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSampleAppointment/ViewSampleAppointment";
+import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
+import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
 
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
@@ -93,6 +95,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+      
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -101,6 +104,11 @@ function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/service" element={<CustomerService />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route
+            path="/api/payment/payos-return"
+            element={<PayOSReturn />}
+          />
         </Route>
 
         <Route path="/customer" element={<CustomerSideBarLayout />}>
