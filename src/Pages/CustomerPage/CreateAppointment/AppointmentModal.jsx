@@ -81,11 +81,16 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center appointment-modal">
-      <div className="bg-white rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6">Đặt lịch dịch vụ: {serviceName}</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+      <div
+        className="bg-white rounded-lg p-8"
+        style={{       // Make modal 90% of viewport width     // Remove max width restriction
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-6 w-full">Đặt lịch dịch vụ: {serviceName}</h2>
+        <form onSubmit={handleSubmit} className="space-y-6 w-full ml-20">
+          <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Phương thức lấy mẫu
             </label>
@@ -94,6 +99,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
               onChange={(e) => setType(e.target.value)}
               className="w-full p-2 border rounded-md"
               disabled={serviceType === 'administrative'}
+              style={{ width: '100%' }}
             >
               <option value="facility">Tại phòng khám</option>
               {serviceType === 'civil' && <>
@@ -104,7 +110,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
           </div>
 
           {type === 'home' && (
-            <div>
+            <div className="w-full">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Địa chỉ lấy mẫu
               </label>
@@ -114,41 +120,43 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full p-2 border rounded-md"
                 required
+                style={{ width: '100%' }}
               />
             </div>
           )}
 
-          <div>
+          <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Chọn tuần
             </label>
-            <DateRange
-              editableDateInputs={false}
-              onChange={handleRangeChange}
-              moveRangeOnFirstSelection={false}
-              ranges={range}
-              minDate={new Date()}
-              // maxDate={addDays(new Date(), 30)} // hoặc tuỳ ý
-              showDateDisplay={false}
-              rangeColors={['#00a9a4']}
-              showMonthAndYearPickers={true}
-              showPreview={false}
-              months={1}
-              direction="horizontal"
-              // Chỉ cho phép chọn startDate, endDate sẽ tự động là +6 ngày
-              
-            />
-            <div className="mt-2 text-sm">
+            <div className="w-full">
+              <DateRange
+                editableDateInputs={false}
+                onChange={handleRangeChange}
+                moveRangeOnFirstSelection={false}
+                ranges={range}
+                minDate={new Date()}
+                showDateDisplay={false}
+                rangeColors={['#00a9a4']}
+                showMonthAndYearPickers={true}
+                showPreview={false}
+                months={1}
+                direction="horizontal"
+                className="w-full"
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className="mt-2 text-sm w-full">
               Tuần đã chọn: {range[0].startDate ? format(range[0].startDate, 'dd/MM/yyyy') : ''} - {range[0].endDate ? format(range[0].endDate, 'dd/MM/yyyy') : ''}
             </div>
           </div>
 
           {startDate && endDate && availableSlots?.length > 0 ? (
-            <div>
+            <div className="w-full">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Chọn khung giờ
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 w-full">
                 {availableSlots.map((slot) => {
                   const timeSlot = slot.time_slots?.[0];
                   
@@ -201,21 +209,24 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
               </div>
             </div>
           ) : startDate && endDate ? (
-            <div className="text-center text-gray-500 mt-4">
+            <div className="text-center text-gray-500 mt-4 w-full">
               Không có khung giờ trống cho khoảng thời gian đã chọn
             </div>
           ) : null}
 
-          <div className="flex justify-end space-x-3 mt-6">
+          <div className="flex justify-end space-x-3 mt-6 w-full">
             <button
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              style={{ width: '120px' }}
             >
               Hủy
             </button>
             <button
-              type="submit"              className="px-4 py-2 bg-[#00a9a4] text-white rounded-md hover:bg-[#1c6b68]"
+              type="submit"
+              className="px-4 py-2 bg-[#00a9a4] text-white rounded-md hover:bg-[#1c6b68]"
+              style={{ width: '180px' }}
             >
               Xác nhận đặt lịch
             </button>
