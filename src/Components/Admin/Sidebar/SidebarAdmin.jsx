@@ -85,11 +85,21 @@ function Sidebar() {
                   <Link to="/admin/service-admin" className="submenu-item">
                     Danh sách dịch vụ
                   </Link>
+
+                  {/* Appoint */}
                   <Link
-                    to="/admin/service-admin/device-b"
+                    to="/admin/appointment-admin"
                     className="submenu-item"
                   >
-                    Đặt lịch theo dịch vụ
+                    Quản lý đặt lịch
+                  </Link>
+
+                  {/* Xét nghiệm Hành chính */}
+                  <Link
+                    to="/admin/administrative-case"
+                    className="submenu-item"
+                  >
+                    Dịch vụ hành chính
                   </Link>
                 </div>
               )}
