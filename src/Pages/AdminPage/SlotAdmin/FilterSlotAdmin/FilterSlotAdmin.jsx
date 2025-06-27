@@ -135,7 +135,7 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         <Select.Option value="unavailable">Không còn chỗ</Select.Option>
       </Select>
 
-      <RangePicker onChange={handleDateChange} style={{ width: 250 }} />
+      {/* <RangePicker onChange={handleDateChange} style={{ width: 250 }} /> */}
 
       <Select
         placeholder="Thứ tự"

@@ -9,7 +9,7 @@ import { logout } from "../../../Feartures/user/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { FcManager } from "react-icons/fc";
 
-function Topbar() {
+function TopbarAdmin() {
   const { firstName, lastName, email } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
@@ -92,4 +92,4 @@ function Topbar() {
   );
 }
 
-export default Topbar;
+export default TopbarAdmin;

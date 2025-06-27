@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../Components/Admin/Sidebar/SidebarAdmin";
-import Topbar from "../Components/Admin/Topbar/TopbarAdmin";
+import TopbarAdmin from "../Components/Admin/Topbar/TopbarAdmin";
+import SidebarAdmin from "../Components/Admin/Sidebar/SidebarAdmin";
 
 const layoutStyle = {
   display: "flex",
@@ -56,12 +56,12 @@ function AdminLayout() {
   return (
     <div style={layoutStyle}>
       <div style={sidebarStyle}>
-        <Sidebar />
+        <SidebarAdmin />
       </div>
 
       <div style={mainWrapperStyle}>
         <div style={topbarStyle}>
-          <Topbar />
+          <TopbarAdmin />
         </div>
         <div style={outletWrapperStyle}>
           <Outlet />
