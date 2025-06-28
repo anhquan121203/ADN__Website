@@ -141,3 +141,9 @@
 .submenu-item:hover {
   color: #1e40af;
 }
+
+
+.submenu-item.active {
+  color: #2563eb;
+  font-weight: 600;
+}

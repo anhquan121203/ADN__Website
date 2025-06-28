@@ -27,6 +27,8 @@ import ProfileAdmin from "./Pages/AdminPage/ProfileAdmin/Profile";
 import DepartmentAdmin from "./Pages/AdminPage/DepartmentAdmin/DepartmentAdmin";
 import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
 import KitAdmin from "./Pages/AdminPage/KitAdmin/KitAdmin";
+import AdministrativeCaseAdmin from "./Pages/AdminPage/AdministrativeCaseAdmin/AdministrativeCaseAdmin";
+import AppointmentAdmin from "./Pages/AdminPage/AppointmentAdmin/AppointmentAdmin";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
@@ -128,6 +130,8 @@ function App() {
           <Route path="slot-admin" element={<SlotAdmin />} />
           <Route path="manager-staff-profile" element={<ManagerStaffProfile />} />
           <Route path="kit-admin" element={<KitAdmin />} />
+          <Route path="administrative-case" element={<AdministrativeCaseAdmin />} />
+          <Route path="appointment-admin" element={<AppointmentAdmin />} />
         </Route>
 
         {/* STAFF ROUTES*********************************** */}

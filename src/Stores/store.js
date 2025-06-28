@@ -10,20 +10,22 @@ import kitSlice from "../Feartures/kits/kitSlice";
 import appointmentSlice from "../Feartures/appoinment/appoimentSlice";
 import sampleSlice from "../Feartures/sample/sampleSlice";
 import paymentSlice from "../Feartures/payment/paymentSlice";
+import caseSlice from "../Feartures/case/caseSlice";
+
 export const store = configureStore({
-    reducer: {
-        // Add your reducers here
-        auth: authSlice.reducer,
-        account: adminSlice.reducer,
-        service: serviceSlice.reducer,
-        slot: slotSlice.reducer,
-        department: departmentSlice.reducer,
-        staff: staffSlice.reducer,
-        staffProfile: staffProfileSlice.reducer,
-        kit: kitSlice.reducer,
-        appointment: appointmentSlice.reducer,
-        sample: sampleSlice.reducer,
-        payment: paymentSlice.reducer,
-    },
-    
-})
+  reducer: {
+    // Add your reducers here
+    auth: authSlice.reducer,
+    account: adminSlice.reducer,
+    service: serviceSlice.reducer,
+    slot: slotSlice.reducer,
+    department: departmentSlice.reducer,
+    staff: staffSlice.reducer,
+    staffProfile: staffProfileSlice.reducer,
+    kit: kitSlice.reducer,
+    appointment: appointmentSlice.reducer,
+    sample: sampleSlice.reducer,
+    payment: paymentSlice.reducer,
+    case: caseSlice.reducer,
+  },
+});
