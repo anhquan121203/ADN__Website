@@ -1,0 +1,28 @@
+.blogcategory-table-container {
+  padding: 24px;
+  margin-bottom: 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+.blogcategory-table-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1890ff;
+}
+.blogcategory-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f9f9f9;
+}
+.blogcategory-table th,
+.blogcategory-table td {
+  border: 1px solid #e7e7e7;
+  padding: 8px 12px;
+  text-align: left;
+}
+.blogcategory-table th {
+  background: #e6f7ff;
+  font-weight: bold;
+}

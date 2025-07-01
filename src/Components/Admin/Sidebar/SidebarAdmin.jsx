@@ -109,9 +109,9 @@ function Sidebar() {
                 <IoIosMedkit /> Quản lý dụng cụ Y tế
               </Link>
               
-              <Link to="/admin/blog" className="nav-item">
+              {/* <Link to="/admin/blog" className="nav-item">
                 <MdOutlineMiscellaneousServices /> Quản lý blog
-              </Link>
+              </Link> */}
 
               {/*Quản lý thiết bị */}
               <div
@@ -131,11 +131,11 @@ function Sidebar() {
 
               {blogDropdownOpen && (
                 <div className="submenu">
-                  <Link to="#" className="submenu-item">
+                  <Link to="/admin/blog" className="submenu-item">
                     Danh sách blogger
                   </Link>
                   <Link
-                    to="#"
+                    to="/admin/blog-category"
                     className="submenu-item"
                   >
                     Các loại blogger

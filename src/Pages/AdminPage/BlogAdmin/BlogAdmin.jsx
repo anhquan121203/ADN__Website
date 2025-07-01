@@ -1,40 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { Pagination, Spin, Button, message } from "antd";
 import useBlog from "../../../Hooks/useBlog";
+import ModalCreateBlog from "./ModalCreateBlog/ModalCreateBlog";
 import "./BlogAdmin.css";
 
 function BlogAdmin() {
   const {
     blogs,
-    blogCategories,
     totalBlogs,
-    totalCategories,
     loading,
     error,
     searchListBlog,
-    searchListBlogCategory,
+    addNewBlog,
+    blogCategories,
+    // Nếu cần, truyền thêm list dịch vụ từ useService
   } = useBlog();
 
-  // State phân trang blogs
   const [currentBlogPage, setCurrentBlogPage] = useState(1);
   const blogPageSize = 10;
 
-  // State phân trang blog categories
-  const [currentCategoryPage, setCurrentCategoryPage] = useState(1);
-  const categoryPageSize = 10;
+  // Modal state
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // State filter (mở rộng nếu cần)
   const [blogFilters, setBlogFilters] = useState({
     keyword: "",
     sort_by: "created_at",
     sort_order: "desc",
   });
-  const [categoryFilters, setCategoryFilters] = useState({
-    keyword: "",
-    sort_by: "created_at",
-    sort_order: "desc",
-  });
 
+  // Lấy danh sách blog
   useEffect(() => {
     searchListBlog({
       ...blogFilters,
@@ -44,84 +38,38 @@ function BlogAdmin() {
     // eslint-disable-next-line
   }, [currentBlogPage, blogFilters]);
 
-  useEffect(() => {
-    searchListBlogCategory({
-      ...categoryFilters,
-      pageNum: currentCategoryPage,
-      pageSize: categoryPageSize,
-    });
-    // eslint-disable-next-line
-  }, [currentCategoryPage, categoryFilters]);
+  // Handler tạo mới blog
+  const handleCreateBlog = async (formData) => {
+    const res = await addNewBlog(formData);
+    if (res.success) {
+      message.success("Tạo blog mới thành công!");
+      setIsAddModalOpen(false);
+      searchListBlog({
+        ...blogFilters,
+        pageNum: 1,
+        pageSize: blogPageSize,
+      });
+      setCurrentBlogPage(1);
+    } else {
+      message.error(res.message || "Tạo blog thất bại!");
+    }
+  };
 
   return (
     <div className="blog-admin">
-      {/* Blog Categories Table */}
-      <div className="admin-table-container">
-        <h2 className="table-title">Blog Categories</h2>
-        {loading ? (
-          <Spin />
-        ) : (
-          <>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>STT</th>
-
-                  <th>Name</th>
-
-                  <th>Created At</th>
-                  <th>Updated At</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blogCategories && blogCategories.length > 0 ? (
-                  blogCategories.map((cat, idx) => (
-                    <tr key={cat._id || cat.id}>
-                      <td>
-                        {(currentCategoryPage - 1) * categoryPageSize + idx + 1}
-                      </td>
-
-                      <td>{cat.name}</td>
-
-                      <td>
-                        {cat.created_at
-                          ? new Date(cat.created_at).toLocaleString()
-                          : ""}
-                      </td>
-                      <td>
-                        {cat.updated_at
-                          ? new Date(cat.updated_at).toLocaleString()
-                          : ""}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} style={{ textAlign: "center" }}>
-                      No categories found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            <Pagination
-              current={currentCategoryPage}
-              pageSize={categoryPageSize}
-              total={totalCategories}
-              onChange={setCurrentCategoryPage}
-              style={{
-                marginTop: 20,
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            />
-          </>
-        )}
-      </div>
-
-      {/* Blogs Table */}
-      <div className="admin-table-container">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+      >
         <h2 className="table-title">Blogs</h2>
+        <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
+          Thêm blog
+        </Button>
+      </div>
+      <div className="admin-table-container">
         {loading ? (
           <Spin />
         ) : (
@@ -130,10 +78,8 @@ function BlogAdmin() {
               <thead>
                 <tr>
                   <th>STT</th>
-
                   <th>Title</th>
                   <th>Content</th>
-
                   <th>User ID</th>
                   <th>Service ID</th>
                   <th>Category ID</th>
@@ -149,7 +95,6 @@ function BlogAdmin() {
                   blogs.map((blog, idx) => (
                     <tr key={blog._id || blog.id}>
                       <td>{(currentBlogPage - 1) * blogPageSize + idx + 1}</td>
-
                       <td>{blog.title}</td>
                       <td>
                         <div
@@ -163,7 +108,6 @@ function BlogAdmin() {
                           {blog.content}
                         </div>
                       </td>
-
                       <td>{blog.user_id}</td>
                       <td>{blog.service_id}</td>
                       <td>{blog.blog_category_id}</td>
@@ -202,7 +146,7 @@ function BlogAdmin() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={13} style={{ textAlign: "center" }}>
+                    <td colSpan={11} style={{ textAlign: "center" }}>
                       No blogs found
                     </td>
                   </tr>
@@ -223,6 +167,16 @@ function BlogAdmin() {
           </>
         )}
       </div>
+
+      {/* Modal tạo blog */}
+      <ModalCreateBlog
+        isModalOpen={isAddModalOpen}
+        handleCancel={() => setIsAddModalOpen(false)}
+        handleCreate={handleCreateBlog}
+        loading={loading}
+        categories={blogCategories} // truyền danh mục blog từ hook
+        services={[]} // truyền dịch vụ nếu có, hoặc lấy từ useService
+      />
     </div>
   );
 }

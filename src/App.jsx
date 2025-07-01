@@ -28,6 +28,7 @@ import DepartmentAdmin from "./Pages/AdminPage/DepartmentAdmin/DepartmentAdmin";
 import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
 import KitAdmin from "./Pages/AdminPage/KitAdmin/KitAdmin";
 import BlogAdmin from "./Pages/AdminPage/BlogAdmin/BlogAdmin";
+import BlogCategoriesAdmin from "./Pages/AdminPage/BlogCategoriesAdmin/BlogCategoriesAdmin";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
@@ -53,6 +54,7 @@ import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/Appointmen
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
 import LaboratoryTechnicianProfile from "./Pages/LaboratoryTechnicianPage/LaboratoryTechnicianProfile/ViewProfileLaboratoryTechnician";
+
 
 
 // Protected route component
@@ -131,6 +133,7 @@ function App() {
           <Route path="manager-staff-profile" element={<ManagerStaffProfile />} />
           <Route path="kit-admin" element={<KitAdmin />} />
           <Route path="blog" element={<BlogAdmin />} />
+          <Route path="blog-category" element={<BlogCategoriesAdmin />} />
         </Route>
 
         {/* STAFF ROUTES*********************************** */}

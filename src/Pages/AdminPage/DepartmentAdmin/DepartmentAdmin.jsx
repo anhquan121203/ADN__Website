@@ -187,7 +187,7 @@ function DepartmentAdmin() {
       },
       searchCondition: {
         keyword: "",
-        role: "manager",
+        role: ["manager"],
         is_verified: true,
         status: true,
         is_deleted: false,
@@ -199,9 +199,9 @@ function DepartmentAdmin() {
   }, []);
 
   useEffect(() => {
-    // if (isAddModalOpen || isEditModalOpen) {
-    fetchManagers();
-    // }
+    if (isAddModalOpen || isEditModalOpen) {
+      fetchManagers();
+    }
   }, [isAddModalOpen, isEditModalOpen]);
 
   useEffect(() => {

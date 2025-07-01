@@ -34,7 +34,7 @@ function FilterStaffProfile({ filters, setFilters, onSearch }) {
     setFilters({
         ...filters,
         hire_date_from: date ? date[0]?.format("YYYY-MM-DD") : undefined,
-        hire_date_from: date ? date[0]?.format("YYYY-MM-DD") : undefined
+        // hire_date_from: date ? date[0]?.format("YYYY-MM-DD") : undefined
     })
   }
 

@@ -325,7 +325,7 @@ const blogSlice = createSlice({
       })
       .addCase(deleteBlogCategory.fulfilled, (state, action) => {
         state.blogCategories = state.blogCategories.filter(
-          (cat) => cat._id !== action.payload
+          (cat) => (cat._id || cat.id) !== action.payload
         );
       })
       .addCase(searchBlogCategory.fulfilled, (state, action) => {
