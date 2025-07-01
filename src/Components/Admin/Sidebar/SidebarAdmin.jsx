@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SidebarAdmin.css";
 import {
   MdOutlineDashboard,
   MdOutlineMiscellaneousServices,
 } from "react-icons/md";
-import { FaUserAlt } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IoIosArrowDown, IoIosMedkit } from "react-icons/io";
 import { LuListTodo } from "react-icons/lu";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { CiCalendar } from "react-icons/ci";
 import { IoDocumentAttachOutline } from "react-icons/io5";
 
-function Sidebar() {
+function SidebarAdmin() {
+  const location = useLocation();
+  const { pathname } = location;
+
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [blogDropdownOpen, setBlogDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setServiceDropdownOpen(
+      pathname.startsWith("/admin/service") ||
+        pathname.startsWith("/admin/appointment") ||
+        pathname.startsWith("/admin/administrative-case")
+    );
+    setAccountDropdownOpen(pathname.startsWith("/admin/manager"));
+    setBlogDropdownOpen(pathname.startsWith("/admin/blog"));
+  }, [pathname]);
 
   return (
     <div>
@@ -30,14 +42,21 @@ function Sidebar() {
           </div>
           <nav className="nav-admin">
             <div className="nav-group">
-              <Link to="/admin/dashboard-admin" className="nav-item active">
+              {/* Dashboard */}
+              <Link
+                to="/admin/dashboard-admin"
+                className={`nav-item ${
+                  pathname === "/admin/dashboard-admin" ? "active" : ""
+                }`}
+              >
                 <MdOutlineDashboard /> Doanh số
               </Link>
 
-              {/* Quản lý người dùng */}
+              {/* Quản lý tài khoản */}
               <div
-                className={`nav-item dropdown-service ${accountDropdownOpen ? "open" : ""
-                  }`}
+                className={`nav-item dropdown-service ${
+                  accountDropdownOpen ? "open" : ""
+                }`}
                 onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
               >
                 <div className="dropdown-left">
@@ -45,29 +64,39 @@ function Sidebar() {
                   <span>Quản lý tài khoản</span>
                 </div>
                 <IoIosArrowDown
-                  className={`dropdown-icon ${accountDropdownOpen ? "rotate" : ""
-                    }`}
+                  className={`dropdown-icon ${
+                    accountDropdownOpen ? "rotate" : ""
+                  }`}
                 />
               </div>
-
               {accountDropdownOpen && (
                 <div className="submenu">
-                  <Link to="/admin/manager-account" className="submenu-item">
+                  <Link
+                    to="/admin/manager-account"
+                    className={`submenu-item ${
+                      pathname === "/admin/manager-account" ? "active" : ""
+                    }`}
+                  >
                     Danh sách người dùng
                   </Link>
                   <Link
                     to="/admin/manager-staff-profile"
-                    className="submenu-item"
+                    className={`submenu-item ${
+                      pathname === "/admin/manager-staff-profile"
+                        ? "active"
+                        : ""
+                    }`}
                   >
                     Danh sách nhân viên
                   </Link>
                 </div>
               )}
 
-              {/*Quản lý thiết bị */}
+              {/* Quản lý dịch vụ */}
               <div
-                className={`nav-item dropdown-service ${serviceDropdownOpen ? "open" : ""
-                  }`}
+                className={`nav-item dropdown-service ${
+                  serviceDropdownOpen ? "open" : ""
+                }`}
                 onClick={() => setServiceDropdownOpen(!serviceDropdownOpen)}
               >
                 <div className="dropdown-left">
@@ -75,68 +104,101 @@ function Sidebar() {
                   <span>Quản lý dịch vụ</span>
                 </div>
                 <IoIosArrowDown
-                  className={`dropdown-icon ${serviceDropdownOpen ? "rotate" : ""
-                    }`}
+                  className={`dropdown-icon ${
+                    serviceDropdownOpen ? "rotate" : ""
+                  }`}
                 />
               </div>
-
               {serviceDropdownOpen && (
                 <div className="submenu">
-                  <Link to="/admin/service-admin" className="submenu-item">
+                  <Link
+                    to="/admin/service-admin"
+                    className={`submenu-item ${
+                      pathname === "/admin/service-admin" ? "active" : ""
+                    }`}
+                  >
                     Danh sách dịch vụ
                   </Link>
                   <Link
-                    to="/admin/service-admin/device-b"
-                    className="submenu-item"
+                    to="/admin/appointment-admin"
+                    className={`submenu-item ${
+                      pathname === "/admin/appointment-admin" ? "active" : ""
+                    }`}
                   >
-                    Đặt lịch theo dịch vụ
+                    Quản lý đặt lịch
+                  </Link>
+                  <Link
+                    to="/admin/administrative-case"
+                    className={`submenu-item ${
+                      pathname === "/admin/administrative-case" ? "active" : ""
+                    }`}
+                  >
+                    Dịch vụ hành chính
                   </Link>
                 </div>
               )}
 
-              {/* Quản lý slot */}
-              <Link to="/admin/slot-admin" className="nav-item">
+              {/* Lịch làm việc */}
+              <Link
+                to="/admin/slot-admin"
+                className={`nav-item ${
+                  pathname === "/admin/slot-admin" ? "active" : ""
+                }`}
+              >
                 <CiCalendar /> Lịch làm việc
               </Link>
 
               {/* Quản lý phòng ban */}
-              <Link to="/admin/department-admin" className="nav-item">
+              <Link
+                to="/admin/department-admin"
+                className={`nav-item ${
+                  pathname === "/admin/department-admin" ? "active" : ""
+                }`}
+              >
                 <HiOutlineOfficeBuilding /> Quản lý phòng ban
               </Link>
 
-              {/*  */}
-              <Link to="/admin/kit-admin" className="nav-item">
+              {/* Dụng cụ y tế */}
+              <Link
+                to="/admin/kit-admin"
+                className={`nav-item ${
+                  pathname === "/admin/kit-admin" ? "active" : ""
+                }`}
+              >
                 <IoIosMedkit /> Quản lý dụng cụ Y tế
               </Link>
-              
-              {/* <Link to="/admin/blog" className="nav-item">
-                <MdOutlineMiscellaneousServices /> Quản lý blog
-              </Link> */}
 
-              {/*Quản lý thiết bị */}
+              {/* Quản lý blogger */}
               <div
-                className={`nav-item dropdown-service ${blogDropdownOpen ? "open" : ""
-                  }`}
+                className={`nav-item dropdown-service ${
+                  blogDropdownOpen ? "open" : ""
+                }`}
                 onClick={() => setBlogDropdownOpen(!blogDropdownOpen)}
               >
                 <div className="dropdown-left">
-                  <IoDocumentAttachOutline   />
+                  <IoDocumentAttachOutline />
                   <span>Quản lý blogger</span>
                 </div>
                 <IoIosArrowDown
-                  className={`dropdown-icon ${blogDropdownOpen ? "rotate" : ""
-                    }`}
+                  className={`dropdown-icon ${
+                    blogDropdownOpen ? "rotate" : ""
+                  }`}
                 />
               </div>
-
               {blogDropdownOpen && (
                 <div className="submenu">
-                  <Link to="/admin/blog" className="submenu-item">
+                  <Link to="/admin/blog"  
+                    className={`submenu-item ${
+                      pathname === "/admin/blog" ? "active" : ""
+                    }`}
+                  >
                     Danh sách blogger
                   </Link>
                   <Link
                     to="/admin/blog-category"
-                    className="submenu-item"
+                    className={`submenu-item ${
+                      pathname === "/admin/blog-category" ? "active" : ""
+                    }`}
                   >
                     Các loại blogger
                   </Link>
@@ -150,4 +212,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default SidebarAdmin;

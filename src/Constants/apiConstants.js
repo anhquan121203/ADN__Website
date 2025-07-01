@@ -1,4 +1,3 @@
-// export const API_BASE_URL = "https://restapi-dna-testing-fwdnadcqc9hsfmbf.canadacentral-01.azurewebsites.net";
 export const API_BASE_URL = "https://restapi-dnatesting.up.railway.app";
 // export const API_BASE_URL = "http://localhost:8080";
 

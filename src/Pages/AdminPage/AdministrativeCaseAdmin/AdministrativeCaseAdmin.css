@@ -1,0 +1,22 @@
+.staffProfile-title{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
+
+.title-name{
+    font-size: 15px;
+    margin: 0;
+
+}
+
+.title-email{
+    color: gray;
+}
+
+.action-staffProfile{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
