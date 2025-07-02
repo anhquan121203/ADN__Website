@@ -50,11 +50,14 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {      
+    try {
+      // Lấy ngày hiện tại theo real time
+      const currentDate = new Date().toISOString().split('T')[0];
+      
       await createAppointment({
         service_id: serviceId,
         ...(selectedSlot && { slot_id: selectedSlot }),
-        appointment_date: startDate,
+        appointment_date: currentDate,
         type: type,
         collection_address: type === 'home' ? collection_address : null
       });
@@ -65,9 +68,6 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
   };
 
   if (!isOpen) return null;
-
-  const today = new Date().toISOString().split('T')[0];
-  const maxDate = addDays(new Date(today), 7).toISOString().split('T')[0];
 
   const handleRangeChange = (item) => {
     const picked = item.selection.startDate;

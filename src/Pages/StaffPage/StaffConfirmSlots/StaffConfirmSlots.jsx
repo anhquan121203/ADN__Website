@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button } from 'antd';
+import { Table, Button, Space, Tooltip } from 'antd';
+import { EyeOutlined, InboxOutlined, SettingOutlined } from '@ant-design/icons';
 import { useAppointment } from '../../../Hooks/useAppoinment';
 import { useNavigate } from 'react-router-dom';
+import ModalRequestKit from './ModalRequestKit/ModalRequestKit';
 
 const StaffConfirmSlots = () => {
   const {
@@ -11,12 +13,29 @@ const StaffConfirmSlots = () => {
     loading
   } = useAppointment();
 
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-const navigate = useNavigate();
+  const [pageNum, setPageNum] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
-    getStaffAssignedAppointments({ page, limit });
-  }, [page, limit]);
+    getStaffAssignedAppointments({ pageNum, pageSize });
+  }, [pageNum, pageSize]);
+
+  const handleReceiveKit = (appointment) => {
+    setSelectedAppointment(appointment);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleModalSuccess = () => {
+    // Refresh the appointments list
+    getStaffAssignedAppointments({ pageNum, pageSize });
+  };
 
   const columns = [
     {
@@ -56,12 +75,37 @@ const navigate = useNavigate();
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <Button
-          type="link"
-          onClick={() => navigate(`/staff/appointment/view/${record._id}`)}
-        >
-          Xem chi tiết
-        </Button>
+        <Space>
+          <Tooltip title="Xem chi tiết">
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              onClick={() => navigate(`/staff/appointment/view/${record._id}`)}
+            />
+          </Tooltip>
+
+          {record.type === 'facility' && record.status !== 'sample_collected' && record.status !== 'sample_received' && (
+            <Tooltip title="Nhận bộ dụng cụ">
+              <Button
+                type="text"
+                icon={<InboxOutlined />}
+                onClick={() => handleReceiveKit(record)}
+                style={{ color: '#1890ff' }}
+              />
+            </Tooltip>
+          )}
+
+          {record.type === 'facility' && (record.status === 'sample_collected' || record.status === 'sample_received') && (
+            <Tooltip title="Xem mẫu">
+              <Button
+                type="text"
+                icon={<EyeOutlined />}
+                onClick={() => navigate(`/staff/appointment/samples/${record._id}`)}
+                style={{ color: '#52c41a' }}
+              />
+            </Tooltip>
+          )}
+        </Space>
       ),
     },
   ];
@@ -79,10 +123,17 @@ const navigate = useNavigate();
           pageSize: staffAssignedPageInfo.pageSize,
           total: staffAssignedPageInfo.totalItems,
           onChange: (p, ps) => {
-            setPage(p);
-            setLimit(ps);
+            setPageNum(p);
+            setPageSize(ps);
           },
         }}
+      />
+
+      <ModalRequestKit
+        open={modalOpen}
+        onClose={handleModalClose}
+        appointmentId={selectedAppointment?._id}
+        onSuccess={handleModalSuccess}
       />
     </div>
   );

@@ -145,11 +145,57 @@ export const searchSamples = createAsyncThunk(
     }
   }
 );
+export const collectSampleAtFacility = createAsyncThunk(
+  "sample/collectSampleAtFacility",
+  async ({ appointment_id, type, person_info }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.post(
+        `${API_BASE_URL}/api/sample/collect`,
+        {
+          appointment_id,
+          type,
+          person_info
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+export const fetchSampleById = createAsyncThunk(
+  "sample/fetchSampleById",
+  async (sampleId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/sample/${sampleId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
 const sampleSlice = createSlice({
   name: "sample",
   initialState: {
     samples: [],
+    selectedSample: null,
     // data: [],
     isLoading: false,
     isError: false,
@@ -232,6 +278,34 @@ const sampleSlice = createSlice({
       .addCase(searchSamples.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || 'Failed to fetch samples';
+      })
+      .addCase(collectSampleAtFacility.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+      })
+      .addCase(collectSampleAtFacility.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        // Update samples if needed
+      })
+      .addCase(collectSampleAtFacility.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload;
+      })
+      .addCase(fetchSampleById.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+      })
+      .addCase(fetchSampleById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.selectedSample = action.payload.data; // Changed from action.payload.sample to action.payload.data
+      })
+      .addCase(fetchSampleById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload;
       });
   },
 });
