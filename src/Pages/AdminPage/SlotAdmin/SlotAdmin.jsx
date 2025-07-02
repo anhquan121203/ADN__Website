@@ -69,8 +69,8 @@ function SlotAdmin() {
       is_active: true,
       pageNum: currentPage,
       pageSize: pageSize,
-      sort_by: "start_time",
-      sort_order: "asc",
+      sort_by: "created_at",
+      sort_order: "desc",
     });
   };
 

@@ -42,7 +42,7 @@ import StaffConfirmSlots from "./Pages/StaffPage/StaffConfirmSlots/StaffConfirmS
 import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/AppointmentViewDetail";
 import StaffSample from "./Pages/StaffPage/StaffSample/StaffSample";
 import ViewSampleAppoinment from "./Pages/StaffPage/StaffSample/ViewSampleAppoinment/ViewSampleAppoinment";
-
+import ViewSamplesByAppointment from "./Pages/StaffPage/StaffConfirmSlots/ViewSamplesByAppointment/ViewSamplesByAppointment";
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
@@ -108,7 +108,7 @@ function App() {
           <Route path="/service" element={<CustomerService />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route
-            path="/api/payment/payos-return"
+            path="/api/payments/payos-return"
             element={<PayOSReturn />}
           />
         </Route>
@@ -145,6 +145,7 @@ function App() {
           <Route path="appointment/view/:id" element={<AppointmentViewDetail />} />
           <Route path="sample" element={<StaffSample />} />
           <Route path="samples/appointment/:appointmentId" element={<ViewSampleAppoinment />} />
+          <Route path="appointment/samples/:appointmentId" element={<ViewSamplesByAppointment />} />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}

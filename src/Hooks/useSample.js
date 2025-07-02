@@ -7,13 +7,16 @@ import {
   searchSamples,
   updateFilters,
   resetFilters,
-  receiveSamples as receiveSamplesAction
+  receiveSamples as receiveSamplesAction,
+  collectSampleAtFacility,
+  fetchSampleById
 } from '../Feartures/sample/sampleSlice';
 
 const useSample = () => {
   const dispatch = useDispatch();
   const { 
     samples, 
+    selectedSample,
     isLoading, 
     isError, 
     error, 
@@ -110,19 +113,40 @@ const useSample = () => {
     }
   };
 
+  const collectSample = async (appointment_id, type, person_info) => {
+    try {
+      const res = await dispatch(collectSampleAtFacility({ appointment_id, type, person_info })).unwrap();
+      return { success: true, data: res };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const getSampleById = async (sampleId) => {
+    try {
+      const res = await dispatch(fetchSampleById(sampleId)).unwrap();
+      return { success: true, data: res };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   return {
     // Actions
     addSamples,
     getSamplesByAppointment,
     uploadPersonImage,
     submitSamples,
+    collectSample,
     searchSamples: searchSamplesWithFilters,
     updateFilters: updateSampleFilters,
     resetFilters: resetSampleFilters,
     receiveSamples,
+    getSampleById,
     
     // State
     samples,
+    selectedSample,
     loading: isLoading,
     error: isError ? error : null,
     pagination,

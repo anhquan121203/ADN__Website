@@ -121,7 +121,7 @@ const isSlotAssigned = (slotId) => {
               <Descriptions.Item label="Khung giờ" span={2}>
                 {detail.slot_id.time_slots?.map((slot) => (
                   <div key={slot._id}>
-                    {slot.day}/{slot.month + 1}/{slot.year} – {slot.start_time.hour}h
+                    {slot.day}/{slot.month }/{slot.year} – {slot.start_time.hour}h
                     {slot.start_time.minute.toString().padStart(2, '0')} đến {slot.end_time.hour}h
                     {slot.end_time.minute.toString().padStart(2, '0')}
                   </div>

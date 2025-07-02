@@ -60,8 +60,16 @@ useEffect(() => {
   // Handle file select
   const handleImageChange = (sampleId, e) => {
     const files = Array.from(e.target.files);
-    if (!files.length) return;
+    if (!files.length) {
+      // Clear preview if no files selected
+      setSelectedFiles(prev => ({ ...prev, [sampleId]: undefined }));
+      setImages(prev => ({ ...prev, [sampleId]: undefined }));
+      return;
+    }
+    
     setSelectedFiles(prev => ({ ...prev, [sampleId]: files }));
+    
+    // Create preview for the first selected file
     const reader = new FileReader();
     reader.onload = ev => {
       setImages(prev => ({ ...prev, [sampleId]: ev.target.result }));
@@ -78,8 +86,12 @@ useEffect(() => {
       for (const file of files) {
         await uploadPersonImage(sampleId, file);
       }
+      // Clear selected files and preview after successful upload
       setSelectedFiles(prev => ({ ...prev, [sampleId]: undefined }));
+      setImages(prev => ({ ...prev, [sampleId]: undefined }));
       setNotification({ message: 'Upload thành công!', type: 'success' });
+      // Refresh samples to show updated image
+      fetchSamples();
     } catch {
       setNotification({ message: 'Upload thất bại!', type: 'error' });
     }
@@ -130,6 +142,7 @@ useEffect(() => {
   // If appointment is collected AND kit is used, hide all batch controls
   const appointmentStatus = sampleArray[0].appointment_id?.status;
   const kitStatus = sampleArray[0].kit_id?.status;
+  const paymentStatus = sampleArray[0].appointment_id?.payment_status;
   const isBatchCompleted = appointmentStatus === 'sample_collected' || appointmentStatus === 'sample_received' && kitStatus === 'used';
 
   return (
@@ -155,7 +168,7 @@ useEffect(() => {
         Return
       </button>
 
-      {appointmentStatus === "sample_received" && (
+      {appointmentStatus === "sample_received" && paymentStatus!== "paid" &&(
         <button
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           onClick={() =>
@@ -192,6 +205,7 @@ useEffect(() => {
           const imgSrc = sample.person_info?.image_url;
           const hasSelected = selectedFiles[sample._id]?.length > 0;
           const hideCheckbox = isBatchCompleted;
+          const previewImage = images[sample._id]; // Preview image from file selection
 
           return (
             <div
@@ -207,23 +221,37 @@ useEffect(() => {
                 onChange={e => handleCheckboxChange(sample._id, e.target.checked)}
               />
               )}
-              {/* Avatar */}
+              {/* Avatar with preview */}
               <div className="relative mb-4 w-24 h-24">
-                {imgSrc ? (
+                {previewImage ? (
+                  // Show preview image if file is selected
+                  <div className="relative">
+                    <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="w-full h-full rounded-full object-cover border-2 border-blue-500"
+                    />
+                    <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-1 rounded">
+                      Preview
+                    </div>
+                  </div>
+                ) : imgSrc ? (
+                  // Show existing uploaded image
                   <img
                     src={person.image_url}
                     alt="Sample"
                     className="w-full h-full rounded-full object-cover border-2 border-gray-300"
                   />
                 ) : (
+                  // Show initials if no image
                   <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-4xl text-gray-400 border-2 border-gray-300 select-none">
                     {getInitial(person.name)}
                   </div>
                 )}
                 <label
                   htmlFor={`upload-${sample._id}`}
-                  className="absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer shadow-sm"
-                  title="Upload image"
+                  className="absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer shadow-sm hover:bg-gray-50"
+                  title="Select image to upload"
                 >
                   <input
                     id={`upload-${sample._id}`}
@@ -237,18 +265,34 @@ useEffect(() => {
                 </label>
               </div>
 
-              {/* Upload button */}
-              <button
-                className={`mb-2 px-3 py-1 rounded w-full ${
-                  hasSelected
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-                disabled={!hasSelected || uploading[sample._id]}
-                onClick={() => handleUpload(sample._id)}
-              >
-                {uploading[sample._id] ? 'Uploading...' : 'Upload'}
-              </button>
+              {/* Upload and Cancel buttons */}
+              <div className="mb-2 w-full flex gap-2">
+                <button
+                  className={`flex-1 px-3 py-1 rounded ${
+                    hasSelected
+                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                  disabled={!hasSelected || uploading[sample._id]}
+                  onClick={() => handleUpload(sample._id)}
+                >
+                  {uploading[sample._id] ? 'Uploading...' : 'Upload'}
+                </button>
+                {hasSelected && (
+                  <button
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => {
+                      setSelectedFiles(prev => ({ ...prev, [sample._id]: undefined }));
+                      setImages(prev => ({ ...prev, [sample._id]: undefined }));
+                      // Reset file input
+                      const fileInput = document.getElementById(`upload-${sample._id}`);
+                      if (fileInput) fileInput.value = '';
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
 
               {/* Info */}
               <div className="w-full space-y-1 text-sm text-gray-700">
