@@ -219,6 +219,30 @@ export const assignLabTechToAppointment = createAsyncThunk(
   }
 );
 
+export const fetchLabTechAssignedAppointments = createAsyncThunk(
+  "appointment/fetchLabTechAssignedAppointments",
+  async (params, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/appointment/lab-tech/assigned`,
+        {
+          params: {
+            ...params,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const appointmentSlice = createSlice({
   name: "APPOINTMENT",
   initialState: {
@@ -230,6 +254,8 @@ const appointmentSlice = createSlice({
     pageInfo: { pageNum: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
     staffAssignedAppointments: [],
     staffAssignedPageInfo: { pageNum: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
+    labTechAssignedAppointments: [],
+    labTechAssignedPageInfo: { pageNum: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
     staffSlots: [],
     staffSlotsLoading: false,
     staffSlotsError: null,
@@ -362,6 +388,19 @@ const appointmentSlice = createSlice({
         // Optionally update state if needed
       })
       .addCase(assignLabTechToAppointment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchLabTechAssignedAppointments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchLabTechAssignedAppointments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.labTechAssignedAppointments = action.payload.data.pageData;
+        state.labTechAssignedPageInfo = action.payload.data.pageInfo;
+      })
+      .addCase(fetchLabTechAssignedAppointments.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
