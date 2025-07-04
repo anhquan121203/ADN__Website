@@ -9,7 +9,8 @@ import {
   fetchStaffSlots,
   confirmAppointment,
   fetchAvailableLabTechs,
-  assignLabTechToAppointment
+  assignLabTechToAppointment,
+  fetchLabTechAssignedAppointments
 } from "../Feartures/appoinment/appoimentSlice";
 
 export const useAppointment = () => {
@@ -22,7 +23,9 @@ export const useAppointment = () => {
     error, 
     pageInfo,
     staffAssignedAppointments, // <-- add this
-    staffAssignedPageInfo      // <-- add this
+    staffAssignedPageInfo,     // <-- add this
+    labTechAssignedAppointments,
+    labTechAssignedPageInfo
   } = useSelector((state) => state.appointment);
 
   const createNewAppointment = async (appointmentData) => {
@@ -115,6 +118,15 @@ export const useAppointment = () => {
     }
   };
 
+  const getLabTechAssignedAppointments = async (params) => {
+    try {
+      const result = await dispatch(fetchLabTechAssignedAppointments(params)).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   return {
     appointments,
     selectedAppointment,
@@ -134,5 +146,10 @@ export const useAppointment = () => {
     confirmAppointmentSlot,
     getAvailableLabTechs,
     assignLabTech,
+    getLabTechAssignedAppointments,
+    labTechAssignedAppointments,
+    labTechAssignedPageInfo,
   };
 };
+
+export default useAppointment;

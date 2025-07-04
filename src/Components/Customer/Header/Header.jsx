@@ -133,120 +133,106 @@ function Header() {
       </div>
 
       <nav className="navBar-menu">
-        <ul>
-          <li>
-            <Link
-              to="/"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Trang chủ
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/service"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Xét nghiệm DNA
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/blog"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Blog
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/news"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Hướng dẫn xét nghiệm
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              Về chúng tôi
-            </Link>
-          </li>
-        </ul>
-
-        <div className="navBar-menu__login">
+        <div className="nav-content">
           <ul>
             <li>
-              {" "}
-              <CiTwitter className="navBar-menu__icon" />
+              <Link
+                to="/"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Trang chủ
+              </Link>
             </li>
             <li>
-              {" "}
-              <FaFacebookF className="navBar-menu__icon" />
+              <Link
+                to="/service"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Xét nghiệm DNA
+              </Link>
             </li>
-
-            {isLoggedIn ? (
-              <div className="dropdown-login">
-                <div className="header-avavtar">{getAvatarContent()}</div>
-
-                {isOpen && (
-                  <div className="dropdown-content">
-                    {role === "customer" ? (
-                      <>
-                        {firstName} {lastName}
-                        <a href="/customer">Profile</a>
-                        <a href="/history">Lịch sử xét nghiệm</a>
-                      </>
-                    ) : role === "staff" ? (
-                      <>
-                        <ul>
-                          <li>
-                            <Link to="/staff">Người lấy mẫu</Link>
-                          </li>
-                        </ul>
-                      </>
-                    ) : role === "manager" ? (
-                      <>
-                        <ul>
-                          <li>
-                            <Link to="/manager">Người quan ly</Link>
-                          </li>
-                        </ul>
-                      </>
-                    ) : role === "laboratory_technician" ? (
-                      <>
-                        <ul>
-                          <li>
-                            <Link to="/laboratory_technician">Ky thuat vien</Link>
-                          </li>
-                        </ul>
-                      </>
-                    ) : (
-                      <>
-                        <ul>
-                          <li>
-                            <Link to="/admin">Dashboard</Link>
-                          </li>
-                        </ul>
-                      </>
-                    )}
-
-                    <a onClick={handleLogout}>Thoát</a>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                <Link to="/login">
-                  <FaCircleUser className="navBar-menu__icon" />
-                </Link>
-              </>
-            )}
+            <li>
+              <Link
+                to="/blog"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Blog
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/news"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Hướng dẫn xét nghiệm
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/about"
+                className={({ isActive }) => (isActive ? "active" : "")}
+              >
+                Về chúng tôi
+              </Link>
+            </li>
           </ul>
 
-          {/* <CiUser  className="navBar-menu__icon"/> */}
+          <div className="navBar-menu__login">
+            <ul>
+              <li>
+                <CiTwitter className="navBar-menu__icon" />
+              </li>
+              <li>
+                <FaFacebookF className="navBar-menu__icon" />
+              </li>
+
+              {isLoggedIn ? (
+                <li>
+                  <div className="dropdown-login">
+                    <div className="header-avavtar">{getAvatarContent()}</div>
+
+                    {isOpen && (
+                      <div className="dropdown-content">
+                        {role === "customer" ? (
+                          <>
+                            <div style={{ padding: '12px 16px', fontWeight: 'bold', borderBottom: '2px solid #eee' }}>
+                              {firstName} {lastName}
+                            </div>
+                            <Link to="/customer">Profile</Link>
+                            <Link to="/history">Lịch sử xét nghiệm</Link>
+                          </>
+                        ) : role === "staff" ? (
+                          <>
+                            <Link to="/staff">Người lấy mẫu</Link>
+                          </>
+                        ) : role === "manager" ? (
+                          <>
+                            <Link to="/manager">Người quản lý</Link>
+                          </>
+                        ) : role === "laboratory_technician" ? (
+                          <>
+                            <Link to="/laboratory_technician">Kỹ thuật viên</Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link to="/admin">Dashboard</Link>
+                          </>
+                        )}
+
+                        <a onClick={handleLogout}>Thoát</a>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ) : (
+                <li>
+                  <Link to="/login">
+                    <FaCircleUser className="navBar-menu__icon" />
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </div>
         </div>
       </nav>
     </div>

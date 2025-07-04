@@ -54,7 +54,10 @@ import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/Appointmen
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
 import LaboratoryTechnicianProfile from "./Pages/LaboratoryTechnicianPage/LaboratoryTechnicianProfile/ViewProfileLaboratoryTechnician";
-
+import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechAppointments";
+import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
+import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
+import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -159,6 +162,10 @@ function App() {
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
           <Route path="/laboratory_technician" element={<LaboratoryTechnicianLayout/>}>
           <Route index element={<LaboratoryTechnicianProfile />} />
+          <Route path="samples" element={<LabTechAppointments />} />
+          <Route path="appointments/:appointmentId/samples" element={<LabTechViewSamplesByAppointment />} />
+          <Route path="results" element={<ManageResult />} />
+          <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
           </Route>
         </Routes>
 

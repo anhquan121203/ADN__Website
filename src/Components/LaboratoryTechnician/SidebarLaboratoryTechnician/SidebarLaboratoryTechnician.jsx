@@ -40,7 +40,7 @@ function SidebarLaboratoryTechnician() {
           <li className={`px-3`}>
             <Link to="/laboratory_technician/samples" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
               <FaVial className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Quản lý mẫu</span>
+              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Xác nhận mẫu trước khi xét nghiệm</span>
             </Link>
           </li>
           <li className={`px-3`}>
