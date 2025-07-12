@@ -199,9 +199,9 @@ function DepartmentAdmin() {
   }, []);
 
   useEffect(() => {
-    if (isAddModalOpen || isEditModalOpen) {
-      fetchManagers();
-    }
+    // if (isAddModalOpen || isEditModalOpen) {
+    fetchManagers();
+    // }
   }, [isAddModalOpen, isEditModalOpen]);
 
   useEffect(() => {
