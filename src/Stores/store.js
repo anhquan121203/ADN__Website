@@ -11,7 +11,7 @@ import appointmentSlice from "../Feartures/appoinment/appoimentSlice";
 import sampleSlice from "../Feartures/sample/sampleSlice";
 import paymentSlice from "../Feartures/payment/paymentSlice";
 import caseSlice from "../Feartures/case/caseSlice";
-
+import resultSlice from "../Feartures/result/resultSlice";
 import blogsSlice from "../Feartures/blog/blogSlice";
 
 export const store = configureStore({
@@ -29,6 +29,7 @@ export const store = configureStore({
     sample: sampleSlice.reducer,
     payment: paymentSlice.reducer,
     case: caseSlice.reducer,
+    result: resultSlice.reducer,
     blog: blogsSlice.reducer,
   },
 });

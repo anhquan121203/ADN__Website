@@ -35,9 +35,14 @@ const PaymentPage = () => {
     }
     const paymentData = res.data.data;
     const url = paymentData.checkout_url;      // lấy đúng field checkout_url
+    const paymentNo = paymentData.payment_no;  // lấy payment_no từ response
 
     if (res.success) {
       if (method === "pay_os" && url) {
+        // Lưu payment_no vào localStorage trước khi redirect
+        if (paymentNo) {
+          localStorage.setItem("payment_no", paymentNo);
+        }
         window.location.href = url;
       } else {
         notification.success({ message: "Thanh toán tiền mặt thành công!" });
