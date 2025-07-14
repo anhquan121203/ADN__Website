@@ -78,6 +78,7 @@ const useSlot = () => {
       console.error("Error create Staff");
     }
   };  
+  
   const fetchAvailableSlots = useCallback(
     async (params) => {
       try {
