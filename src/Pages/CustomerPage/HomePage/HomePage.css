@@ -46,6 +46,7 @@
   position: relative;
   overflow: visible;
 }
+
 .homepage__hero {
   display: flex;
   flex-wrap: wrap;
@@ -53,10 +54,12 @@
   justify-content: space-between;
   gap: 1.5rem;
 }
+
 .homepage__hero-text {
   flex: 1 1 320px;
   max-width: 540px;
 }
+
 .homepage__hero-text h1 {
   font-weight: 700;
   font-size: 1.8rem;
@@ -64,6 +67,7 @@
   margin-bottom: 0.6rem;
   line-height: 1.3;
 }
+
 .homepage__btn-primary {
   display: inline-block;
   background-color: #22b36a;
@@ -75,6 +79,7 @@
   border: 2px solid transparent;
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
+
 .homepage__btn-primary:hover,
 .homepage__btn-primary:focus {
   background-color: #1a8550;
@@ -96,6 +101,7 @@
   line-height: 1.2;
   user-select: none;
 }
+
 .homepage__hero-cta small {
   display: block;
   font-weight: 500;
@@ -103,6 +109,7 @@
   color: #bb3f73;
   margin-bottom: 0.35rem;
 }
+
 .homepage__register-line {
   margin-top: 5px;
   font-size: 0.95rem;
@@ -139,23 +146,39 @@
   gap: 1rem;
   padding: 1rem 1.2rem;
   text-align: center;
+  align-items: center;
+  justify-content: center;
 }
+
 .homepage__info-box {
   flex: 1 1 0;
   font-size: 0.9rem;
   color: #3c3c3c;
 }
+
 .homepage__info-box svg {
   fill: #5180fb;
   margin-bottom: 7px;
   width: 26px;
   height: 26px;
 }
+
+.homepage__info-box svg {
+  display: block;
+  margin: 0 auto 7px auto; /* căn giữa icon theo chiều ngang */
+  fill: #5180fb;
+  width: 26px;
+  height: 26px;
+}
+
+
 .homepage__info-box strong {
   display: block;
   margin-bottom: 0.3rem;
   color: #222;
 }
+
+
 
 /* Why Choose Section */
 .homepage__why {
@@ -177,6 +200,7 @@
   gap: 2rem;
   justify-content: space-between;
 }
+
 .homepage__why-img {
   flex: 1 1 270px;
   max-width: 280px;
@@ -184,11 +208,13 @@
   overflow: hidden;
   box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
 }
+
 .homepage__why-img img {
   width: 100%;
   height: auto;
   object-fit: cover;
 }
+
 .homepage__why-texts {
   flex: 1 2 460px;
   display: grid;
@@ -197,11 +223,13 @@
   font-size: 0.95rem;
   color: #3a3a3a;
 }
+
 .homepage__why-text {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
 }
+
 .homepage__why-icon {
   flex-shrink: 0;
   width: 42px;
@@ -209,14 +237,17 @@
   color: #196fc6;
   padding: 6px;
 }
+
 .homepage__why-icon svg {
   width: 100%;
   height: 100%;
   fill: currentColor;
 }
+
 .homepage__why-content-text {
   flex: 1;
 }
+
 .homepage__why-content-text strong {
   display: block;
   font-weight: 600;
@@ -231,17 +262,20 @@
   color: white;
   text-align: center;
 }
+
 .homepage__cert-info {
   max-width: 400px;
   font-size: 1rem;
   margin: 0 auto 1.5rem;
 }
+
 .homepage__cert-logos {
   display: flex;
   gap: 2.5rem;
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .homepage__cert-logos img {
   height: 55px;
   width: auto;
@@ -255,51 +289,60 @@
   padding: 0 1rem;
   text-align: center;
 }
+
 .homepage__clinic h2 {
   font-weight: 700;
   font-size: 1.4rem;
   margin-bottom: 1rem;
   color: #212121;
 }
+
 .homepage__clinic p {
   font-size: 1rem;
   line-height: 1.45;
   color: #464646;
   margin-bottom: 1.8rem;
 }
+
 .homepage__clinic-gallery {
   display: flex;
   flex-wrap: wrap;
   gap: 1.2rem;
 }
+
 .homepage__clinic-main {
-  flex: 1 1 400px;
+  flex: 1 1 600px;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 5px 8px rgb(20 20 20 / 0.1);
 }
+
 .homepage__clinic-main img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
 }
+
 .homepage__clinic-thumbs {
   flex: 1 1 320px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
 .homepage__clinic-thumb {
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
 }
+
 .homepage__clinic-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .homepage__btn-secondary {
   background-color: #22b36a;
   color: white;
@@ -313,6 +356,7 @@
   transition: background-color 0.2s ease;
   box-shadow: 0 5px 10px rgb(34 179 106 / 0.3);
 }
+
 .homepage__btn-secondary:hover,
 .homepage__btn-secondary:focus {
   background-color: #1a8550;
@@ -329,6 +373,7 @@
   gap: 1rem;
   z-index: 30;
 }
+
 .homepage__circle-btn {
   width: 44px;
   height: 44px;
@@ -343,10 +388,12 @@
   border: 2px solid transparent;
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
+
 .homepage__circle-btn:hover {
   background-color: #1a8550;
   border-color: #176b44;
 }
+
 .homepage__circle-btn svg {
   pointer-events: none;
 }

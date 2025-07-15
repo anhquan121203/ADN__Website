@@ -74,7 +74,7 @@ export const dashboardSumary = createAsyncThunk(
 const dashboardSlice = createSlice({
   name: "DASHBOARD",
   initialState: {
-    dashboards: [],
+    dashboards: {},
     revenues: [],
     summary: {},
     loading: false,
@@ -90,7 +90,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(dashboardPayment.fulfilled, (state, action) => {
         state.loading = false;
-        state.dashboards = action.payload;
+        state.dashboards = action.payload || {};
       })
       .addCase(dashboardPayment.rejected, (state, action) => {
         state.loading = false;
@@ -104,7 +104,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(dashboardRevenue.fulfilled, (state, action) => {
         state.loading = false;
-        state.revenues = action.payload;
+        state.revenues = action.payload || [];
       })
       .addCase(dashboardRevenue.rejected, (state, action) => {
         state.loading = false;

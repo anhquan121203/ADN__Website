@@ -5,6 +5,7 @@ import DepartmentDashboard from './DepartmentDashboard/DepartmentDashboard'
 import RevenueDashboardAdmin from './RevenueDashboardAdmin/RevenueDashboardAdmin'
 import { Divider } from 'antd';
 import LoadingComponent from '../../../Components/Customer/LoadingComponent/LoadingComponent'
+import PaymentDashboardAdmin from './PaymentDashboardAdmin/PaymentDashboardAdmin'
 
 function DashboardAdmin() {
 
@@ -21,7 +22,9 @@ function DashboardAdmin() {
           <DepartmentDashboard />
         </div>
 
-        <div className="user-statics"></div>
+        <div className="user-statics">
+          <PaymentDashboardAdmin/>
+        </div>
       </div>
 
       {/* <Divider size="middle" /> */}

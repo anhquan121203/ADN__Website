@@ -89,8 +89,6 @@ const CreateAppointmentAdmin = ({
       const result = await createAppointment({
         service_id: serviceId,
         slot_id: selectedSlot,
-        type: serviceType,
-        collection_address: collectionAddress,
         case_number: values.case_number,
         authorization_code: values.authorization_code,
       });
