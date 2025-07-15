@@ -27,7 +27,7 @@ const ServicePage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 mt-[160px]">
       <ServiceFilter 
         activeCategory={activeCategory} 
         onCategoryChange={handleCategoryClick} 

@@ -95,6 +95,7 @@ function Header() {
     <div className={`header-container ${isScrolled ? "scrolled" : ""}`}>
       {/* HEADER TOP */}
       <div className="header-top">
+        <div className="header__top-menu">
         <div className="top-menu">
           <div className="top--logo">
             <img src={logo} alt="ADN Logo" />
@@ -129,6 +130,7 @@ function Header() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
 

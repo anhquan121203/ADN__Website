@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import TopbarAdmin from "../Components/Admin/Topbar/TopbarAdmin";
 import SidebarAdmin from "../Components/Admin/Sidebar/SidebarAdmin";
+import { useEffect, useState } from "react";
+import LoadingComponent from "../Components/Customer/LoadingComponent/LoadingComponent";
 
 const layoutStyle = {
   display: "flex",
@@ -53,6 +55,18 @@ const outletWrapperStyle = {
 };
 
 function AdminLayout() {
+  const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }, []);
+  
+  
+    if (loading) {
+      return <LoadingComponent />;
+    }
+
   return (
     <div style={layoutStyle}>
       <div style={sidebarStyle}>

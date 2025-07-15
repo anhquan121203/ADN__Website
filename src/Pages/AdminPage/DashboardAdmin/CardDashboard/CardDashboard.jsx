@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./CardDashboard.css";
 import { FaArrowUp, FaCalendarAlt, FaLongArrowAltUp } from "react-icons/fa";
 import { FiUsers } from "react-icons/fi";
-import { IoCalendarOutline } from "react-icons/io5";
+import { IoCalendarOutline, IoDocumentTextOutline } from "react-icons/io5";
+import useDashboard from "../../../../Hooks/useDashboard";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 function CardDashboard() {
+
+  const { summary, loading, error, total, listDashboardSumary } = useDashboard();
+
+  useEffect(() => {
+    listDashboardSumary();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="card-dashboard">
       <div className="card--element">
@@ -13,7 +26,7 @@ function CardDashboard() {
         </div>
         <div className="card-user-info">
           <h2>Người dùng</h2>
-          <p>1000</p>
+          <p>{summary?.users}</p>
         </div>
       </div>
 
@@ -22,20 +35,19 @@ function CardDashboard() {
           <IoCalendarOutline />
         </div>
         <div className="card-user-info">
-          <h2>Lịch làm việc</h2>
-          <p>1000</p>
+          <h2>Số liệu đặt lịch</h2>
+          <p>{summary?.appointments}</p>
         </div>
       </div>
 
       <div className="card--element">
         <div className="icon-card">
-          <IoCalendarOutline />
+          <IoDocumentTextOutline  />
         </div>
         <div className="card-user-info">
-          <h2>Users</h2>
-
+          <h2>Số lượng mẫu xét nghiệm</h2>
           <div className="statics-card">
-            <p>1000</p>
+            <p>{summary?.samples}</p>
             <p className="statics">📈 11.01%</p>
           </div>
         </div>
@@ -43,13 +55,14 @@ function CardDashboard() {
 
       <div className="card--element">
         <div className="icon-card">
-          <IoCalendarOutline />
+          <RiMoneyDollarCircleLine  />
         </div>
         <div className="card-user-info">
-          <h2>Users</h2>
-          <p>1000</p>
+          <h2>Doanh thu</h2>
+          <p>{summary?.revenue?.toLocaleString()}</p>
         </div>
       </div>
+
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -58,6 +58,7 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
+
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -97,6 +98,9 @@ import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSample
 // };
 
 function App() {
+
+  
+
   return (
     <BrowserRouter>
       <Routes>
