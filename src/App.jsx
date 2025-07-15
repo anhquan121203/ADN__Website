@@ -18,6 +18,7 @@ import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointmen
 import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSampleAppointment/ViewSampleAppointment";
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
+import CreateAppointmentAdminComponent from "./Components/Customer/AppointmentAdmin/CreateAppointmentAdminComponent";
 
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
@@ -58,6 +59,8 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
+
+
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -100,7 +103,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-      
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -110,16 +112,20 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/service" element={<CustomerService />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/api/payments/payos-return" element={<PayOSReturn />} />
           <Route
-            path="/api/payments/payos-return"
-            element={<PayOSReturn />}
+            path="/create-appointment-admin"
+            element={<CreateAppointmentAdminComponent />}
           />
         </Route>
 
         <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
           <Route path="appointment" element={<ViewAppointment />} />
-          <Route path="appointment/sample/:appointmentId" element={<ViewSampleAppointment />}/>
+          <Route
+            path="appointment/sample/:appointmentId"
+            element={<ViewSampleAppointment />}
+          />
         </Route>
 
         {/* ADMIN ROUTES*********************************** */}
@@ -131,9 +137,15 @@ function App() {
           <Route path="profile" element={<ProfileAdmin />} />
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
-          <Route path="manager-staff-profile" element={<ManagerStaffProfile />} />
+          <Route
+            path="manager-staff-profile"
+            element={<ManagerStaffProfile />}
+          />
           <Route path="kit-admin" element={<KitAdmin />} />
-          <Route path="administrative-case" element={<AdministrativeCaseAdmin />} />
+          <Route
+            path="administrative-case"
+            element={<AdministrativeCaseAdmin />}
+          />
           <Route path="appointment-admin" element={<AppointmentAdmin />} />
         </Route>
 
@@ -145,10 +157,19 @@ function App() {
           <Route path="department" element={<StaffDepartment />} />
           <Route path="slot" element={<StaffSlot />} />
           <Route path="confirm-slots" element={<StaffConfirmSlots />} />
-          <Route path="appointment/view/:id" element={<AppointmentViewDetail />} />
+          <Route
+            path="appointment/view/:id"
+            element={<AppointmentViewDetail />}
+          />
           <Route path="sample" element={<StaffSample />} />
-          <Route path="samples/appointment/:appointmentId" element={<ViewSampleAppoinment />} />
-          <Route path="appointment/samples/:appointmentId" element={<ViewSamplesByAppointment />} />
+          <Route
+            path="samples/appointment/:appointmentId"
+            element={<ViewSampleAppoinment />}
+          />
+          <Route
+            path="appointment/samples/:appointmentId"
+            element={<ViewSamplesByAppointment />}
+          />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}
@@ -160,14 +181,20 @@ function App() {
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
-          <Route path="/laboratory_technician" element={<LaboratoryTechnicianLayout/>}>
+        <Route
+          path="/laboratory_technician"
+          element={<LaboratoryTechnicianLayout />}
+        >
           <Route index element={<LaboratoryTechnicianProfile />} />
           <Route path="samples" element={<LabTechAppointments />} />
-          <Route path="appointments/:appointmentId/samples" element={<LabTechViewSamplesByAppointment />} />
+          <Route
+            path="appointments/:appointmentId/samples"
+            element={<LabTechViewSamplesByAppointment />}
+          />
           <Route path="results" element={<ManageResult />} />
           <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
-          </Route>
-        </Routes>
+        </Route>
+      </Routes>
 
       {/* Setup toast */}
       <ToastContainer
