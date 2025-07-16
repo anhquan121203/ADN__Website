@@ -97,7 +97,7 @@ function BlogCategoriesAdmin() {
           marginBottom: 16,
         }}
       >
-        <h2 className="blogcategory-table-title">Blog Categories</h2>
+        <h2 className="blogcategory-table-title">Danh mục các bài Blog </h2>
         <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
           Thêm danh mục
         </Button>

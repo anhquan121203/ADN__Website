@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Pagination, Spin, Button, message } from "antd";
 import useBlog from "../../../Hooks/useBlog";
+import useService from "../../../Hooks/useService";
 import ModalCreateBlog from "./ModalCreateBlog/ModalCreateBlog";
 import "./BlogAdmin.css";
 
@@ -13,8 +14,8 @@ function BlogAdmin() {
     searchListBlog,
     addNewBlog,
     blogCategories,
-    // Nếu cần, truyền thêm list dịch vụ từ useService
   } = useBlog();
+  const { services, searchListService } = useService();
 
   const [currentBlogPage, setCurrentBlogPage] = useState(1);
   const blogPageSize = 10;
@@ -37,6 +38,17 @@ function BlogAdmin() {
     });
     // eslint-disable-next-line
   }, [currentBlogPage, blogFilters]);
+
+  // Lấy danh sách dịch vụ
+  useEffect(() => {
+    searchListService({
+      is_active: true,
+      pageNum: 1,
+      pageSize: 10,
+      sort_by: "created_at",
+      sort_order: "desc",
+    });
+  }, []);
 
   // Handler tạo mới blog
   const handleCreateBlog = async (formData) => {
@@ -64,7 +76,7 @@ function BlogAdmin() {
           marginBottom: 16,
         }}
       >
-        <h2 className="table-title">Blogs</h2>
+        <h2 className="table-title">Các bài Blog</h2>
         <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
           Thêm blog
         </Button>
@@ -93,9 +105,9 @@ function BlogAdmin() {
               <tbody>
                 {blogs && blogs.length > 0 ? (
                   blogs.map((blog, idx) => (
-                    <tr key={blog._id || blog.id}>
+                    <tr key={blog.id || blog._id}>
                       <td>{(currentBlogPage - 1) * blogPageSize + idx + 1}</td>
-                      <td>{blog.title}</td>
+                      <td>{blog.title || "N/A"}</td>
                       <td>
                         <div
                           style={{
@@ -105,12 +117,25 @@ function BlogAdmin() {
                             whiteSpace: "nowrap",
                           }}
                         >
-                          {blog.content}
+                          {blog.content || "N/A"}
                         </div>
                       </td>
-                      <td>{blog.user_id}</td>
-                      <td>{blog.service_id}</td>
-                      <td>{blog.blog_category_id}</td>
+                      <td>
+                        {typeof blog.user_id === "object"
+                          ? `${blog.user_id.email || blog.user_id._id}`
+                          : blog.user_id || "N/A"}
+                      </td>
+                      <td>
+                        {typeof blog.service_id === "object"
+                          ? blog.service_id.name || blog.service_id._id
+                          : blog.service_id || "N/A"}
+                      </td>
+                      <td>
+                        {typeof blog.blog_category_id === "object"
+                          ? blog.blog_category_id.name ||
+                            blog.blog_category_id._id
+                          : blog.blog_category_id || "N/A"}
+                      </td>
                       <td>{blog.is_published ? "Yes" : "No"}</td>
                       <td>
                         {blog.published_at
@@ -118,19 +143,33 @@ function BlogAdmin() {
                           : ""}
                       </td>
                       <td>
-                        {blog.images && blog.images.length > 0
-                          ? blog.images.map((img, i) => (
-                              <div key={i}>
-                                <a
-                                  href={img.image_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {img.name}
-                                </a>
-                              </div>
-                            ))
-                          : ""}
+                        {Array.isArray(blog.images) &&
+                        blog.images.length > 0 ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 8,
+                            }}
+                          >
+                            {blog.images.map((img, i) => (
+                              <img
+                                key={i}
+                                src={img.image_url || "#"}
+                                alt={img.name || `image-${i}`}
+                                style={{
+                                  maxWidth: 120,
+                                  maxHeight: 80,
+                                  objectFit: "cover",
+                                  borderRadius: 4,
+                                  border: "1px solid #ddd",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <span style={{ color: "#888" }}>No images</span>
+                        )}
                       </td>
                       <td>
                         {blog.created_at
@@ -174,8 +213,8 @@ function BlogAdmin() {
         handleCancel={() => setIsAddModalOpen(false)}
         handleCreate={handleCreateBlog}
         loading={loading}
-        categories={blogCategories} // truyền danh mục blog từ hook
-        services={[]} // truyền dịch vụ nếu có, hoặc lấy từ useService
+        categories={blogCategories}
+        services={services}
       />
     </div>
   );

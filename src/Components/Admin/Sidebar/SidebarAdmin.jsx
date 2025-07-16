@@ -187,12 +187,13 @@ function SidebarAdmin() {
               </div>
               {blogDropdownOpen && (
                 <div className="submenu">
-                  <Link to="/admin/blog"  
+                  <Link
+                    to="/admin/blog"
                     className={`submenu-item ${
                       pathname === "/admin/blog" ? "active" : ""
                     }`}
                   >
-                    Danh sách blogger
+                    Danh sách các blog
                   </Link>
                   <Link
                     to="/admin/blog-category"
@@ -200,7 +201,7 @@ function SidebarAdmin() {
                       pathname === "/admin/blog-category" ? "active" : ""
                     }`}
                   >
-                    Các loại blogger
+                    Danh mục các loại blog
                   </Link>
                 </div>
               )}
