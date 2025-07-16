@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Pagination, Spin, Button, message } from "antd";
+import { Pagination, Spin, Button, message, Popconfirm } from "antd";
 import useBlog from "../../../Hooks/useBlog";
 import useService from "../../../Hooks/useService";
 import ModalCreateBlog from "./ModalCreateBlog/ModalCreateBlog";
+import ModalEditBlog from "./ModalEditBlog/ModalEditBlog";
 import "./BlogAdmin.css";
 
 function BlogAdmin() {
@@ -13,7 +14,10 @@ function BlogAdmin() {
     error,
     searchListBlog,
     addNewBlog,
+    updateBlogById,
+    deleteBlogById,
     blogCategories,
+    searchListBlogCategory,
   } = useBlog();
   const { services, searchListService } = useService();
 
@@ -22,12 +26,28 @@ function BlogAdmin() {
 
   // Modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
-  const [blogFilters, setBlogFilters] = useState({
+  const [blogFilters] = useState({
     keyword: "",
     sort_by: "created_at",
     sort_order: "desc",
   });
+
+  const [categoryFilters] = useState({
+    keyword: "",
+    sort_by: "created_at",
+    sort_order: "desc",
+  });
+
+  useEffect(() => {
+    searchListBlogCategory({
+      ...categoryFilters,
+      pageNum: 1,
+      pageSize: 10,
+    });
+  }, [categoryFilters]);
 
   // Lấy danh sách blog
   useEffect(() => {
@@ -67,6 +87,37 @@ function BlogAdmin() {
     }
   };
 
+  const handleUpdateBlog = async (id, formData) => {
+    const res = await updateBlogById(id, formData);
+    if (res.success) {
+      message.success("Cập nhật blog thành công!");
+      setIsEditModalOpen(false);
+      searchListBlog({
+        ...blogFilters,
+        pageNum: 1,
+        pageSize: blogPageSize,
+      });
+      setCurrentBlogPage(1);
+    } else {
+      message.error(res.message || "Cập nhật blog thất bại!");
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    const res = await deleteBlogById(id);
+    if (res.success) {
+      message.success("Xóa blog thành công!");
+      searchListBlog({
+        ...blogFilters,
+        pageNum: 1,
+        pageSize: blogPageSize,
+      });
+      setCurrentBlogPage(1);
+    } else {
+      message.error("Xóa blog thất bại!");
+    }
+  };
+
   return (
     <div className="blog-admin">
       <div
@@ -92,14 +143,12 @@ function BlogAdmin() {
                   <th>STT</th>
                   <th>Title</th>
                   <th>Content</th>
-                  <th>User ID</th>
                   <th>Service ID</th>
                   <th>Category ID</th>
                   <th>Is Published</th>
                   <th>Published At</th>
                   <th>Images</th>
-                  <th>Created At</th>
-                  <th>Updated At</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -119,11 +168,6 @@ function BlogAdmin() {
                         >
                           {blog.content || "N/A"}
                         </div>
-                      </td>
-                      <td>
-                        {typeof blog.user_id === "object"
-                          ? `${blog.user_id.email || blog.user_id._id}`
-                          : blog.user_id || "N/A"}
                       </td>
                       <td>
                         {typeof blog.service_id === "object"
@@ -172,14 +216,28 @@ function BlogAdmin() {
                         )}
                       </td>
                       <td>
-                        {blog.created_at
-                          ? new Date(blog.created_at).toLocaleString()
-                          : ""}
-                      </td>
-                      <td>
-                        {blog.updated_at
-                          ? new Date(blog.updated_at).toLocaleString()
-                          : ""}
+                        <Button
+                          size="small"
+                          style={{ marginRight: 8 }}
+                          onClick={() => {
+                            setSelectedBlog(blog);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          Sửa
+                        </Button>
+                        <Popconfirm
+                          title="Bạn chắc chắn muốn xoá?"
+                          onConfirm={() =>
+                            handleDeleteBlog(blog._id || blog.id)
+                          }
+                          okText="Xóa"
+                          cancelText="Huỷ"
+                        >
+                          <Button size="small" danger>
+                            Xoá
+                          </Button>
+                        </Popconfirm>
                       </td>
                     </tr>
                   ))
@@ -215,6 +273,16 @@ function BlogAdmin() {
         loading={loading}
         categories={blogCategories}
         services={services}
+      />
+      {/* Modal tạo edit */}
+      <ModalEditBlog
+        isModalOpen={isEditModalOpen}
+        handleCancel={() => setIsEditModalOpen(false)}
+        handleUpdate={handleUpdateBlog}
+        blog={selectedBlog}
+        categories={blogCategories}
+        services={services}
+        loading={loading}
       />
     </div>
   );

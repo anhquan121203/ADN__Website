@@ -368,7 +368,7 @@ const blogSlice = createSlice({
       .addCase(searchBlog.fulfilled, (state, action) => {
         state.blogs = action.payload.data.pageData || [];
         state.totalBlogs = action.payload.data.pageInfo?.totalItems || 0;
-        console.log("searchBlog.fulfilled payload:", action.payload);
+        // console.log("searchBlog.fulfilled payload:", action.payload);
       })
       .addCase(getBlogBySlug.fulfilled, (state, action) => {
         state.blogDetail = action.payload;
