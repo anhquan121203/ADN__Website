@@ -45,6 +45,7 @@ function DepartmentAdmin() {
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
   const [statResult, setStatResult] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); //dùng cho Dữ liệu thống kê phòng ban
   // State cho danh sách quản lý
   const [selectedManagerId, setSelectedManagerId] = useState(null);
   const [managerDepartmentsList, setManagerDepartmentsList] = useState([]);
@@ -70,6 +71,60 @@ function DepartmentAdmin() {
       pageSize: pageSize,
     });
   };
+  // hàm tính này mặc định sẽ lấy dữ liệu từ ngày hiện tại đến 7 ngày sau
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setStatDateFrom(today);
+    const defaultToDate = new Date(today);
+    defaultToDate.setDate(defaultToDate.getDate() + 7);
+    setStatDateTo(defaultToDate.toISOString().split("T")[0]);
+    getTotalDepartmentCount();
+    if (departments.length > 0) {
+      setStatDepartmentId(departments[0]._id);
+    }
+  }, [departments]);
+
+  useEffect(() => {
+    if (isInitialLoad && statDepartmentId && statDateFrom && statDateTo) {
+      handleStatistic();
+      setIsInitialLoad(false); // Chạy một lần duy nhất
+    }
+  }, [isInitialLoad, statDepartmentId, statDateFrom, statDateTo]);
+
+  //xử lý việc gọi quản lý đầu tiên
+  useEffect(() => {
+    if (!selectedManagerId && accounts.length > 0) {
+      const firstManagerId = accounts[0]._id;
+      setSelectedManagerId(firstManagerId);
+
+      // Gọi API để lấy danh sách phòng ban của người quản lý đầu tiên
+      (async () => {
+        setManagerLoading(true);
+        try {
+          const res = await getDepartmentsByManagerId(firstManagerId);
+          const departments = res?.data?.data?.departments || [];
+          const count = res?.data?.data?.count ?? departments.length;
+
+          if (
+            res?.success &&
+            res?.data?.success &&
+            Array.isArray(departments)
+          ) {
+            setManagerDepartmentsList(departments);
+            setManagerDepartmentsCount(count);
+          } else {
+            throw new Error("Không thể lấy danh sách phòng ban.");
+          }
+        } catch (error) {
+          setManagerDepartmentsList([]);
+          setManagerDepartmentsCount(0);
+          toast.error(error.message || "Lỗi khi gọi API.");
+          console.error(error);
+        }
+        setManagerLoading(false);
+      })();
+    }
+  }, [accounts]);
 
   // Handle Add Department
   const handleAddDepartment = async (departmentData) => {
@@ -199,10 +254,8 @@ function DepartmentAdmin() {
   }, []);
 
   useEffect(() => {
-    // if (isAddModalOpen || isEditModalOpen) {
     fetchManagers();
-    // }
-  }, [isAddModalOpen, isEditModalOpen]);
+  }, []);
 
   useEffect(() => {
     searchListDepartment({
@@ -328,7 +381,7 @@ function DepartmentAdmin() {
               style={{ minWidth: 220 }}
               placeholder="Chọn phòng ban"
               value={statDepartmentId}
-              onChange={setStatDepartmentId}
+              onChange={(value) => setStatDepartmentId(value)}
               options={departments.map((d) => ({
                 value: d._id,
                 label: d.name,
@@ -339,7 +392,16 @@ function DepartmentAdmin() {
             <Input
               type="date"
               value={statDateFrom}
-              onChange={(e) => setStatDateFrom(e.target.value)}
+              onChange={(e) => {
+                const newDateFrom = e.target.value;
+                setStatDateFrom(newDateFrom);
+                const dateFrom = new Date(newDateFrom);
+                const dateTo = new Date(dateFrom);
+                dateTo.setDate(dateFrom.getDate() + 7);
+                if (new Date(statDateTo) <= dateFrom) {
+                  setStatDateTo(dateTo.toISOString().split("T")[0]);
+                }
+              }}
               placeholder="Từ ngày"
               style={{ minWidth: 140 }}
               max={statDateTo || undefined}
@@ -347,10 +409,23 @@ function DepartmentAdmin() {
             <Input
               type="date"
               value={statDateTo}
-              onChange={(e) => setStatDateTo(e.target.value)}
+              onChange={(e) => {
+                const newDateTo = e.target.value;
+                setStatDateTo(newDateTo);
+                const dateFrom = new Date(statDateFrom);
+                if (new Date(newDateTo) <= dateFrom) {
+                  const dateTo = new Date(dateFrom);
+                  dateTo.setDate(dateFrom.getDate() + 1);
+                  setStatDateTo(dateTo.toISOString().split("T")[0]);
+                }
+              }}
               placeholder="Đến ngày"
               style={{ minWidth: 140 }}
-              min={statDateFrom || undefined}
+              min={
+                statDateFrom
+                  ? new Date(statDateFrom).toISOString().split("T")[0]
+                  : undefined
+              }
             />
             <Button type="primary" onClick={handleStatistic}>
               Thống kê
