@@ -1,5 +1,15 @@
-import React, { useEffect } from "react";
-import { Modal, Form, Input, Select, Switch, Button, message } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  Switch,
+  Button,
+  message,
+  Upload,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 
@@ -13,6 +23,7 @@ const ModalEditBlog = ({
   loading,
 }) => {
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
     if (blog) {
@@ -24,8 +35,26 @@ const ModalEditBlog = ({
         blog_category_id: blog.blog_category_id?._id || blog.blog_category_id,
         is_published: blog.is_published,
       });
+
+      if (Array.isArray(blog.images)) {
+        const initialFiles = blog.images.map((img, index) => ({
+          uid: `${index}`,
+          name: img.name || `Image-${index + 1}`,
+          status: "done",
+          url: img.image_url || img.url,
+        }));
+        setFileList(initialFiles);
+      }
     }
   }, [blog, form]);
+
+  const handleUploadChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  // const normFile = (e) => {
+  //   return Array.isArray(e) ? e : e?.fileList;
+  // };
 
   const onFinish = async (values) => {
     if (blog && blog._id) {
@@ -37,9 +66,35 @@ const ModalEditBlog = ({
       formData.append("service_id", values.service_id || "");
       formData.append("is_published", values.is_published);
 
+      // 1. Convert ảnh cũ từ URL thành File rồi append
+      const convertUrlToFile = async (url, name = "old-image.jpg") => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], name, { type: blob.type });
+        return file;
+      };
+
+      // 2. Convert tất cả ảnh cũ thành file
+      const oldImagePromises = fileList
+        .filter((file) => !file.originFileObj && file.url)
+        .map((file, index) => convertUrlToFile(file.url, `old-${index}.jpg`));
+
+      // 3. Append ảnh mới luôn (để khỏi đợi)
+      fileList.forEach((file) => {
+        if (file.originFileObj) {
+          formData.append("images", file.originFileObj);
+        }
+      });
+
       try {
+        const oldImageFiles = await Promise.all(oldImagePromises);
+        oldImageFiles.forEach((file) => {
+          formData.append("images", file); // append ảnh cũ đã convert
+        });
+
         await handleUpdate(blog._id, formData);
       } catch (error) {
+        console.error(error);
         message.error("Cập nhật blog thất bại!");
       }
     }
@@ -63,7 +118,7 @@ const ModalEditBlog = ({
           Cập nhật
         </Button>,
       ]}
-      width={600}
+      width={700}
     >
       <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
@@ -94,7 +149,7 @@ const ModalEditBlog = ({
         >
           <Select placeholder="Chọn danh mục">
             {categories.map((cat) => (
-              <Select.Option value={cat._id || cat.id} key={cat._id || cat.id}>
+              <Select.Option key={cat._id || cat.id} value={cat._id || cat.id}>
                 {cat.name}
               </Select.Option>
             ))}
@@ -103,7 +158,7 @@ const ModalEditBlog = ({
         <Form.Item label="Dịch vụ liên quan" name="service_id">
           <Select placeholder="Chọn dịch vụ (nếu có)" allowClear>
             {services.map((sv) => (
-              <Select.Option value={sv._id || sv.id} key={sv._id || sv.id}>
+              <Select.Option key={sv._id || sv.id} value={sv._id || sv.id}>
                 {sv.name}
               </Select.Option>
             ))}
@@ -115,6 +170,22 @@ const ModalEditBlog = ({
           valuePropName="checked"
         >
           <Switch />
+        </Form.Item>
+        <Form.Item label="Ảnh minh họa">
+          <Upload
+            listType="picture-card"
+            fileList={fileList}
+            onChange={handleUploadChange}
+            beforeUpload={() => false}
+            multiple
+          >
+            {fileList.length >= 8 ? null : (
+              <div>
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Tải ảnh</div>
+              </div>
+            )}
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>
