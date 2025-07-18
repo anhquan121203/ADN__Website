@@ -307,7 +307,12 @@ function DepartmentAdmin() {
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item.name}</td>
-                    <td>{item.description}</td>
+                    {/* <td>{item.description}</td> */}
+                    <td>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      />
+                    </td>
                     <td>
                       {item.manager_id ? (
                         <>
@@ -462,7 +467,7 @@ function DepartmentAdmin() {
         </div>
 
         {/* Danh sách phòng ban của quản lý */}
-        <div className="department-container" style={{ marginTop: 24 }}>
+        {/* <div className="department-container" style={{ marginTop: 24 }}>
           <h2 className="table-title">Phòng ban do quản lý phụ trách</h2>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <Select
@@ -544,7 +549,7 @@ function DepartmentAdmin() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Modal create department */}

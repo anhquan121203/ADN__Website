@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
+import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalEditDepartment = ({
   isModalOpen,
@@ -32,7 +33,7 @@ const ModalEditDepartment = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const editorContent = editorRef.current?.getContent({ format: "text" });
+      const editorContent = editorRef.current?.getContent();
       await handleEdit({
         name: values.name,
         description: editorContent,
@@ -71,41 +72,33 @@ const ModalEditDepartment = ({
           rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
         >
           <Editor
-            apiKey="your-kbwlwa1zq81ve1dux2j21b9fp7dfn1pmhzn70qnoiajaousx-api-key"
+            apiKey={API_TINY_URL}
             onInit={(evt, editor) => {
               editorRef.current = editor;
               const desc = form.getFieldValue("description");
               if (desc) editor.setContent(desc);
             }}
             init={{
+              height: 200,
               menubar: false,
-              branding: false,
-              statusbar: false,
-              height: 300,
-              plugins: [
-                "link",
-                "lists",
-                "wordcount",
-                "fullscreen",
-                "table",
-                "autolink",
-                "paste",
-                "code",
-                "preview",
-                "charmap",
-                "anchor",
-                "visualblocks",
-                "formatselect",
-                "fontselect",
-                "fontsizeselect",
-                "help",
-              ],
+              plugins:
+                "advlist autolink lists link image charmap preview anchor " +
+                "searchreplace visualblocks code fullscreen " +
+                "insertdatetime table help wordcount",
               toolbar:
-                "undo redo | formatselect fontselect fontsizeselect | bold italic underline | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | link table | fullscreen preview code | help",
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                "undo redo | blocks | bold italic forecolor | " +
+                "alignleft aligncenter alignright alignjustify | " +
+                "bullist numlist outdent indent | link image | removeformat | fullscreen | help",
+              branding: false,
+              promotion: false,
+              resize: false,
+              statusbar: false,
+              paste_data_images: false,
+              automatic_uploads: false,
+              file_picker_types: "image",
+              valid_elements:
+                "p,br,strong,b,em,i,u,ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote," +
+                "a[href|title],img[src|alt|title|width|height|style]",
             }}
           />
         </Form.Item>
