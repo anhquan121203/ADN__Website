@@ -7,11 +7,9 @@ export const searchService = createAsyncThunk(
   "service/searchService",
   async (listService, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("accessToken");
       const response = await axios.get(`${API_BASE_URL}/api/service/search`, {
         params: listService,
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -148,8 +146,13 @@ const serviceSlice = createSlice({
       })
       .addCase(searchService.fulfilled, (state, action) => {
         state.loading = false;
-        state.services = action.payload.pageData; // Lấy danh sách service
-        state.total = action.payload.pageInfo.totalItems; // Tổng số service
+        const allServices = action.payload.pageData || [];
+        
+        // Filter only services with parent_service_id
+        const filteredServices = allServices.filter(service => service.parent_service_id);
+        
+        state.services = filteredServices; // Lấy danh sách service đã filter
+        state.total = filteredServices.length; // Đếm số service có parent_service_id
       })
       .addCase(searchService.rejected, (state, action) => {
         state.loading = false;

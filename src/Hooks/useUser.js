@@ -3,14 +3,17 @@ import { updateUser, changePassword as changePasswordAction, forgotPassword } fr
 
 const useUser = () => {
     const dispatch = useDispatch();
-    const { accounts, loading, error, total } = useSelector((state) => state.account);
 
-    const updateUsers = async (user) => {
+    // Use correct slice name: state.staff
+    const { accounts, loading, error, total } = useSelector((state) => state.staff);
+
+    // Accept (id, formData) and dispatch updateUser({id, formData})
+    const updateUsers = async (id, formData) => {
         try {
-            const response = await dispatch(updateUser(user))
+            const response = await dispatch(updateUser({ id, formData }));
             return { success: true, data: response };
         } catch (error) {
-            return error
+            return error;
         }
     }
     
