@@ -40,7 +40,7 @@ function DepartmentAdmin() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // State cho thống kê
-  const [statDepartmentId, setStatDepartmentId] = useState(null);
+  // const [statDepartmentId, setStatDepartmentId] = useState(null);
   const [statDateFrom, setStatDateFrom] = useState("");
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
@@ -79,17 +79,13 @@ function DepartmentAdmin() {
     defaultToDate.setDate(defaultToDate.getDate() + 7);
     setStatDateTo(defaultToDate.toISOString().split("T")[0]);
     getTotalDepartmentCount();
-    if (departments.length > 0) {
-      setStatDepartmentId(departments[0]._id);
-    }
   }, [departments]);
 
   useEffect(() => {
-    if (isInitialLoad && statDepartmentId && statDateFrom && statDateTo) {
-      handleStatistic();
-      setIsInitialLoad(false); // Chạy một lần duy nhất
+    if (isInitialLoad && statDateFrom && statDateTo) {
+      setIsInitialLoad(false); 
     }
-  }, [isInitialLoad, statDepartmentId, statDateFrom, statDateTo]);
+  }, [isInitialLoad, statDateFrom, statDateTo]);
 
   //xử lý việc gọi quản lý đầu tiên
   useEffect(() => {
@@ -150,6 +146,7 @@ function DepartmentAdmin() {
       toast.error("Thêm phòng ban không thành công!");
     }
   };
+
 
   // Get Department by ID
   const handleDetailDepartment = async (departmentId) => {
@@ -214,25 +211,25 @@ function DepartmentAdmin() {
   };
 
   // Xử lý thống kê
-  const handleStatistic = async () => {
-    if (!statDepartmentId) {
-      toast.error("Vui lòng chọn phòng ban!");
-      return;
-    }
-    setStatLoading(true);
-    const res = await fetchDepartmentStatistics({
-      departmentId: statDepartmentId,
-      date_from: statDateFrom || undefined,
-      date_to: statDateTo || undefined,
-    });
-    setStatLoading(false);
-    if (res.success) {
-      setStatResult(res.data);
-    } else {
-      setStatResult(null);
-      toast.error("Không lấy được dữ liệu thống kê!");
-    }
-  };
+  // const handleStatistic = async () => {
+  //   if (!statDepartmentId) {
+  //     toast.error("Vui lòng chọn phòng ban!");
+  //     return;
+  //   }
+  //   setStatLoading(true);
+  //   const res = await fetchDepartmentStatistics({
+  //     departmentId: statDepartmentId,
+  //     date_from: statDateFrom || undefined,
+  //     date_to: statDateTo || undefined,
+  //   });
+  //   setStatLoading(false);
+  //   if (res.success) {
+  //     setStatResult(res.data);
+  //   } else {
+  //     setStatResult(null);
+  //     toast.error("Không lấy được dữ liệu thống kê!");
+  //   }
+  // };
 
   const fetchManagers = () => {
     searchUserPag({
@@ -372,7 +369,7 @@ function DepartmentAdmin() {
         />
 
         {/* Dữ liệu thống kê phòng ban */}
-        <div className="department-container" style={{ marginTop: 40 }}>
+        {/* <div className="department-container" style={{ marginTop: 40 }}>
           <h2 className="table-title">Dữ liệu thống kê phòng ban</h2>
           <div
             style={{
@@ -464,7 +461,7 @@ function DepartmentAdmin() {
               <div style={{ color: "#888" }}>Chưa có dữ liệu thống kê</div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Danh sách phòng ban của quản lý */}
         {/* <div className="department-container" style={{ marginTop: 24 }}>
@@ -576,6 +573,15 @@ function DepartmentAdmin() {
         isModalOpen={isDetailModalOpen}
         handleCancel={() => setIsDetailModalOpen(false)}
         selectedDepartment={selectedDepartment}
+        statDateFrom={statDateFrom}
+        setStatDateFrom={setStatDateFrom}
+        statDateTo={statDateTo}
+        setStatDateTo={setStatDateTo}
+        statLoading={statLoading}
+        setStatLoading={setStatLoading}
+        statResult={statResult}
+        setStatResult={setStatResult}
+        fetchDepartmentStatistics={fetchDepartmentStatistics}
       />
 
       {/* Modal Delete */}
