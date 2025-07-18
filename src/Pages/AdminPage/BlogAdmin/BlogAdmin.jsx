@@ -4,6 +4,7 @@ import useBlog from "../../../Hooks/useBlog";
 import useService from "../../../Hooks/useService";
 import ModalCreateBlog from "./ModalCreateBlog/ModalCreateBlog";
 import ModalEditBlog from "./ModalEditBlog/ModalEditBlog";
+import ModalDetailBlog from "./ModalDetailBlog/ModalDetailBlog";
 import "./BlogAdmin.css";
 
 function BlogAdmin() {
@@ -27,6 +28,7 @@ function BlogAdmin() {
   // Modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
 
   const [blogFilters] = useState({
@@ -141,13 +143,13 @@ function BlogAdmin() {
               <thead>
                 <tr>
                   <th>STT</th>
-                  <th>Title</th>
-                  <th>Content</th>
-                  <th>Service ID</th>
-                  <th>Category ID</th>
-                  <th>Is Published</th>
-                  <th>Published At</th>
-                  <th>Images</th>
+                  <th>Tiêu đề</th>
+                  <th>Nội dung</th>
+                  <th>Dịch vụ</th>
+                  <th>Danh mục</th>
+                  <th>Trạng thái xuất bản </th>
+                  <th>Ngày xuất bản</th>
+                  <th>Hình ảnh</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -180,7 +182,9 @@ function BlogAdmin() {
                             blog.blog_category_id._id
                           : blog.blog_category_id || "N/A"}
                       </td>
-                      <td>{blog.is_published ? "Yes" : "No"}</td>
+                      <td>
+                        {blog.is_published ? "Đã xuất bản" : "Chưa xuất bản"}
+                      </td>
                       <td>
                         {blog.published_at
                           ? new Date(blog.published_at).toLocaleString()
@@ -225,6 +229,15 @@ function BlogAdmin() {
                           }}
                         >
                           Sửa
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setSelectedBlog(blog);
+                            setIsDetailModalOpen(true);
+                          }}
+                        >
+                          Chi tiết
                         </Button>
                         <Popconfirm
                           title="Bạn chắc chắn muốn xoá?"
@@ -274,6 +287,13 @@ function BlogAdmin() {
         categories={blogCategories}
         services={services}
       />
+      {/* Modal chi tiết blog */}
+      <ModalDetailBlog
+        isModalOpen={isDetailModalOpen}
+        handleCancel={() => setIsDetailModalOpen(false)}
+        blog={selectedBlog}
+      />
+
       {/* Modal tạo edit */}
       <ModalEditBlog
         isModalOpen={isEditModalOpen}
