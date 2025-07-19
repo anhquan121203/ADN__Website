@@ -67,17 +67,17 @@ const ModalEditBlog = ({
       formData.append("is_published", values.is_published);
 
       // 1. Convert ảnh cũ từ URL thành File rồi append
-      const convertUrlToFile = async (url, name = "old-image.jpg") => {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], name, { type: blob.type });
-        return file;
-      };
+      // const convertUrlToFile = async (url, name = "old-image.jpg") => {
+      //   const response = await fetch(url);
+      //   const blob = await response.blob();
+      //   const file = new File([blob], name, { type: blob.type });
+      //   return file;
+      // };
 
       // 2. Convert tất cả ảnh cũ thành file
-      const oldImagePromises = fileList
-        .filter((file) => !file.originFileObj && file.url)
-        .map((file, index) => convertUrlToFile(file.url, `old-${index}.jpg`));
+      // const oldImagePromises = fileList
+      //   .filter((file) => !file.originFileObj && file.url)
+      //   .map((file, index) => convertUrlToFile(file.url, `old-${index}.jpg`));
 
       // 3. Append ảnh mới luôn (để khỏi đợi)
       fileList.forEach((file) => {
@@ -87,10 +87,10 @@ const ModalEditBlog = ({
       });
 
       try {
-        const oldImageFiles = await Promise.all(oldImagePromises);
-        oldImageFiles.forEach((file) => {
-          formData.append("images", file); // append ảnh cũ đã convert
-        });
+        // const oldImageFiles = await Promise.all(oldImagePromises);
+        // oldImageFiles.forEach((file) => {
+        //   formData.append("images", file); // append ảnh cũ đã convert
+        // });
 
         await handleUpdate(blog._id, formData);
       } catch (error) {

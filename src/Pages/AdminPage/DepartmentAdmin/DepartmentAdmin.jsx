@@ -3,12 +3,14 @@ import { Button, Input, Modal, Pagination, Select, Spin } from "antd";
 import "./DepartmentAdmin.css";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import ModalCreateDepartment from "./ModalCreateDepartment/ModalCreateDepartment";
 import ModalEditDepartment from "./ModalEditDepartment/ModalEditDepartment";
 import ModalDetailDepartment from "./ModalDetailDepartment/ModalDetailDepartment";
 import useAdmin from "../../../Hooks/useAdmin";
 import FilterDepartment from "./FilterDepartment/FilterDepartment";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 function DepartmentAdmin() {
   const { accounts, searchUserPag } = useAdmin();
@@ -83,7 +85,7 @@ function DepartmentAdmin() {
 
   useEffect(() => {
     if (isInitialLoad && statDateFrom && statDateTo) {
-      setIsInitialLoad(false); 
+      setIsInitialLoad(false);
     }
   }, [isInitialLoad, statDateFrom, statDateTo]);
 
@@ -146,7 +148,6 @@ function DepartmentAdmin() {
       toast.error("Thêm phòng ban không thành công!");
     }
   };
-
 
   // Get Department by ID
   const handleDetailDepartment = async (departmentId) => {
@@ -324,26 +325,20 @@ function DepartmentAdmin() {
                       )}
                     </td>
                     <td>
-                      <button
-                        className="detail-department"
-                        onClick={() => handleDetailDepartment(item._id)}
-                      >
-                        Chi tiết
-                      </button>
-                      <button
-                        className="edit-department"
-                        onClick={() => openEditModal(item)}
-                        style={{ marginLeft: 8 }}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="delete-department"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => openDeleteModal(item)}
-                      >
-                        Xóa
-                      </button>
+                      <div className="action-admin-department">
+                        <FaRegEye
+                          className="icon-admin-department"
+                          onClick={() => handleDetailDepartment(item._id)}
+                        />
+                        <CiEdit
+                          className="icon-admin-department"
+                          onClick={() => openEditModal(item)}
+                        />
+                        <MdDeleteOutline
+                          className="icon-admin-department"
+                          onClick={() => openDeleteModal(item)}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))

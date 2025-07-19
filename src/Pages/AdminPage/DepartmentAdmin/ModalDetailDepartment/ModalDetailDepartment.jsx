@@ -101,14 +101,15 @@ function ModalDetailDepartment({
 
           {/* Thống kê */}
           <div style={{ marginTop: 40 }}>
-            <h2 style={{ fontSize: "20px", fontWeight: 500 }}>
+            <h2 style={{ fontSize: "20px", fontWeight: 500, marginBottom: 20 }}>
               Dữ liệu thống kê phòng ban: {department.name}
             </h2>
             <div
               style={{
                 display: "flex",
-                gap: 16,
-                flexWrap: "wrap",
+                flexDirection: "row",
+                gap: "16px",
+                flexWrap: "nowrap",
                 alignItems: "center",
                 marginBottom: 24,
               }}
@@ -127,7 +128,7 @@ function ModalDetailDepartment({
                   }
                 }}
                 placeholder="Từ ngày"
-                style={{ minWidth: 140 }}
+                style={{ minWidth: 180, flex: 1 }}
                 max={statDateTo || undefined}
               />
               <Input
@@ -144,7 +145,7 @@ function ModalDetailDepartment({
                   }
                 }}
                 placeholder="Đến ngày"
-                style={{ minWidth: 140 }}
+                style={{ minWidth: 180, flex: 1 }}
                 min={
                   statDateFrom
                     ? new Date(statDateFrom).toISOString().split("T")[0]

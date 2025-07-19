@@ -6,6 +6,9 @@ import ModalCreateBlog from "./ModalCreateBlog/ModalCreateBlog";
 import ModalEditBlog from "./ModalEditBlog/ModalEditBlog";
 import ModalDetailBlog from "./ModalDetailBlog/ModalDetailBlog";
 import "./BlogAdmin.css";
+import { CiEdit } from "react-icons/ci";
+import { FaRegEye } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 function BlogAdmin() {
   const {
@@ -139,7 +142,7 @@ function BlogAdmin() {
           <Spin />
         ) : (
           <>
-            <table className="admin-table">
+            <table className="admin-table-blog">
               <thead>
                 <tr>
                   <th>STT</th>
@@ -220,37 +223,32 @@ function BlogAdmin() {
                         )}
                       </td>
                       <td>
-                        <Button
-                          size="small"
-                          style={{ marginRight: 8 }}
-                          onClick={() => {
-                            setSelectedBlog(blog);
-                            setIsEditModalOpen(true);
-                          }}
-                        >
-                          Sửa
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() => {
-                            setSelectedBlog(blog);
-                            setIsDetailModalOpen(true);
-                          }}
-                        >
-                          Chi tiết
-                        </Button>
-                        <Popconfirm
-                          title="Bạn chắc chắn muốn xoá?"
-                          onConfirm={() =>
-                            handleDeleteBlog(blog._id || blog.id)
-                          }
-                          okText="Xóa"
-                          cancelText="Huỷ"
-                        >
-                          <Button size="small" danger>
-                            Xoá
-                          </Button>
-                        </Popconfirm>
+                        <div className="action-admin-blog">
+                          <CiEdit
+                            className="icon-admin-blog"
+                            onClick={() => {
+                              setSelectedBlog(blog);
+                              setIsEditModalOpen(true);
+                            }}
+                          />
+                          <FaRegEye
+                            className="icon-admin-blog"
+                            onClick={() => {
+                              setSelectedBlog(blog);
+                              setIsDetailModalOpen(true);
+                            }}
+                          />
+                          <Popconfirm
+                            title="Bạn chắc chắn muốn xoá?"
+                            onConfirm={() =>
+                              handleDeleteBlog(blog._id || blog.id)
+                            }
+                            okText="Xóa"
+                            cancelText="Huỷ"
+                          >
+                            <MdDeleteOutline  className="icon-admin-blog" />
+                          </Popconfirm>
+                        </div>
                       </td>
                     </tr>
                   ))

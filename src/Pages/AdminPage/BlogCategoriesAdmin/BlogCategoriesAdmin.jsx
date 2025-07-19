@@ -4,6 +4,8 @@ import useBlog from "../../../Hooks/useBlog";
 import ModalCreateCategoryBlog from "./ModalCreateCategoryBlog/ModalCreateCategoryBlog";
 import ModalEditCategoryBlog from "./ModalEditCategoryBlog/ModalEditCategoryBlog";
 import "./BlogCategoriesAdmin.css";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 function BlogCategoriesAdmin() {
   const {
@@ -58,12 +60,17 @@ function BlogCategoriesAdmin() {
   };
 
   const handleEditCategory = async (data) => {
-    const res = await updateBlogCategoryById(data._id || data.id, { name: data.name });
+    const res = await updateBlogCategoryById(data._id || data.id, {
+      name: data.name,
+    });
     if (res.success) {
       message.success("Cập nhật danh mục blog thành công!");
       setIsEditModalOpen(false);
       setEditCategory(null);
-      searchListBlogCategory({ pageNum: currentCategoryPage, pageSize: categoryPageSize });
+      searchListBlogCategory({
+        pageNum: currentCategoryPage,
+        pageSize: categoryPageSize,
+      });
     } else {
       message.error(res.message || "Cập nhật thất bại!");
     }
@@ -77,12 +84,17 @@ function BlogCategoriesAdmin() {
 
   const handleDeleteCategory = async () => {
     if (!deleteCategory) return;
-    const res = await deleteBlogCategoryById(deleteCategory._id || deleteCategory.id);
+    const res = await deleteBlogCategoryById(
+      deleteCategory._id || deleteCategory.id
+    );
     if (res.success) {
       message.success("Xóa danh mục blog thành công!");
       setIsDeleteModalOpen(false);
       setDeleteCategory(null);
-      searchListBlogCategory({ pageNum: currentCategoryPage, pageSize: categoryPageSize });
+      searchListBlogCategory({
+        pageNum: currentCategoryPage,
+        pageSize: categoryPageSize,
+      });
     } else {
       message.error("Xóa thất bại!");
     }
@@ -123,20 +135,16 @@ function BlogCategoriesAdmin() {
                     </td>
                     <td>{cat.name}</td>
                     <td>
-                      <Button
-                        type="link"
-                        onClick={() => handleEdit(cat)}
-                        style={{ marginRight: 8 }}
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        type="link"
-                        danger
-                        onClick={() => handleDelete(cat)}
-                      >
-                        Xóa
-                      </Button>
+                      <div className="action-admin-category">
+                        <CiEdit
+                          className="icon-admin-category"
+                          onClick={() => handleEdit(cat)}
+                        />
+                        <MdDeleteOutline
+                          className="icon-admin-category"
+                          onClick={() => handleDelete(cat)}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
