@@ -1,119 +1,109 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import "./SidebarManger.css";
-import logo from "../../../assets/images/logo.png"; // Import the logo image
+import { Link, useLocation } from "react-router-dom";
 import {
-  FaHome,
   FaChartPie,
   FaUser,
   FaCog,
-  FaCreditCard,
-  FaInbox,
   FaAddressBook,
-  FaProjectDiagram,
-  FaHandshake,
-  FaQuestionCircle,
-  FaSignOutAlt,
-  FaChevronRight,
+  FaUserTie
 } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import { useSidebar } from "../../../Contexts/SidebarContext";
 
 function SidebarManager() {
-  const [isCollapsed, setIsCollapsed] = useState(false); // Default to collapsed state
+  const location = useLocation();
+  const { pathname } = location;
+  const { sidebarCollapsed } = useSidebar();
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const [appointmentDropdownOpen, setAppointmentDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setAppointmentDropdownOpen(
+      pathname.startsWith("/manager/appointments")
+    );
+  }, [pathname]);
+
+  // Close dropdowns when sidebar is collapsed
+  useEffect(() => {
+    if (sidebarCollapsed) {
+      setAppointmentDropdownOpen(false);
+    }
+  }, [sidebarCollapsed]);
 
   return (
-    <div className={`sidebar-manager ${isCollapsed ? "collapsed" : ""}`}>
-      <div className="sidebar-header">
-        <div className="logo">
-          {isCollapsed ? (
-            <Link to="/">
-              <img src={logo} alt="Logo" className="logo-image" />
-            </Link>
-          ) : (
-            <Link to="/">
-              <img src={logo} alt="Logo" className="logo-image" />
-            </Link>
-          )}
-        </div>
-      </div>
+    <div>
+      <aside className={`sidebar-manager ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div>
+          <div className="top-manager">
+            <div className="top-manager__icon">
+              <FaUserTie />
+            </div>
+            {!sidebarCollapsed && <span className="title-name">Manager Dashboard</span>}
+          </div>
+          <nav className="nav-manager">
+            <div className="nav-group">
+              {/* Dashboard */}
+              <Link
+                to="/manager"
+                className={`nav-item ${
+                  pathname === "/manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Hồ sơ cá nhân" : ""}
+              >
+                <FaUser /> {!sidebarCollapsed && "Hồ sơ cá nhân"}
+              </Link>
 
-      <div className="sidebar-menu">
-        <ul>
-          <li className="active">
-            <Link to="/dashboard">
-              <FaChartPie className="menu-icon" />
-              <span className="menu-text">Bảng điều khiển</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/manager/appointments">
-              <FaCog className="menu-icon" />
-              <span className="menu-text">Quản lý đặt lịch</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/payments">
-              <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Thanh toán</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/inbox">
-              <FaInbox className="menu-icon" />
-              <span className="menu-text">Hộp thư</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/manager/department-manager">
-              <FaAddressBook className="menu-icon" />
-              <span className="menu-text">Phòng ban</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/projects">
-              <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Dự án</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/onboarding">
-              <FaHandshake className="menu-icon" />
-              <span className="menu-text">Hội nhập</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/manager">
-              <FaUser className="menu-icon" />
-              <span className="menu-text">Hồ sơ cá nhân</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
+              {/* Quản lý đặt lịch */}
+              {!sidebarCollapsed ? (
+                <div
+                  className={`nav-item dropdown-service ${
+                    appointmentDropdownOpen ? "open" : ""
+                  }`}
+                  onClick={() => setAppointmentDropdownOpen(!appointmentDropdownOpen)}
+                >
+                  <div className="dropdown-left">
+                    <FaCog />
+                    <span>Quản lý đặt lịch</span>
+                  </div>
+                  <IoIosArrowDown
+                    className={`dropdown-icon ${
+                      appointmentDropdownOpen ? "rotate" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div className="nav-item" title="Quản lý đặt lịch">
+                  <FaCog />
+                </div>
+              )}
+              {appointmentDropdownOpen && !sidebarCollapsed && (
+                <div className="submenu">
+                  <Link
+                    to="/manager/appointments"
+                    className={`submenu-item ${
+                      pathname === "/manager/appointments" ? "active" : ""
+                    }`}
+                  >
+                    Danh sách đặt lịch
+                  </Link>
+                </div>
+              )}
 
-      <div className="sidebar-footer">
-        <ul>
-          <li>
-            <Link to="/help">
-              <FaQuestionCircle className="menu-icon" />
-              <span className="menu-text">Trợ giúp</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/logout">
-              <FaSignOutAlt className="menu-icon" />
-              <span className="menu-text">Đăng xuất</span>
-            </Link>
-          </li>
-        </ul>
-        <div className="collapse-button">
-          <button onClick={toggleSidebar}>
-            <FaChevronRight />
-          </button>
+              {/* Phòng ban */}
+              <Link
+                to="/manager/department-manager"
+                className={`nav-item ${
+                  pathname === "/manager/department-manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Phòng ban" : ""}
+              >
+                <FaAddressBook /> {!sidebarCollapsed && "Phòng ban"}
+              </Link>
+            </div>
+          </nav>
         </div>
-      </div>
+      </aside>
     </div>
   );
 }
