@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   searchBlog,
   getBlogById,
+  getBlogBySlug,
   createBlog,
   updateBlog,
   deleteBlog,
@@ -34,6 +35,19 @@ const useBlog = () => {
     }
   };
 
+  const blogBySlug = useCallback(
+    async (slug) => {
+      try {
+        const response = await dispatch(getBlogBySlug(slug)).unwrap();
+        // console.log("Raw API response:", response); // Log để kiểm tra
+        return { success: true, data: response.data }; // Lấy response.data thay vì response
+      } catch (error) {
+        // console.error("Error in blogBySlug:", error);
+        return { success: false, message: "Không lấy được blog theo slug!" };
+      }
+    },
+    [dispatch]
+  );
   const addNewBlog = async (createNewBlog) => {
     try {
       const response = await dispatch(createBlog(createNewBlog)).unwrap();
@@ -111,6 +125,7 @@ const useBlog = () => {
     // Blog
     searchListBlog,
     blogById,
+    blogBySlug,
     addNewBlog,
     updateBlogById,
     deleteBlogById,

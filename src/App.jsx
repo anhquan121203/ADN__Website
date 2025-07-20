@@ -19,6 +19,8 @@ import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSamp
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
 import CreateAppointmentAdminComponent from "./Components/Customer/AppointmentAdmin/CreateAppointmentAdminComponent";
+import Blogger from "./Pages/CustomerPage/Blogger/Blogger";
+import BlogDetail from "./Pages/CustomerPage/Blogger/BlogDetail/BlogDetail";
 
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
@@ -62,7 +64,6 @@ import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/La
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
 
-
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
 //   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -102,9 +103,6 @@ import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSample
 // };
 
 function App() {
-
-  
-
   return (
     <BrowserRouter>
       <Routes>
@@ -122,6 +120,8 @@ function App() {
             path="/create-appointment-admin"
             element={<CreateAppointmentAdminComponent />}
           />
+          <Route path="/blog" element={<Blogger />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
         </Route>
 
         <Route path="/customer" element={<CustomerSideBarLayout />}>
