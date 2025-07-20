@@ -15,8 +15,6 @@ const COLORS = ["#FFBB28", "#00C49F"];
 const PaymentDashboardAdmin = () => {
   const { dashboards, listDashboardPayment } = useDashboard();
 
-  console.log(dashboards)
-
   useEffect(() => {
     listDashboardPayment();
   }, [listDashboardPayment]);

@@ -44,6 +44,7 @@ import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/Appointme
 import StaffSample from "./Pages/StaffPage/StaffSample/StaffSample";
 import ViewSampleAppoinment from "./Pages/StaffPage/StaffSample/ViewSampleAppoinment/ViewSampleAppoinment";
 import ViewSamplesByAppointment from "./Pages/StaffPage/StaffConfirmSlots/ViewSamplesByAppointment/ViewSamplesByAppointment";
+
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
@@ -51,6 +52,7 @@ import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerSt
 import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentManager";
 import AppointmentManager from "./Pages/ManagerPage/AppointmentManager/AppointmentManager";
 import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/AppointmentDetail";
+import ServiceManager from "./Pages/ManagerPage/ServiceManager/ServiceManager";
 
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
@@ -59,6 +61,8 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
+import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
+
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -119,6 +123,7 @@ function App() {
             path="/create-appointment-admin"
             element={<CreateAppointmentAdminComponent />}
           />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
 
         <Route path="/customer" element={<CustomerSideBarLayout />}>
@@ -180,6 +185,7 @@ function App() {
           <Route path="department-manager" element={<DepartmentManager />} />
           <Route path="appointments" element={<AppointmentManager />} />
           <Route path="appointments/:id" element={<AppointmentDetail />} />
+          <Route path="service-manager" element={<ServiceManager />} />
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}

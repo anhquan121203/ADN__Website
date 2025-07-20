@@ -1,0 +1,406 @@
+/* Reset and base */
+.aboutUs-page {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #fff;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  margin-top: 160px;
+}
+.aboutUs-page a {
+  color: #0077cc;
+  text-decoration: none;
+}
+.aboutUs-page a:hover,
+.aboutUs-page a:focus {
+  text-decoration: underline;
+}
+
+/* Container */
+.aboutUs-page__container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto 4rem;
+}
+
+/* Hero section */
+.aboutUs-page__hero {
+  width: 100%;
+  height: 400px;
+  background-image: url("https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5e2bfa17-523f-4f3a-a3db-1178684a7896.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+.aboutUs-page__hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(9, 68, 94, 0.75);
+  z-index: 1;
+}
+.aboutUs-page__hero h1 {
+  position: relative;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  z-index: 2;
+  text-transform: uppercase;
+  font-family: "Segoe UI Black", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Button group */
+.aboutUs-page__btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem auto 3rem;
+  max-width: 600px;
+  width: 90%;
+}
+.aboutUs-page__btn {
+  flex: 1 1 0;
+  padding: 0.9rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+.aboutUs-page__btn--blue {
+  background-color: #007bb8;
+}
+.aboutUs-page__btn--blue:hover,
+.aboutUs-page__btn--blue:focus {
+  background-color: #005f8a;
+}
+.aboutUs-page__btn--orange {
+  background-color: #ea8300;
+}
+.aboutUs-page__btn--orange:hover,
+.aboutUs-page__btn--orange:focus {
+  background-color: #b36300;
+}
+.aboutUs-page__btn--green {
+  background-color: #20a67a;
+}
+.aboutUs-page__btn--green:hover,
+.aboutUs-page__btn--green:focus {
+  background-color: #186b54;
+}
+
+/* Breadcrumb */
+.aboutUs-page__breadcrumb {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+.aboutUs-page__breadcrumb a {
+  color: #007bb8;
+}
+.aboutUs-page__breadcrumb a:hover,
+.aboutUs-page__breadcrumb a:focus {
+  text-decoration: underline;
+}
+.aboutUs-page__breadcrumb span {
+  margin: 0 0.3rem;
+  user-select: none;
+}
+
+/* Intro Section */
+.aboutUs-page__intro-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  align-items: center;
+}
+.aboutUs-page__intro-text {
+  flex: 1 1 380px;
+  min-width: 320px;
+}
+.aboutUs-page__intro-text h2 {
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #00475e;
+  border-left: 5px solid #20a67a;
+  padding-left: 0.75rem;
+  font-family: "Segoe UI Semibold", Tahoma, Geneva, Verdana, sans-serif;
+}
+.aboutUs-page__intro-text p {
+  margin-bottom: 1.25rem;
+  color: #444;
+  font-size: 1rem;
+}
+.aboutUs-page__vision-mission {
+  margin-top: 1rem;
+}
+.aboutUs-page__vision-mission strong {
+  display: block;
+  font-weight: 700;
+  margin-top: 1rem;
+  color: #007bb8;
+  font-size: 1.15rem;
+}
+.aboutUs-page__vision-mission span {
+  display: block;
+  margin-top: 0.4rem;
+  font-weight: 500;
+  color: #2e2e2e;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.aboutUs-page__intro-image {
+  flex: 1 1 300px;
+  max-width: 400px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.15);
+}
+.aboutUs-page__intro-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Values section */
+.aboutUs-page__values-section {
+  background-color: #f7fafb;
+  padding: 3rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: inset 0 0 15px #dce7eb;
+  margin-bottom: 3rem;
+}
+.aboutUs-page__values-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
+}
+.aboutUs-page__values-text {
+  flex: 1 1 450px;
+  min-width: 320px;
+}
+.aboutUs-page__values-text li {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.05);
+}
+.aboutUs-page__values-text li strong {
+  color: #127ca3;
+  font-size: 1.15rem;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+.aboutUs-page__values-text li span {
+  line-height: 1.35;
+  font-size: 0.95rem;
+  color: #444;
+}
+.aboutUs-page__values-image {
+  flex: 1 1 350px;
+  max-width: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 14px rgb(0 0 0 / 0.15);
+}
+.aboutUs-page__values-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  aspect-ratio: 4/3;
+}
+.aboutUs-page__values-left {
+  flex: 1 1 600px;
+}
+
+.aboutUs-page__values-left h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  color: #222;
+}
+.aboutUs-page__values-left h3 span {
+  color: #007bb8;
+  text-decoration: underline;
+}
+
+.aboutUs-page__values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.aboutUs-page__value-card {
+  display: flex;
+  gap: 0.75rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.05);
+  align-items: flex-start;
+}
+
+.aboutUs-page__value-icon {
+  font-size: 1.8rem;
+  color: #007bb8;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.aboutUs-page__value-card strong {
+  color: #007bb8;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.aboutUs-page__value-card p {
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .aboutUs-page__values-container {
+    flex-direction: column;
+  }
+  .aboutUs-page__values-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* System capacity section */
+.aboutUs-page__system-capacity {
+  background-color: #00475e;
+  color: #f1f7f9;
+  padding: 3rem 1rem 4rem;
+  width: 100%;
+}
+.aboutUs-page__system-capacity .aboutUs-page__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.aboutUs-page__system-capacity h3 {
+  font-weight: 700;
+  font-size: 1.7rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1em;
+  font-family: "Segoe UI Black", Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+.aboutUs-page__capacity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.75rem 2rem;
+  justify-items: center;
+}
+.aboutUs-page__capacity-item {
+  text-align: center;
+  max-width: 160px;
+}
+.aboutUs-page__capacity-item strong {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #70d1aa;
+}
+.aboutUs-page__capacity-item span {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #d4e2eb;
+}
+
+/* Floating buttons */
+.aboutUs-page__floating-btns {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  z-index: 999;
+}
+.aboutUs-page__floating-btn {
+  background-color: #20a67a;
+  border: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgb(32 166 122 / 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+.aboutUs-page__floating-btn:hover,
+.aboutUs-page__floating-btn:focus {
+  background-color: #186b54;
+  outline: none;
+  box-shadow: 0 0 10px 3px #20a67a;
+}
+.aboutUs-page__floating-btn svg {
+  stroke: white;
+  stroke-width: 2;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .aboutUs-page__hero h1 {
+    font-size: 1.5rem;
+  }
+  .aboutUs-page__btn-group {
+    flex-direction: column;
+  }
+  .aboutUs-page__btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.85rem;
+  }
+  .aboutUs-page__intro-section {
+    flex-direction: column;
+  }
+  .aboutUs-page__values-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .aboutUs-page__values-image,
+  .aboutUs-page__intro-image {
+    max-width: 100%;
+  }
+  .aboutUs-page__capacity-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.25rem 1.5rem;
+  }
+}

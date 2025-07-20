@@ -101,7 +101,7 @@ const ModalEditStaffProfile = ({
       ]}
     >
       <Form form={form} layout="vertical">
-        <Form.Item name="_id">
+        <Form.Item name="_id" hidden>
           <Input />
         </Form.Item>
 
@@ -132,9 +132,10 @@ const ModalEditStaffProfile = ({
         <Form.Item
           label="Tiền"
           name="salary"
+          disable
           rules={[{ required: true, message: "Vui lòng chọn tiền!" }]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <InputNumber style={{ width: "100%" }} type="number" />
         </Form.Item>
 
         <Form.Item

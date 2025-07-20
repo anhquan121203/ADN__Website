@@ -56,32 +56,32 @@ const outletWrapperStyle = {
 
 function AdminLayout() {
   const [loading, setLoading] = useState(true);
-  
-    useEffect(() => {
-      const timer = setTimeout(() => setLoading(false), 2000);
-      return () => clearTimeout(timer);
-    }, []);
-  
-  
-    if (loading) {
-      return <LoadingComponent />;
-    }
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+
 
   return (
-    <div style={layoutStyle}>
-      <div style={sidebarStyle}>
-        <SidebarAdmin />
-      </div>
+    <>
+      {loading && <LoadingComponent />}
+      <div style={layoutStyle}>
+        <div style={sidebarStyle}>
+          <SidebarAdmin />
+        </div>
 
-      <div style={mainWrapperStyle}>
-        <div style={topbarStyle}>
-          <TopbarAdmin />
-        </div>
-        <div style={outletWrapperStyle}>
-          <Outlet />
+        <div style={mainWrapperStyle}>
+          <div style={topbarStyle}>
+            <TopbarAdmin />
+          </div>
+          <div style={outletWrapperStyle}>
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

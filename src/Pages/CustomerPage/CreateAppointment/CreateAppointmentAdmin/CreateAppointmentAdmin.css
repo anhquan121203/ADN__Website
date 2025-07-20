@@ -166,11 +166,11 @@ textarea {
   cursor: not-allowed;
 }
 
-a.link {
+.booking-form a.link {
   color: #1caf9a;
   text-decoration: none;
 }
 
-a.link:hover {
+.booking-form a.link:hover {
   text-decoration: underline;
 }

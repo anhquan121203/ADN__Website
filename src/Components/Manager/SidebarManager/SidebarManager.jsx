@@ -61,9 +61,9 @@ function SidebarManager() {
             </Link>
           </li>
           <li>
-            <Link to="/inbox">
+            <Link to="/manager/service-manager">
               <FaInbox className="menu-icon" />
-              <span className="menu-text">Hộp thư</span>
+              <span className="menu-text">Quản lý dịch vụ</span>
             </Link>
           </li>
           <li>

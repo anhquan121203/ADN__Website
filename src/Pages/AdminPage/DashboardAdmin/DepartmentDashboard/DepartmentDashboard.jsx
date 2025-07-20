@@ -14,14 +14,9 @@ import "./DepartmentDashboard.css";
 import useDepartment from "../../../../Hooks/useDepartment";
 
 function DepartmentDashboard() {
-  
-  const {
-    departments,
-    searchListDepartment,
-    fetchDepartmentStatistics,
-  } = useDepartment();
-
+  const { searchListDepartment, fetchDepartmentStatistics } = useDepartment();
   const [loading, setLoading] = useState(false);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const fetchAllStatistics = async () => {
@@ -29,7 +24,7 @@ function DepartmentDashboard() {
         setLoading(true);
 
         // 1. Lấy danh sách phòng ban
-        const deptList = await searchListDepartment({
+        const result = await searchListDepartment({
           is_deleted: false,
           is_active: true,
           pageNum: 1,
@@ -38,16 +33,34 @@ function DepartmentDashboard() {
           sort_order: "desc",
         });
 
+        const departmentList = result?.data?.pageData || [];
+
+        console.log("Danh sách phòng ban:", departmentList);
+
+        const chartDataTemp = [];
+
         // 2. Gọi API thống kê cho từng phòng ban
-        for (const dept of deptList) {
-          await fetchDepartmentStatistics({
-            departmentId: dept.departmentId,
+        for (const dept of departmentList) {
+          const statRes = await fetchDepartmentStatistics({
+            departmentId: dept._id,
             date_from: null,
             date_to: null,
           });
+
+          console.log("Thống kê:", dept.name, statRes);
+
+          chartDataTemp.push({
+            name: dept.name?.slice(0, 15) || dept._id,
+            st: statRes?.data?.totalStaff ?? 0,
+            sl: statRes?.data?.totalSlots ?? 0,
+            bs: statRes?.data?.bookedSlots ?? 0,
+            br: Number(statRes?.data?.bookingRate ?? 0)
+          });
         }
+
+        setChartData(chartDataTemp);
       } catch (error) {
-        console.error("Error fetching department statistics:", error);
+        console.error("Lỗi khi lấy thống kê phòng ban:", error);
       } finally {
         setLoading(false);
       }
@@ -55,15 +68,6 @@ function DepartmentDashboard() {
 
     fetchAllStatistics();
   }, []);
-
-  // Tạo dữ liệu cho biểu đồ
-  const data = departments.map((dept) => ({
-    name: dept.name || dept.departmentId,
-    st: dept.statistics?.totalStaff ?? 0,
-    sl: dept.statistics?.totalSlots ?? 0,
-    bs: dept.statistics?.bookedSlots ?? 0,
-    br: dept.statistics?.bookingRate ?? 0,
-  }));
 
   return (
     <div className="department-dashboard">
@@ -75,7 +79,7 @@ function DepartmentDashboard() {
         <div className="static-department">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={data}
+              data={chartData}
               margin={{
                 top: 5,
                 right: 30,
