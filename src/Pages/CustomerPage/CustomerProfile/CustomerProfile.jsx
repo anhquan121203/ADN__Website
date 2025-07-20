@@ -121,6 +121,10 @@ const CustomerProfile = () => {
             <span className="detail-value">{formatDate(user?.dob)}</span>
           </div>
           <div className="detail-row">
+            <span className="detail-label">Gender:</span>
+            <span className="detail-value">{user?.gender || "Not provided"}</span>
+          </div>
+          <div className="detail-row">
             <span className="detail-label">Role:</span>
             <span className="detail-value">{user?.role || "User"}</span>
           </div>

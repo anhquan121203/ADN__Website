@@ -1,119 +1,181 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './SidebarStaff.css';
-import logo from '../../assets/images/logo.png'; // Import the logo image
-import { 
-  FaHome, 
-  FaChartPie, 
-  FaUser, 
-  FaCog, 
-  FaCreditCard, 
-  FaInbox, 
-  FaAddressBook, 
-  FaProjectDiagram,
-  FaHandshake,
-  FaQuestionCircle, 
-  FaSignOutAlt,
-  FaChevronRight
-} from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import "./SidebarStaff.css";
+import {
+  MdOutlineDashboard,
+  MdOutlineMiscellaneousServices,
+} from "react-icons/md";
+import { FaUserTie } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { IoIosArrowDown, IoIosMedkit } from "react-icons/io";
+import { LuListTodo } from "react-icons/lu";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { CiCalendar } from "react-icons/ci";
+import { FaUser, FaFlask } from "react-icons/fa";
+import { useSidebar } from "../../Contexts/SidebarContext";
 
 function SidebarStaff() {
-  const [isCollapsed, setIsCollapsed] = useState(false); // Default to collapsed state
+  const location = useLocation();
+  const { pathname } = location;
+  const { sidebarCollapsed } = useSidebar();
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
+  const [scheduleDropdownOpen, setScheduleDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setServiceDropdownOpen(
+      pathname.startsWith("/staff/service") ||
+        pathname.startsWith("/staff/appointment")
+    );
+    setScheduleDropdownOpen(
+      pathname.startsWith("/staff/slot") ||
+        pathname.startsWith("/staff/confirm-slots")
+    );
+  }, [pathname]);
+
+  // Close dropdowns when sidebar is collapsed
+  useEffect(() => {
+    if (sidebarCollapsed) {
+      setServiceDropdownOpen(false);
+      setScheduleDropdownOpen(false);
+    }
+  }, [sidebarCollapsed]);
 
   return (
-    <div className={`sidebar-staff ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="sidebar-header">
-        <div className="logo">
-          {isCollapsed ? (
-            <Link to= "/">
-            <img src={logo} alt="Logo" className="logo-image" />
-            </Link>
-          ) : (
-            <Link to= "/">
-            <img src={logo} alt="Logo" className="logo-image" />
-            </Link>
-          )}
+    <div>
+      <aside className={`sidebar-staff ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div>
+          <div className="top-staff">
+            <div className="top-staff__icon">
+              <FaUserTie />
+            </div>
+            {!sidebarCollapsed && <span className="title-name">Staff Dashboard</span>}
+          </div>
+          <nav className="nav-staff">
+            <div className="nav-group">
+              {/* Hồ sơ cá nhân */}
+              <Link
+                to="/staff"
+                className={`nav-item ${
+                  pathname === "/staff" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Hồ sơ cá nhân" : ""}
+              >
+                <FaUser /> {!sidebarCollapsed && "Hồ sơ cá nhân"}
+              </Link>
+
+              {/* Quản lý dịch vụ */}
+              {!sidebarCollapsed ? (
+                <div
+                  className={`nav-item dropdown-service ${
+                    serviceDropdownOpen ? "open" : ""
+                  }`}
+                  onClick={() => setServiceDropdownOpen(!serviceDropdownOpen)}
+                >
+                  <div className="dropdown-left">
+                    <MdOutlineMiscellaneousServices />
+                    <span>Quản lý dịch vụ</span>
+                  </div>
+                  <IoIosArrowDown
+                    className={`dropdown-icon ${
+                      serviceDropdownOpen ? "rotate" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div className="nav-item" title="Quản lý dịch vụ">
+                  <MdOutlineMiscellaneousServices />
+                </div>
+              )}
+              {serviceDropdownOpen && !sidebarCollapsed && (
+                <div className="submenu">
+                  <Link
+                    to="/staff/service"
+                    className={`submenu-item ${
+                      pathname === "/staff/service" ? "active" : ""
+                    }`}
+                  >
+                    Danh sách dịch vụ
+                  </Link>
+                  <Link
+                    to="/staff/appointment"
+                    className={`submenu-item ${
+                      pathname === "/staff/appointment" ? "active" : ""
+                    }`}
+                  >
+                    Quản lý lịch hẹn
+                  </Link>
+                </div>
+              )}
+
+              {/* Quản lý lịch làm việc */}
+              {!sidebarCollapsed ? (
+                <div
+                  className={`nav-item dropdown-service ${
+                    scheduleDropdownOpen ? "open" : ""
+                  }`}
+                  onClick={() => setScheduleDropdownOpen(!scheduleDropdownOpen)}
+                >
+                  <div className="dropdown-left">
+                    <CiCalendar />
+                    <span>Lịch làm việc</span>
+                  </div>
+                  <IoIosArrowDown
+                    className={`dropdown-icon ${
+                      scheduleDropdownOpen ? "rotate" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div className="nav-item" title="Lịch làm việc">
+                  <CiCalendar />
+                </div>
+              )}
+              {scheduleDropdownOpen && !sidebarCollapsed && (
+                <div className="submenu">
+                  <Link
+                    to="/staff/slot"
+                    className={`submenu-item ${
+                      pathname === "/staff/slot" ? "active" : ""
+                    }`}
+                  >
+                    Ca làm việc
+                  </Link>
+                  <Link
+                    to="/staff/confirm-slots"
+                    className={`submenu-item ${
+                      pathname === "/staff/confirm-slots" ? "active" : ""
+                    }`}
+                  >
+                    Xác nhận lịch làm việc
+                  </Link>
+                </div>
+              )}
+
+              {/* Quản lý phòng ban */}
+              <Link
+                to="/staff/department"
+                className={`nav-item ${
+                  pathname === "/staff/department" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Quản lý phòng ban" : ""}
+              >
+                <HiOutlineOfficeBuilding /> {!sidebarCollapsed && "Quản lý phòng ban"}
+              </Link>
+
+              {/* Vật mẫu */}
+              <Link
+                to="/staff/sample"
+                className={`nav-item ${
+                  pathname === "/staff/sample" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Vật mẫu" : ""}
+              >
+                <FaFlask /> {!sidebarCollapsed && "Vật mẫu"}
+              </Link>
+            </div>
+          </nav>
         </div>
-      </div>
-      
-      <div className="sidebar-menu">
-        <ul>
-          <li className='active'>
-            <Link to="/dashboard">
-              <FaChartPie className="menu-icon" />
-              <span className="menu-text">Bảng điều khiển</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/appointment">
-              <FaCog className="menu-icon" />
-              <span className="menu-text">Lịch hẹn</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/service">
-              <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Dịch vụ</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/department">
-              <FaInbox className="menu-icon" />
-              <span className="menu-text">Phòng ban</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/slot">
-              <FaAddressBook className="menu-icon" />
-              <span className="menu-text">Ca làm việc</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/confirm-slots">
-              <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Xác nhận lịch làm việc</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff/sample">
-              <FaHandshake className="menu-icon" />
-              <span className="menu-text">Vật mẫu</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/staff">
-              <FaUser className="menu-icon" />
-              <span className="menu-text">Hồ sơ cá nhân</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
-      
-      <div className="sidebar-footer">
-        <ul>
-          <li>
-            <Link to="/help">
-              <FaQuestionCircle className="menu-icon" />
-              <span className="menu-text">Trợ giúp</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/logout">
-              <FaSignOutAlt className="menu-icon" />
-              <span className="menu-text">Đăng xuất</span>
-            </Link>
-          </li>
-        </ul>
-        <div className="collapse-button">
-          <button onClick={toggleSidebar}>
-            <FaChevronRight />
-          </button>
-        </div>
-      </div>
+      </aside>
     </div>
   );
 }

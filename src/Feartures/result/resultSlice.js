@@ -59,6 +59,25 @@ export const createTestResult = createAsyncThunk(
     }
 );
 
+// Async thunk to get result by appointment ID
+export const getResultByAppointmentId = createAsyncThunk(
+    "result/getResultByAppointmentId",
+    async (appointmentId, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await axios.get(`${API_BASE_URL}/api/result/appointment/${appointmentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to fetch result");
+        }
+    }
+);
+
 export const resultSlice = createSlice({
     name: "result",
     initialState: {
@@ -70,6 +89,10 @@ export const resultSlice = createSlice({
         startTestingError: null,
         createResultLoading: false,
         createResultError: null,
+        // Add new state for single result
+        currentResult: null,
+        resultLoading: false,
+        resultError: null,
     },
     reducers: {
         resetResults: (state) => {
@@ -85,6 +108,12 @@ export const resultSlice = createSlice({
         resetCreateResult: (state) => {
             state.createResultLoading = false;
             state.createResultError = null;
+        },
+        // Add new reset action
+        resetCurrentResult: (state) => {
+            state.currentResult = null;
+            state.resultLoading = false;
+            state.resultError = null;
         },
     },
     extraReducers: (builder) => {
@@ -127,9 +156,25 @@ export const resultSlice = createSlice({
             .addCase(createTestResult.rejected, (state, action) => {
                 state.createResultLoading = false;
                 state.createResultError = action.payload || "Failed to create test result";
+            })
+            .addCase(getResultByAppointmentId.pending, (state) => {
+                state.resultLoading = true;
+                state.resultError = null;
+            })
+            .addCase(getResultByAppointmentId.fulfilled, (state, action) => {
+                state.resultLoading = false;
+                if (action.payload.success && action.payload.data) {
+                    state.currentResult = action.payload;
+                } else {
+                    state.currentResult = action.payload || null;
+                }
+            })
+            .addCase(getResultByAppointmentId.rejected, (state, action) => {
+                state.resultLoading = false;
+                state.resultError = action.payload || "Failed to fetch result";
             });
     },
 });
 
-export const { resetResults, resetStartTesting, resetCreateResult } = resultSlice.actions;
+export const { resetResults, resetStartTesting, resetCreateResult, resetCurrentResult } = resultSlice.actions;
 export default resultSlice;

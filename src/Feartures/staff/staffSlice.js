@@ -2,16 +2,20 @@ import { API_BASE_URL } from "../../Constants/apiConstants";
 import axios from "axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+// Fix: Accept (id, formData), use id in URL, send formData as body (for multipart/form-data)
 export const updateUser = createAsyncThunk(
   "account/updateUser",
-  async (updateUser, { rejectWithValue }) => {
+  async ({ id, formData }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.put(
-        `${API_BASE_URL}/api/users/${updateUser.id}`,
-        updateUser,
+        `${API_BASE_URL}/api/users/${id}`,
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // Do NOT set Content-Type, let Axios handle it for FormData
+          },
         }
       );
       return response.data;
@@ -88,7 +92,6 @@ export const getServices = createAsyncThunk(
   "staff/getServices",
   async (searchParams, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("accessToken");
       
       // Build query string from search params
       const queryParams = new URLSearchParams();
@@ -106,9 +109,6 @@ export const getServices = createAsyncThunk(
       
       const response = await axios.get(
         `${API_BASE_URL}/api/service/search?${queryParams.toString()}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
       
       return response.data;
