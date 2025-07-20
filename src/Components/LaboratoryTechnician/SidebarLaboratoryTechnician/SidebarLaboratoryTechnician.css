@@ -1,5 +1,5 @@
 /* Sidebar Layout */
-.sidebar-manager {
+.sidebar-lab {
   width: 256px;
   background-color: #ffffff;
   padding: 32px 24px;
@@ -11,14 +11,14 @@
   transition: all 0.3s ease;
 }
 
-.sidebar-manager.collapsed {
+.sidebar-lab.collapsed {
   width: 80px;
   padding: 32px 12px;
   align-items: center;
 }
 
 /* Brand Section */
-.top-manager {
+.top-lab {
   display: flex;
   align-items: center;
   margin-bottom: 24px;
@@ -26,14 +26,14 @@
   justify-content: flex-start;
 }
 
-.sidebar-manager.collapsed .top-manager {
+.sidebar-lab.collapsed .top-lab {
   justify-content: center;
 }
 
-.top-manager__icon {
+.top-lab__icon {
   width: 32px;
   height: 32px;
-  background-color: #3b82f6;
+  background-color: #7c3aed;
   color: white;
   display: flex;
   align-items: center;
@@ -52,20 +52,20 @@
   transition: opacity 0.3s ease;
 }
 
-.sidebar-manager.collapsed .title-name {
+.sidebar-lab.collapsed .title-name {
   opacity: 0;
   width: 0;
   margin: 0;
 }
 
-.nav-manager {
+.nav-lab {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-.nav-manager .nav-group {
+.nav-lab .nav-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -86,7 +86,7 @@
   position: relative;
 }
 
-.sidebar-manager.collapsed .nav-item {
+.sidebar-lab.collapsed .nav-item {
   justify-content: center;
   padding: 10px;
   gap: 0;
@@ -99,8 +99,8 @@
 
 /* Active Item */
 .nav-item.active {
-  background-color: #dbeafe;
-  color: #3b82f6;
+  background-color: #ede9fe;
+  color: #7c3aed;
   font-weight: 600;
 }
 
@@ -133,7 +133,7 @@
   cursor: pointer;
 }
 
-.sidebar-manager.collapsed .dropdown-service {
+.sidebar-lab.collapsed .dropdown-service {
   justify-content: center;
   padding: 10px;
 }
@@ -144,8 +144,8 @@
 }
 
 .dropdown-service.open {
-  background-color: #dbeafe;
-  color: #3b82f6;
+  background-color: #ede9fe;
+  color: #7c3aed;
   font-weight: 600;
 }
 
@@ -174,16 +174,16 @@
 }
 
 .submenu-item:hover {
-  color: #3b82f6;
+  color: #7c3aed;
 }
 
 .submenu-item.active {
-  color: #3b82f6;
+  color: #7c3aed;
   font-weight: 600;
 }
 
 /* Tooltip for collapsed state */
-.sidebar-manager.collapsed .nav-item[title]:hover::after {
+.sidebar-lab.collapsed .nav-item[title]:hover::after {
   content: attr(title);
   position: absolute;
   left: 60px;
@@ -199,7 +199,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-manager.collapsed .nav-item[title]:hover::before {
+.sidebar-lab.collapsed .nav-item[title]:hover::before {
   content: '';
   position: absolute;
   left: 55px;

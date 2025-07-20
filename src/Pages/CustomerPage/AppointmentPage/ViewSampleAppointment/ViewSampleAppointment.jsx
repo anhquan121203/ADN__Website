@@ -131,7 +131,7 @@ const ViewSampleAppointment = () => {
   const appointmentStatus = sampleArray[0]?.appointment_id?.status;
   const kitStatus = sampleArray[0]?.kit_id?.status;
   const paymentStatus = sampleArray[0]?.appointment_id?.payment_status;
-  const isBatchCompleted = appointmentStatus === 'sample_collected' || (appointmentStatus === 'sample_received' && kitStatus === 'used');
+  const isBatchCompleted = appointmentStatus === 'sample_collected' || appointmentStatus === 'sample_received' || kitStatus === 'used' || appointmentStatus === 'completed';
 
   const columns = [
     {

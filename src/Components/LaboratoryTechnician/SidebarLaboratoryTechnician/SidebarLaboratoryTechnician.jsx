@@ -1,100 +1,131 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../../../assets/images/logo.png';
-import { 
+import React, { useEffect, useState } from "react";
+import "./SidebarLaboratoryTechnician.css";
+import {
   FaVial,
   FaClipboardList,
   FaMicroscope,
   FaFileMedicalAlt,
-  FaUser, 
-  FaQuestionCircle, 
-  FaSignOutAlt,
-  FaChevronRight
-} from 'react-icons/fa';
+  FaUser,
+  FaFlask
+} from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { IoIosArrowDown } from "react-icons/io";
+import { useSidebar } from "../../../Contexts/SidebarContext";
 
 function SidebarLaboratoryTechnician() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
+  const { pathname } = location;
+  const { sidebarCollapsed } = useSidebar();
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const [sampleDropdownOpen, setSampleDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setSampleDropdownOpen(
+      pathname.startsWith("/laboratory_technician/samples") ||
+        pathname.startsWith("/laboratory_technician/results") ||
+        pathname.startsWith("/laboratory_technician/view-samples")
+    );
+  }, [pathname]);
+
+  // Close dropdowns when sidebar is collapsed
+  useEffect(() => {
+    if (sidebarCollapsed) {
+      setSampleDropdownOpen(false);
+    }
+  }, [sidebarCollapsed]);
 
   return (
-    <div className={`flex flex-col h-screen bg-[#1a1f2e] text-white font-sans relative transition-all duration-300 ease-in-out ${isCollapsed ? 'w-[125px]' : 'w-[250px]'}`}>
-      {/* Header */}
-      <div className={`flex justify-center items-center py-6 ${isCollapsed ? 'px-0' : 'px-4'}`}>
-        <div className="flex items-center justify-center">
-          <Link to="/">
-            <img 
-              src={logo} 
-              alt="Logo" 
-              className={`transition-all duration-300 ${isCollapsed ? 'h-[35px]' : 'h-[45px]'} max-w-full`}
-            />
-          </Link>
+    <div>
+      <aside className={`sidebar-lab ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div>
+          <div className="top-lab">
+            <div className="top-lab__icon">
+              <FaFlask />
+            </div>
+            {!sidebarCollapsed && <span className="title-name">Lab Technician</span>}
+          </div>
+          <nav className="nav-lab">
+            <div className="nav-group">
+              {/* Quản lý mẫu xét nghiệm */}
+              {!sidebarCollapsed ? (
+                <div
+                  className={`nav-item dropdown-service ${
+                    sampleDropdownOpen ? "open" : ""
+                  }`}
+                  onClick={() => setSampleDropdownOpen(!sampleDropdownOpen)}
+                >
+                  <div className="dropdown-left">
+                    <FaVial />
+                    <span>Quản lý mẫu xét nghiệm</span>
+                  </div>
+                  <IoIosArrowDown
+                    className={`dropdown-icon ${
+                      sampleDropdownOpen ? "rotate" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div className="nav-item" title="Quản lý mẫu xét nghiệm">
+                  <FaVial />
+                </div>
+              )}
+              {sampleDropdownOpen && !sidebarCollapsed && (
+                <div className="submenu">
+                  <Link
+                    to="/laboratory_technician/samples"
+                    className={`submenu-item ${
+                      pathname === "/laboratory_technician/samples" ? "active" : ""
+                    }`}
+                  >
+                    Xác nhận mẫu trước khi xét nghiệm
+                  </Link>
+                  <Link
+                    to="/laboratory_technician/results"
+                    className={`submenu-item ${
+                      pathname === "/laboratory_technician/results" ? "active" : ""
+                    }`}
+                  >
+                    Kết quả xét nghiệm
+                  </Link>
+                </div>
+              )}
+
+              {/* Thiết bị */}
+              <Link
+                to="/laboratory_technician/equipment"
+                className={`nav-item ${
+                  pathname === "/laboratory_technician/equipment" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Thiết bị" : ""}
+              >
+                <FaMicroscope /> {!sidebarCollapsed && "Thiết bị"}
+              </Link>
+
+              {/* Báo cáo */}
+              <Link
+                to="/laboratory_technician/reports"
+                className={`nav-item ${
+                  pathname === "/laboratory_technician/reports" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Báo cáo" : ""}
+              >
+                <FaFileMedicalAlt /> {!sidebarCollapsed && "Báo cáo"}
+              </Link>
+
+              {/* Hồ sơ cá nhân */}
+              <Link
+                to="/laboratory_technician"
+                className={`nav-item ${
+                  pathname === "/laboratory_technician" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Hồ sơ cá nhân" : ""}
+              >
+                <FaUser /> {!sidebarCollapsed && "Hồ sơ cá nhân"}
+              </Link>
+            </div>
+          </nav>
         </div>
-      </div>
-      
-      {/* Menu */}
-      <div className="flex-1 overflow-y-auto">
-        <ul className="list-none p-0 m-0 space-y-2">
-          <li className={`px-3`}>
-            <Link to="/laboratory_technician/samples" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaVial className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Xác nhận mẫu trước khi xét nghiệm</span>
-            </Link>
-          </li>
-          <li className={`px-3`}>
-            <Link to="/laboratory_technician/results" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaClipboardList className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Kết quả xét nghiệm</span>
-            </Link>
-          </li>
-          <li className={`px-3`}>
-            <Link to="/laboratory_technician/equipment" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaMicroscope className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Thiết bị</span>
-            </Link>
-          </li>
-          <li className={`px-3`}>
-            <Link to="/laboratory_technician/reports" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaFileMedicalAlt className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Báo cáo</span>
-            </Link>
-          </li>
-          <li className={`px-3`}>
-            <Link to="/laboratory_technician" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaUser className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Hồ sơ</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
-      
-      {/* Footer */}
-      <div className="mt-auto border-t border-[#252b3b]">
-        <ul className="list-none p-3 space-y-2">
-          <li>
-            <Link to="/help" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaQuestionCircle className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Trợ giúp</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/logout" className="flex items-center px-4 py-3 text-[#6b7280] hover:bg-[#252b3b] hover:text-white transition-all duration-200 rounded-lg">
-              <FaSignOutAlt className="text-xl mr-3" />
-              <span className={`${isCollapsed ? 'hidden' : 'block'} text-sm font-medium`}>Đăng xuất</span>
-            </Link>
-          </li>
-        </ul>
-        <div className="flex justify-center py-3">
-          <button 
-            onClick={toggleSidebar}
-            className="w-8 h-8 flex items-center justify-center text-[#6b7280] hover:text-white transition-all duration-200"
-          >
-            <FaChevronRight className={`transition-transform duration-200 ${isCollapsed ? 'rotate-180' : ''}`} />
-          </button>
-        </div>
-      </div>
+      </aside>
     </div>
   );
 }
