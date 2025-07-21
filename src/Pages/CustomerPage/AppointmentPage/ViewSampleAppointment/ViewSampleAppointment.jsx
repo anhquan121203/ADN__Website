@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, Button, Space, Tooltip, Card, Tag, Typography, Checkbox } from 'antd';
-import { ArrowLeftOutlined, EyeOutlined, UploadOutlined } from '@ant-design/icons';
+import { 
+  ArrowLeftOutlined, 
+  EyeOutlined, 
+  ExclamationCircleOutlined, 
+  FileTextOutlined 
+} from '@ant-design/icons';
 import useSample from '../../../../Hooks/useSample';
+import useResult from '../../../../Hooks/useResult';
 import ModalDetailSample from './ModalDetailSample/ModalDetailSample';
+import ModalViewResult from './ModalViewResult/ModalViewResult';
+import { toast } from 'react-toastify';
 
 const { Title, Text } = Typography;
 
@@ -16,6 +24,7 @@ const ViewSampleAppointment = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
   const { getSamplesByAppointment, uploadPersonImage, submitSamples } = useSample();
+  const { getResultByAppointment, currentResult, resultLoading } = useResult();
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
@@ -23,6 +32,7 @@ const ViewSampleAppointment = () => {
   const [submitting, setSubmitting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState(null);
+  const [resultModalOpen, setResultModalOpen] = useState(false);
   
   // Auto-clear notification sau 3s
   useEffect(() => {
@@ -57,6 +67,11 @@ const ViewSampleAppointment = () => {
   useEffect(() => {
     if (appointmentId) fetchSamples();
   }, [appointmentId]);
+
+  // Handle view result - just open the modal
+  const handleViewResult = () => {
+    setResultModalOpen(true);
+  };
 
   // Handle view sample detail
   const handleViewSampleDetail = (sampleId) => {
@@ -279,23 +294,37 @@ const ViewSampleAppointment = () => {
           </Title>
         </div>
 
-        {appointmentStatus === "sample_received" && paymentStatus !== "paid" && (
-          <Button
-            type="primary"
-            size="large"
-            onClick={() =>
-              navigate("/payment", {
-                state: {
-                  appointmentId,
-                  sampleIds: sampleArray.map((s) => s._id),
-                },
-              })
-            }
-            className="bg-green-600 hover:bg-green-700 border-green-600"
-          >
-            Thanh toán
-          </Button>
-        )}
+        <div className="flex items-center gap-3">
+          {/* View Result Button - Only show if appointment is completed */}
+          {appointmentStatus === "completed" && (
+            <Button
+              type="default"
+              icon={<FileTextOutlined />}
+              onClick={handleViewResult}
+              className="bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
+            >
+              Xem kết quả test
+            </Button>
+          )}
+
+          {appointmentStatus === "sample_received" && paymentStatus !== "paid" && (
+            <Button
+              type="primary"
+              size="large"
+              onClick={() =>
+                navigate("/payment", {
+                  state: {
+                    appointmentId,
+                    sampleIds: sampleArray.map((s) => s._id),
+                  },
+                })
+              }
+              className="bg-green-600 hover:bg-green-700 border-green-600"
+            >
+              Thanh toán
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Batch submit controls */}
@@ -363,6 +392,14 @@ const ViewSampleAppointment = () => {
           </div>
         </div>
       </Card>
+
+      {/* Modal View Result */}
+      <ModalViewResult
+        open={resultModalOpen}
+        onClose={() => setResultModalOpen(false)}
+        appointmentId={appointmentId}
+        appointmentStatus={appointmentStatus}
+      />
 
       {/* Modal Detail Sample */}
       <ModalDetailSample
