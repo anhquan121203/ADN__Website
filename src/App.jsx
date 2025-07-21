@@ -19,6 +19,7 @@ import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSamp
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
 import CreateAppointmentAdminComponent from "./Components/Customer/AppointmentAdmin/CreateAppointmentAdminComponent";
+import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
 
 // ADMIN PAGE
 import AdminLayout from "./Layouts/AdminLayout";
@@ -54,6 +55,7 @@ import AppointmentManager from "./Pages/ManagerPage/AppointmentManager/Appointme
 import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/AppointmentDetail";
 import ServiceManager from "./Pages/ManagerPage/ServiceManager/ServiceManager";
 import StaffProfileManager from "./Pages/ManagerPage/StaffProfileManager/StaffProfileManager";
+import SlotManager from "./Pages/ManagerPage/SlotManager/SlotManager";
 
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
@@ -62,8 +64,6 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
-import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
-import SlotManager from "./Pages/ManagerPage/SlotManager/SlotManager";
 
 
 
