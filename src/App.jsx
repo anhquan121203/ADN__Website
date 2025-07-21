@@ -30,6 +30,7 @@ import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
 import KitAdmin from "./Pages/AdminPage/KitAdmin/KitAdmin";
 import AdministrativeCaseAdmin from "./Pages/AdminPage/AdministrativeCaseAdmin/AdministrativeCaseAdmin";
 import AppointmentAdmin from "./Pages/AdminPage/AppointmentAdmin/AppointmentAdmin";
+import AdminStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/AdminStaffProfile";
 
 // STAFF PAGE
 import StaffLayout from "./Layouts/StaffLayout";
@@ -48,11 +49,11 @@ import ViewSamplesByAppointment from "./Pages/StaffPage/StaffConfirmSlots/ViewSa
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
-import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerStaffProfile";
 import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentManager";
 import AppointmentManager from "./Pages/ManagerPage/AppointmentManager/AppointmentManager";
 import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/AppointmentDetail";
 import ServiceManager from "./Pages/ManagerPage/ServiceManager/ServiceManager";
+import StaffProfileManager from "./Pages/ManagerPage/StaffProfileManager/StaffProfileManager";
 
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
@@ -62,6 +63,8 @@ import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/La
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
 import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
+import SlotManager from "./Pages/ManagerPage/SlotManager/SlotManager";
+
 
 
 // Protected route component
@@ -145,8 +148,8 @@ function App() {
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
           <Route
-            path="manager-staff-profile"
-            element={<ManagerStaffProfile />}
+            path="admin-staff-profile"
+            element={<AdminStaffProfile />}
           />
           <Route path="kit-admin" element={<KitAdmin />} />
           <Route
@@ -186,6 +189,8 @@ function App() {
           <Route path="appointments" element={<AppointmentManager />} />
           <Route path="appointments/:id" element={<AppointmentDetail />} />
           <Route path="service-manager" element={<ServiceManager />} />
+          <Route path="staff-profile-manager" element={<StaffProfileManager />} />
+          <Route path="slot-manager" element={<SlotManager />} />
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
@@ -201,6 +206,7 @@ function App() {
           />
           <Route path="results" element={<ManageResult />} />
           <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
+          
         </Route>
       </Routes>
 

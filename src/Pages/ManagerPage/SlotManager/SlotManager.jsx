@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Pagination, Popconfirm, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
-import "./SlotAdmin.css";
-
+// import "./SlotAdmin.css";
 import useSlot from "../../../Hooks/useSlot";
 import { format } from "date-fns";
 import { useDispatch } from "react-redux";
-import ModalCreateSlot from "./ModalCreateSlot/ModalCreateSlot";
 import { CiEdit } from "react-icons/ci";
-import ModalEditSlot from "./ModalEditSlot/ModalEditSlot";
-import ModalDetailSlot from "./ModalDetailSlot/ModalDetailSlot";
-import FilterSlotAdmin from "./FilterSlotAdmin/FilterSlotAdmin";
+import FilterSlotManager from "./FilterSlotManager/FilterSlotManager";
+import CreateSlotManager from "./CreateSlotManager/CreateSlotManager";
+import EditSlotManager from "./EditSlotManager/EditSlotManager";
+import DetailSlotManager from "./DetailSlotManager/DetailSlotManager";
 
-function SlotAdmin() {
+function SlotManager() {
   const {
     slots,
     total,
@@ -159,8 +158,6 @@ function SlotAdmin() {
           sort_by: "start_time",
           sort_order: "desc",
         });
-      } else {
-        return { success: false, message: "Cập nhật slot không thành công" };
       }
       return result;
     } catch (error) {
@@ -217,7 +214,7 @@ function SlotAdmin() {
 
       <div className="form-account">
         <div className="filter-slot">
-          <FilterSlotAdmin
+          <FilterSlotManager
             filters={filters}
             setFilters={setFilters}
             onSearch={handleSearch}
@@ -315,20 +312,20 @@ function SlotAdmin() {
           }}
         />
 
-        <ModalCreateSlot
+        <CreateSlotManager
           isModalOpen={isAddModalOpen}
           handleCancel={() => setIsAddModalOpen(false)}
           handleAdd={handleAddSlot}
         />
 
-        <ModalEditSlot
+        <EditSlotManager
           isModalOpen={isEditModalOpen}
           handleCancel={() => setIsEditModalOpen(false)}
           handleEdit={handleEditSlot}
           editSlot={editSlot}
         />
 
-        <ModalDetailSlot
+        <DetailSlotManager
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
           selectedSlot={selectedSlot}
@@ -338,4 +335,4 @@ function SlotAdmin() {
   );
 }
 
-export default SlotAdmin;
+export default SlotManager;

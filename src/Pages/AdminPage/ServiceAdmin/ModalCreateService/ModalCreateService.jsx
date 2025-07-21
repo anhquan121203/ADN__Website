@@ -41,6 +41,9 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
       const values = await form.validateFields();
       const formData = new FormData();
 
+      values.price = Number(values.price)
+      values.estimated_time = Number(values.estimated_time)
+
       // Append all normal fields
       Object.keys(values).forEach((key) => {
         // xử lý ảnh ở dưới
@@ -68,7 +71,7 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Tạo dịch vụ mới"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -85,13 +88,6 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           label="Tên"
           name="name"
           rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-         <Form.Item
-          label="Link slug"
-          name="slug"
         >
           <Input />
         </Form.Item>
@@ -119,9 +115,20 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
         <Form.Item
           label="Giá tiền"
           name="price"
-          rules={[{ required: true, message: "Vui lòng nhập giá tiền!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số giá tiền!" },
+            {
+              pattern: /^[0-9]+$/,
+              message: "Số tiền chỉ được chứa chữ số!",
+            },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Input
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/\D/g, "");
+              form.setFieldsValue({ price: onlyNums });
+            }}
+          />
         </Form.Item>
 
         <Form.Item
@@ -151,14 +158,24 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           </Select>
         </Form.Item>
 
+
         <Form.Item
-          label="Thời gian"
+          label="Thời gian ước tính"
           name="estimated_time"
           rules={[
             { required: true, message: "Vui lòng nhập thời gian ước tính!" },
+            {
+              pattern: /^[0-9]+$/,
+              message: "Thời gian ước tính chỉ được chứa chữ số!",
+            },
           ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Input
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/\D/g, "");
+              form.setFieldsValue({ estimated_time: onlyNums });
+            }}
+          />
         </Form.Item>
 
         <Form.Item

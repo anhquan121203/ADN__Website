@@ -74,7 +74,7 @@ function ManagerUser() {
     };
 
     if (Object.keys(condition).length === 0) {
-      condition.keyword = " "; 
+      condition.keyword = " ";
     }
 
     searchUserPag({
@@ -102,7 +102,7 @@ function ManagerUser() {
     }
   };
 
-
+  // render verify
 
   const openAddModal = () => {
     setIsAddModalOpen(true);
@@ -115,6 +115,19 @@ function ManagerUser() {
       if (result.success) {
         setIsAddModalOpen(false);
       }
+      searchUserPag({
+        pageInfo: {
+          pageNum: currentPage,
+          pageSize: pageSize,
+        },
+        searchCondition: {
+          keyword: "",
+          role: [],
+          is_verified: true,
+          status: true,
+          is_deleted: false,
+        },
+      });
       return result;
     } catch (error) {
       // toast.error("Thêm tài khoản không thành công");
@@ -141,17 +154,15 @@ function ManagerUser() {
 
   // delete user
   const handleDeleteUser = async (user) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) {
-      try {
-        const result = await deleteUserById(user._id);
-        if (result.success) {
-          toast.success("Xóa tài khoản thành công");
-        } else {
-          toast.error(result.message || "Xóa tài khoản không thành công!");
-        }
-      } catch (error) {
-        toast.error("Xóa tài khoản không thành công!");
+    try {
+      const result = await deleteUserById(user._id);
+      if (result.success) {
+        toast.success("Xóa tài khoản thành công");
+      } else {
+        toast.error(result.message || "Xóa tài khoản không thành công!");
       }
+    } catch (error) {
+      toast.error("Xóa tài khoản không thành công!");
     }
   };
 
@@ -223,22 +234,18 @@ function ManagerUser() {
             Tạo tài khoản
           </button>
         </div>
-
       </div>
 
       {/* Table account */}
       <div className="form-account">
-
         <div className="account-container">
           <div className="filter-account">
             <UserFilter
               filters={filters}
               setFilters={setFilters}
               onSearch={handleSearch}
-
             />
           </div>
-
 
           <table className="table-account">
             <thead>
@@ -262,8 +269,9 @@ function ManagerUser() {
                     <td>{getRoleName(item.role)} </td>
                     <td>
                       <span
-                        className={`status-badge ${item.status ? "active" : "inactive"
-                          }`}
+                        className={`status-badge ${
+                          item.status ? "active" : "inactive"
+                        }`}
                       >
                         {item.status ? "Hoạt động" : "Bị khóa"}
                       </span>
@@ -285,15 +293,26 @@ function ManagerUser() {
                           }}
                         />
 
-                        <MdDeleteOutline
-                          className="icon-admin"
-                          onClick={() => handleDeleteUser(item)}
-                        />
-
                         <FaRegEye
                           className="icon-admin"
                           onClick={() => handleDetailUser(item._id)}
                         />
+
+                        {/* <MdDeleteOutline
+                          className="icon-admin"
+                          onClick={() => handleDeleteUser(item)}
+                        /> */}
+
+                        <Popconfirm
+                          title="Xóa tài khoản"
+                          description="Bạn có muốn xóa tài khoản này không?"
+                          onConfirm={() => handleDeleteUser(item)}
+                          onCancel={cancel}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <MdDeleteOutline className="icon-admin" />
+                        </Popconfirm>
 
                         <Popconfirm
                           title="Khóa tài khoản"

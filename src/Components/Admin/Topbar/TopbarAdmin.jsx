@@ -16,10 +16,26 @@ function TopbarAdmin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // const handleLogout = async () => {
+  //   await signOut();
+  //   dispatch(logout());
+  //   navigate("/login");
+  // };
+
   const handleLogout = async () => {
-    await signOut();
-    dispatch(logout());
-    navigate("/login");
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout API error:", error);
+      toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+    } finally {
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      dispatch(logout());
+      navigate("/login");
+      toast.success("Đăng xuất thành công!");
+    }
   };
 
   return (

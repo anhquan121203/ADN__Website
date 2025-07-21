@@ -23,7 +23,6 @@ function DepartmentDashboard() {
       try {
         setLoading(true);
 
-        // 1. Lấy danh sách phòng ban
         const result = await searchListDepartment({
           is_deleted: false,
           is_active: true,
@@ -35,11 +34,9 @@ function DepartmentDashboard() {
 
         const departmentList = result?.data?.pageData || [];
 
-        console.log("Danh sách phòng ban:", departmentList);
-
         const chartDataTemp = [];
 
-        // 2. Gọi API thống kê cho từng phòng ban
+        // thống kê cho từng phòng ban
         for (const dept of departmentList) {
           const statRes = await fetchDepartmentStatistics({
             departmentId: dept._id,

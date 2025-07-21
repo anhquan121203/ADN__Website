@@ -31,7 +31,7 @@ function AboutPage() {
             <nav aria-label="Breadcrumb" className="aboutUs-page__breadcrumb">
                 <a href="#">Trang chủ</a>
                 <span aria-hidden="true">›</span>
-                <a href="#">Về Vinmec</a>
+                <a href="#">Về Blooding</a>
                 <span aria-hidden="true">›</span>
                 <span aria-current="page">Tầm nhìn và sứ mệnh</span>
             </nav>
@@ -44,12 +44,12 @@ function AboutPage() {
                     <article className="aboutUs-page__intro-text">
                         <h2 id="intro-title">Giới thiệu chung</h2>
                         <p>
-                            Vinmec ý chính mục tiêu mang đến một môi trường y tế - chăm sóc sức khỏe chất lượng cao và đồng bộ, góp phần nâng cao sức khỏe cộng đồng, nâng tầm dịch vụ y tế.
+                            Blooding DNA Testing ý chính mục tiêu mang đến một môi trường y tế - chăm sóc sức khỏe chất lượng cao và đồng bộ, góp phần nâng cao sức khỏe cộng đồng, nâng tầm dịch vụ y tế.
                         </p>
                         <div className="aboutUs-page__vision-mission" aria-label="Vision and mission statements">
                             <strong>Tầm nhìn</strong>
                             <span>
-                                Vinmec cam kết phát triển hệ thống y tế hiện đại với đội ngũ y bác sĩ hàng đầu, đem lại dịch vụ y tế chất lượng cao cho cộng đồng thông qua công nghệ tiên tiến và trải nghiệm khác biệt.
+                            Blooding DNA Testing cam kết phát triển hệ thống y tế hiện đại với đội ngũ y bác sĩ hàng đầu, đem lại dịch vụ y tế chất lượng cao cho cộng đồng thông qua công nghệ tiên tiến và trải nghiệm khác biệt.
                             </span>
                             <strong>Sứ mệnh</strong>
                             <span>

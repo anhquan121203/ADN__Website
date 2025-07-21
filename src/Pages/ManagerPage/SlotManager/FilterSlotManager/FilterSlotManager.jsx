@@ -13,7 +13,7 @@ import useStaffProfile from "../../../../Hooks/useStaffProfile";
 
 const { RangePicker } = DatePicker;
 
-function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
+function FilterSlotManager({ filters, setFilters, onSearch, slots }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const defaultFilters = {
@@ -70,7 +70,7 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         onChange={(value) =>
           setFilters({ ...filters, staff_profile_ids: value })
         }
-        style={{ width: 200}}
+        style={{ width: 200 }}
         allowClear
         showSearch
         optionFilterProp="label"
@@ -146,7 +146,7 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
       <Button
         onClick={() => {
           setFilters(defaultFilters);
-          setCurrentPage(1); 
+          setCurrentPage(1);
         }}
       >
         Reset
@@ -155,4 +155,4 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
   );
 }
 
-export default FilterSlotAdmin;
+export default FilterSlotManager;

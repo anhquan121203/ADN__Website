@@ -5,11 +5,12 @@ import { toast } from "react-toastify";
 
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import useService from "../../../Hooks/useService";
-// import ModalCreateService from "./ModalCreateService/ModalCreateService";
-// import ModalDetailService from "./ModalDetailService/ModalDetailService";
-// import ModalEditService from "./ModalEditService/ModalEditService";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import FilterServiceManager from "./FilterServiceManager/FilterServiceManager";
+import CreateServiceManager from "./CreateServiceManager/CreateServiceManager";
+import EditServiceManager from "./EditServiceManager/EditServiceManager";
+import DetailServiceManager from "./DetailServiceManager/DetailServiceManager";
 
 function ServiceManager() {
   const {
@@ -62,136 +63,149 @@ function ServiceManager() {
     });
   }, [currentPage]);
 
-//   // Filter service
-//   const [filters, setFilters] = useState({
-//     type: "",
-//     sample_method: "",
-//     is_active: true,
-//     min_price: "",
-//     max_price: "",
-//     keyword: "",
-//     sort_by: "created_at",
-//     sort_order: "desc",
-//   });
+  // Filter service
+  const [filters, setFilters] = useState({
+    type: "",
+    sample_method: "",
+    is_active: true,
+    min_price: "",
+    max_price: "",
+    keyword: "",
+    sort_by: "created_at",
+    sort_order: "desc",
+  });
 
-//   const handleSearch = () => {
-//     setIsFiltering(true);
-//     searchListService({
-//       ...filters,
-//       pageNum: currentPage,
-//       pageSize: pageSize,
-//     });
-//   };
+  const handleSearch = () => {
+    setIsFiltering(true);
+    searchListService({
+      ...filters,
+      pageNum: currentPage,
+      pageSize: pageSize,
+    });
+  };
 
-//   // type Service
-//   const getType = (type) => {
-//     switch (type) {
-//       case "civil":
-//         return <Tag color="blue">Dân sự</Tag>;
-//       case "administrative":
-//         return <Tag color="purple">Hành chính</Tag>;
-//       default:
-//         return type;
-//     }
-//   };
+  // type Service
+  const getType = (type) => {
+    switch (type) {
+      case "civil":
+        return <Tag color="blue">Dân sự</Tag>;
+      case "administrative":
+        return <Tag color="purple">Hành chính</Tag>;
+      default:
+        return type;
+    }
+  };
 
+  const getSampleMethod = (sample_method) => {
+    switch (sample_method) {
+      case "home_collected":
+        return "Lấy mẫu tại nhà";
+      case "self_collected":
+        return "Tư lấy mẫu";
+      case "facility_collected":
+        return "Lấy mẫu tại cơ sở";
+      default:
+        return sample_method;
+    }
+  };
 
-//   // create service
-//   const openAddModal = () => {
-//     setIsAddModalOpen(true);
-//     setSelectedService(null);
-//   };
+  // create service
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+    setSelectedService(null);
+  };
 
-//   const handleAddService = async (serviceData) => {
-//     try {
-//       const result = await addNewService(serviceData);
-//       if (result.success) {
-//         setIsAddModalOpen(false);
-//         // toast.success("Thêm thiết bị thành công!")
-//         searchListService({
-//           is_active: true,
-//           pageNum: currentPage,
-//           pageSize: pageSize,
-//           sort_by: "created_at",
-//           sort_order: "desc",
-//         });
-//       }
-//       return result.data;
-//     } catch (error) {
-//       toast.error("Thêm dịch vụ không thành công!");
-//     }
-//   };
+  const handleAddService = async (serviceData) => {
+    try {
+      const result = await addNewService(serviceData);
+      if (result.success) {
+        setIsAddModalOpen(false);
+        // toast.success("Thêm thiết bị thành công!")
+        searchListService({
+          is_active: true,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          sort_by: "created_at",
+          sort_order: "desc",
+        });
+      }
+      return result.data;
+    } catch (error) {
+      toast.error("Thêm dịch vụ không thành công!");
+    }
+  };
 
-//   // get service by ID
-//   const handleDetailService = async (serviceId) => {
-//     try {
-//       const result = await serviceById(serviceId);
-//       if (result.success) {
-//         setSelectedService(result.data.data);
-//         setIsDetailModalOpen(true);
-//       }
-//       // return result;
-//     } catch (error) {
-//       // toast.error("Thêm tài khoản không thành công");
-//       return {
-//         success: false,
-//         message: "Xem chi tiết không thành công!",
-//       };
-//     }
-//   };
+  // get service by ID
+  const handleDetailService = async (serviceId) => {
+    try {
+      const result = await serviceById(serviceId);
+      if (result.success) {
+        setSelectedService(result.data.data);
+        setIsDetailModalOpen(true);
+      }
+      // return result;
+    } catch (error) {
+      // toast.error("Thêm tài khoản không thành công");
+      return {
+        success: false,
+        message: "Xem chi tiết không thành công!",
+      };
+    }
+  };
 
-//   // update service
-//   const openEditModal = (serviceData) => {
-//     setEditService(serviceData);
-//     setIsEditModalOpen(true);
-//   };
+  // update service
+  const openEditModal = (serviceData) => {
+    setEditService(serviceData);
+    setIsEditModalOpen(true);
+  };
 
-//   const handleEditService = async (serviceData) => {
-//     const result = await updateServiceById(editService._id, serviceData);
-//     if (result.success) {
-//       setIsEditModalOpen(false);
-//     }
-//   };
+  const handleEditService = async (serviceData) => {
+    const result = await updateServiceById(editService._id, serviceData);
+    if (result.success) {
+      setIsEditModalOpen(false);
+    }
+    return result;
+  };
 
-//   // delete service
-//   const openDeleteModal = (service) => {
-//     setIsDeleteModalOpen(true);
-//     setSelectedService(service);
-//   };
+  // delete service
+  const openDeleteModal = (service) => {
+    setIsDeleteModalOpen(true);
+    setSelectedService(service);
+  };
 
-//   const handleDeleteService = async () => {
-//     if (selectedService?._id) {
-//       const result = await deleteServiceById(selectedService._id);
-//       if (result.success) {
-//         setIsDeleteModalOpen(false);
-//       }
-//     } else {
-//       toast.error("Lỗi: ID thiết bị không hợp lệ!");
-//     }
-//   };
+  const handleDeleteService = async () => {
+    if (selectedService?._id) {
+      const result = await deleteServiceById(selectedService._id);
+      if (result.success) {
+        setIsDeleteModalOpen(false);
+      }
+    } else {
+      toast.error("Lỗi: ID thiết bị không hợp lệ!");
+    }
+  };
 
-//   // change status
-//   const handleChangeStatus = async (service) => {
-//     try {
-//       const result = await changeStatusService({
-//         id: service._id,
-//         status: !service.is_active,
-//       });
-//       if (result?.success) {
-//         toast.success("Thay đổi trạng thái thành công");
-//         // reload lại danh sách nếu cần
-//         searchListService({
-//           is_active: true,
-//           pageNum: currentPage,
-//           pageSize: pageSize,
-//           sort_by: "created_at",
-//           sort_order: "desc",
-//         });
-//       }
-//     } catch (error) {
-//       toast.error("Thay đổi trạng thái không thành công");
-//     }
-//   };
+  // change status
+  const handleChangeStatus = async (service) => {
+    try {
+      const result = await changeStatusService({
+        id: service._id,
+        status: !service.is_active,
+      });
+      if (result?.success) {
+        toast.success("Thay đổi trạng thái thành công");
+        // reload lại danh sách nếu cần
+        searchListService({
+          is_active: true,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          sort_by: "created_at",
+          sort_order: "desc",
+        });
+      }
+    } catch (error) {
+      toast.error("Thay đổi trạng thái không thành công");
+    }
+  };
 
   return (
     <div className="manager-account">
@@ -201,26 +215,26 @@ function ServiceManager() {
         </div>
 
         <div className="btn-managerAccount">
-          {/* <button
+          <button
             className="button-add__account"
             onClick={openAddModal}
             style={{ width: 180, height: 45 }}
           >
             <FaPlus style={{ marginRight: 10 }} />
             Tạo dịch vụ mới
-          </button> */}
+          </button>
         </div>
       </div>
 
       {/* Table account */}
       <div className="form-account">
         <div className="account-container">
-          {/* <FilterService
+          <FilterServiceManager
             filters={filters}
             setFilters={setFilters}
             onSearch={handleSearch}
             setIsFiltering={setIsFiltering}
-          /> */}
+          />
 
           <table className="table-account">
             <thead>
@@ -266,7 +280,7 @@ function ServiceManager() {
                         </span>
                       </td>
                       <td>
-                        {/* <div className="action-service">
+                        <div className="action-service">
                           <CiEdit
                             className="icon-service"
                             onClick={(e) => {
@@ -300,7 +314,7 @@ function ServiceManager() {
                               onClick={(e) => e.stopPropagation()}
                             />
                           </Popconfirm>
-                        </div> */}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -408,7 +422,7 @@ function ServiceManager() {
                               </span>
                             </td>
                             <td>
-                              {/* <div className="action-service">
+                              <div className="action-service">
                                 <CiEdit
                                   className="icon-service"
                                   onClick={(e) => {
@@ -442,7 +456,7 @@ function ServiceManager() {
                                     onClick={(e) => e.stopPropagation()}
                                   />
                                 </Popconfirm>
-                              </div> */}
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -471,29 +485,29 @@ function ServiceManager() {
       </div>
 
       {/* Modal create service */}
-      {/* <ModalCreateService
+      <CreateServiceManager
         isModalOpen={isAddModalOpen}
         handleCancel={() => setIsAddModalOpen(false)}
         handleAdd={handleAddService}
-      /> */}
+      />
 
       {/* Update service */}
-      {/* <ModalEditService
+      <EditServiceManager
         isModalOpen={isEditModalOpen}
         handleCancel={() => setIsEditModalOpen(false)}
         handleEdit={handleEditService}
         editService={editService}
-      /> */}
+      />
 
       {/* Modal details service */}
-      {/* <ModalDetailService
+      <DetailServiceManager
         isModalOpen={isDetailModalOpen}
         handleCancel={() => setIsDetailModalOpen(false)}
         selectedService={selectedService}
-      /> */}
+      />
 
       {/* Modal Delete */}
-      {/* <Modal
+      <Modal
         title="Xác nhận xóa sản phẩm"
         open={isDeleteModalOpen}
         onOk={handleDeleteService}
@@ -505,7 +519,7 @@ function ServiceManager() {
           Bạn có chắc chắn muốn xóa thiết bị{" "}
           <strong>{selectedService?.name}</strong>?
         </p>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

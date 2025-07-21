@@ -15,6 +15,7 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
   FaChevronRight,
+  FaUsersCog,
 } from "react-icons/fa";
 
 function SidebarManager() {
@@ -55,9 +56,9 @@ function SidebarManager() {
             </Link>
           </li>
           <li>
-            <Link to="/payments">
-              <FaCreditCard className="menu-icon" />
-              <span className="menu-text">Thanh toán</span>
+            <Link to="/manager/staff-profile-manager">
+              <FaUsersCog className="menu-icon" />
+              <span className="menu-text">Quản lý danh sách nhân viên</span>
             </Link>
           </li>
           <li>
@@ -67,17 +68,18 @@ function SidebarManager() {
             </Link>
           </li>
           <li>
+            <Link to="/manager/slot-manager">
+              <FaProjectDiagram className="menu-icon" />
+              <span className="menu-text">Quản lý lịch làm việc</span>
+            </Link>
+          </li>
+          <li>
             <Link to="/manager/department-manager">
               <FaAddressBook className="menu-icon" />
               <span className="menu-text">Phòng ban</span>
             </Link>
           </li>
-          <li>
-            <Link to="/projects">
-              <FaProjectDiagram className="menu-icon" />
-              <span className="menu-text">Dự án</span>
-            </Link>
-          </li>
+          
           <li>
             <Link to="/onboarding">
               <FaHandshake className="menu-icon" />

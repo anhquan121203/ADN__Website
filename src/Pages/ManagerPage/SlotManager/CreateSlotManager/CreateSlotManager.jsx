@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
-const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
+const CreateSlotManager = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -156,4 +156,4 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   );
 };
 
-export default ModalCreateSlot;
+export default CreateSlotManager;
