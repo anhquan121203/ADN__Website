@@ -4,9 +4,11 @@ import {
   fetchResultsByAppointmentId, 
   startTestingProcess, 
   createTestResult,
+  getResultByAppointmentId,
   resetResults, 
   resetStartTesting,
-  resetCreateResult 
+  resetCreateResult,
+  resetCurrentResult 
 } from '../Feartures/result/resultSlice';
 
 const useResult = () => {
@@ -18,7 +20,10 @@ const useResult = () => {
     startTestingLoading, 
     startTestingError,
     createResultLoading,
-    createResultError 
+    createResultError,
+    currentResult,
+    resultLoading,
+    resultError 
   } = useSelector((state) => state.result);
 
   const getResultsByAppointmentId = useCallback(async (appointmentId) => {
@@ -72,6 +77,23 @@ const useResult = () => {
     dispatch(resetStartTesting());
   }, [dispatch]);
 
+  const getResultByAppointment = useCallback(async (appointmentId) => {
+    try {
+      const result = await dispatch(getResultByAppointmentId(appointmentId));
+      if (getResultByAppointmentId.fulfilled.match(result)) {
+        return { success: true, data: result.payload };
+      } else {
+        return { success: false, error: result.payload };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }, [dispatch]);
+
+  const resetCurrentResultState = useCallback(() => {
+    dispatch(resetCurrentResult());
+  }, [dispatch]);
+
   return {
     loading,
     error,
@@ -80,14 +102,19 @@ const useResult = () => {
     startTestingError,
     createResultLoading,
     createResultError,
+    currentResult,
+    resultLoading,
+    resultError,
     
     // Actions
     getResultsByAppointmentId,
     startTesting,
     createResult,
+    getResultByAppointment,
     resetResultsState,
     resetStartTestingState,
     resetCreateResultState,
+    resetCurrentResultState,
   };
 };
 

@@ -4,19 +4,33 @@ import ServiceFilter from "./components/ServiceFilter";
 import ServiceList from "./components/ServiceList";
 
 const ServicePage = () => {
-  const { services, loading, searchListService } = useService();
-  const [activeCategory, setActiveCategory] = useState("all");    
+  const { 
+    services, 
+    loading, 
+    total, 
+    currentPage, 
+    searchListService,
+  } = useService();
+  
+  const [activeCategory, setActiveCategory] = useState("all");
+  
   useEffect(() => {
-    // Initial load of all active services
+    // Initial load of all active services with parent_service_id only
     searchListService({ 
-      is_active: true 
+      is_active: true,
+      pageNum: 1,
+      pageSize: 10,
+      has_parent: true
     });
   }, [searchListService]);
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
     const query = {
-      is_active: true
+      is_active: true,
+      pageNum: 1,
+      pageSize: 10,
+      has_parent: true
     };
 
     if (category !== "all") {
@@ -26,6 +40,40 @@ const ServicePage = () => {
     searchListService(query);
   };
 
+  const handleServiceSearch = (keyword) => {
+    const query = {
+      is_active: true,
+      keyword,
+      pageNum: 1,
+      pageSize: 10,
+      has_parent: true
+    };
+
+    if (activeCategory !== "all") {
+      query.type = activeCategory;
+    }
+
+    searchListService(query);
+  };
+
+  const handleServicePageChange = (page) => {
+    const query = {
+      is_active: true,
+      pageNum: page,
+      pageSize: 10,
+      has_parent: true
+    };
+
+    if (activeCategory !== "all") {
+      query.type = activeCategory;
+    }
+
+    searchListService(query);
+  };
+
+  // Calculate pagination info
+  const totalPages = Math.ceil(total / 10);
+
   return (
     <div className="flex min-h-screen bg-gray-50 mt-[160px]">
       <ServiceFilter 
@@ -34,7 +82,11 @@ const ServicePage = () => {
       />
       <ServiceList 
         services={services} 
-        loading={loading} 
+        loading={loading}
+        onSearch={handleServiceSearch}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={handleServicePageChange}
       />
     </div>
   );

@@ -1,38 +1,79 @@
 import React, { useState, useEffect } from 'react';
+import { Select } from 'antd';
 import useUser from '../../../../Hooks/useUser';
-import "../CustomerProfile.css";
-import { FaEnvelope, FaCheck, FaUpload, FaUser } from 'react-icons/fa'; // Added FaUser import
+import useAuth from '../../../../Hooks/useAuth';
+import { FaEnvelope, FaCheck, FaUpload, FaUser} from 'react-icons/fa';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import { handleUploadFile } from '../../../../utils/config/upload';
 
 const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
   const { updateUsers, loading } = useUser();
+  const { refreshUserData } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
+  
+
   const [formData, setFormData] = useState({
-    id: '',
     first_name: '',
     last_name: '',
-    email: '',
     phone_number: '',
+    avatar_image: null, // file object
+    avatar_url: '',     // real URL from backend only
     dob: '',
-    avatar_url: ''
+    address: '',
+    gender: ''
   });
 
-  // Initialize form data with user data
+  // Separate preview URL for UI only, never sent to backend
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  // Auto-load current user data on component mount
   useEffect(() => {
     if (user) {
+      const genderValue = typeof user.gender === 'string' ? user.gender.toLowerCase() : '';
+      console.log('Loaded gender value:', genderValue, 'from user:', user.gender);
       setFormData({
-        id: user._id,
+        id: user._id || '',
         first_name: user.first_name || '',
         last_name: user.last_name || '',
-        email: user.email || '',
         phone_number: user.phone_number || '',
+        avatar_image: null,
+        avatar_url: user.avatar_url || '', // only real URL from backend
         dob: user.dob || '',
-        avatar_url: user.avatar_url || ''
+        address: user.address || '',
+        gender: genderValue || ''
       });
+      setPreviewUrl(user.avatar_url || '');
     }
   }, [user]);
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = 'First name is required';
+    }
+    
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = 'Last name is required';
+    }
+    
+    if (formData.phone_number && !/^\+?[\d\s-()]+$/.test(formData.phone_number)) {
+      newErrors.phone_number = 'Invalid phone number format';
+    }
+    
+    if (formData.dob) {
+      const birthDate = new Date(formData.dob);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (age < 0 || age > 120) {
+        newErrors.dob = 'Invalid date of birth';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Format dates for display
   const formatDate = (dateString) => {
@@ -44,31 +85,69 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
     }
   };
 
-  // In the handleSave function
+  // Handle form submission
   const handleSave = async () => {
+    if (!validateForm()) {
+      toast.error('Please fix the errors in the form');
+      return;
+    }
+
+    if (!user?._id) {
+      toast.error('User ID not found, please reload page!');
+      return;
+    }
+
+
     try {
-      const userData = {
-        id: user?._id,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        email: formData.email,
-        phone_number: formData.phone_number,
-        dob: formData.dob,
-        avatar_url: formData.avatar_url
-      };
-  
-      const result = await updateUsers(userData);
-      
+      // Create FormData for multipart/form-data
+      const formDataToSend = new FormData();
+      formDataToSend.append('first_name', formData.first_name);
+      formDataToSend.append('last_name', formData.last_name);
+      formDataToSend.append('phone_number', formData.phone_number);
+      formDataToSend.append('dob', formData.dob);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('gender', formData.gender);
+
+      if (formData.avatar_image) {
+        formDataToSend.append('avatar_image', formData.avatar_image);
+        // Set avatar_url to the file name (string) for backend
+        formDataToSend.append('avatar_url', formData.avatar_image.name);
+      } else if (
+        typeof formData.avatar_url === 'string' &&
+        formData.avatar_url &&
+        !formData.avatar_url.startsWith('blob:') &&
+        (formData.avatar_url.startsWith('http://') || formData.avatar_url.startsWith('https://'))
+      ) {
+        formDataToSend.append('avatar_url', formData.avatar_url);
+      }
+
+      // Send id as param, FormData as body
+      const result = await updateUsers(user._id, formDataToSend);
       if (result?.success) {
         toast.success('Profile updated successfully');
-        // Add a small delay to ensure the update is processed
+        // Refresh user data to reflect changes
+        await refreshUserData();
         setTimeout(() => {
           if (typeof onSaveSuccess === 'function') {
-            onSaveSuccess();
+            onSaveSuccess(result.data);
           }
         }, 300);
       } else {
-        toast.error(result?.error?.message || 'Failed to update profile');
+        // Always show backend error message if present
+        let errorMessage = 'Failed to update profile';
+        if (result?.error?.message) errorMessage = result.error.message;
+        else if (result?.message) errorMessage = result.message;
+        if (result?.error?.errors) {
+          const backendErrors = {};
+          result.error.errors.forEach(err => {
+            backendErrors[err.field] = err.message;
+          });
+          setErrors(backendErrors);
+          if (result.error.errors.length > 0) {
+            errorMessage = result.error.errors[0].message;
+          }
+        }
+        toast.error(errorMessage);
       }
     } catch (error) {
       toast.error('An error occurred while updating profile');
@@ -82,50 +161,70 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
       ...prev,
       [name]: value
     }));
-  };
-
-  // Add this new function for handling image upload
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    try {
-      setUploading(true);
-      const imageUrl = await handleUploadFile(file, 'image');
-      
-      if (imageUrl) {
-        setFormData(prev => ({
-          ...prev,
-          avatar_url: imageUrl
-        }));
-        toast.success('Image uploaded successfully');
-      }
-    } catch (error) {
-      toast.error('Failed to upload image');
-      console.error('Image upload error:', error);
-    } finally {
-      setUploading(false);
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+  
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file');
+      return;
+    }
+  
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+  
+    // Create preview URL for UI only
+    const localPreviewUrl = URL.createObjectURL(file);
+    setPreviewUrl(localPreviewUrl);
+    setFormData(prev => ({
+      ...prev,
+      avatar_image: file,
+      // Do NOT set avatar_url to previewUrl, keep only real URL from backend
+    }));
+    toast.success('Image selected successfully');
+  };
+
   const getAvatarFallback = () => {
-    if (!user?.last_name) return <FaUser />;
-    return user.last_name.charAt(0).toUpperCase();
+    if (!formData.first_name && !formData.last_name) return <FaUser />;
+    const initials = `${formData.first_name?.charAt(0) || ''}${formData.last_name?.charAt(0) || ''}`;
+    return initials.toUpperCase();
   };
   
   return (
-    <div>
-      <div className="profile-header">
-        <div className="profile-avatar">
-          {formData.avatar_url ? (
-            <img src={formData.avatar_url} alt="Profile" />
+    <div className="max-w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
+      <div className="flex items-center gap-6 mb-8 pb-6 border-b-2 border-gray-100">
+        <div className="relative flex flex-col items-center gap-3">
+          {previewUrl ? (
+            <img 
+              src={previewUrl} 
+              alt="Profile" 
+              className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
+            />
           ) : (
-            <div className="avatar-fallback">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold border-4 border-blue-100">
               {getAvatarFallback()}
             </div>
           )}
-          <div className="avatar-upload">
-            <label htmlFor="avatar-input" className="upload-label">
+          <div className="relative">
+            <label 
+              htmlFor="avatar-input" 
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer text-sm font-medium transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+            >
               <FaUpload />
               <span>{uploading ? 'Uploading...' : 'Change Photo'}</span>
             </label>
@@ -134,84 +233,166 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              disabled={uploading}
-              style={{ display: 'none' }}
+              disabled={uploading || loading}
+              className="hidden"
             />
           </div>
         </div>
-        <div className="profile-title">
-          <h2>{formData.first_name} {formData.last_name}</h2>
-          <div className="profile-email">{formData.email}</div>
+        <div className="flex-1">
+          <h2 className="text-3xl font-bold text-gray-800 mb-3">
+            {formData.first_name} {formData.last_name}
+          </h2>
+          <div className="flex items-center gap-2 text-gray-600 text-lg">
+            <FaEnvelope className="text-blue-600" />
+            {user?.email}
+          </div>
         </div>
       </div>
 
-      <div className="profile-edit-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>First Name</label>
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-gray-700 text-sm">First Name *</label>
             <input 
               type="text" 
               name="first_name" 
               value={formData.first_name} 
               onChange={handleChange} 
-              placeholder="First name"
+              placeholder="Enter first name"
+              className={`p-3 border-2 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
+                errors.first_name ? 'border-red-500' : 'border-gray-200'
+              }`}
             />
+            {errors.first_name && (
+              <span className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                {errors.first_name}
+              </span>
+            )}
           </div>
-          <div className="form-group">
-            <label>Last Name</label>
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-gray-700 text-sm">Last Name *</label>
             <input 
               type="text" 
               name="last_name" 
               value={formData.last_name} 
               onChange={handleChange} 
-              placeholder="Last name"
+              placeholder="Enter last name"
+              className={`p-3 border-2 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
+                errors.last_name ? 'border-red-500' : 'border-gray-200'
+              }`}
             />
+            {errors.last_name && (
+              <span className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                {errors.last_name}
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="form-group">
-          <label>Email address</label>
-          <div className="email-input">
-            <FaEnvelope className="input-icon" />
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-gray-700 text-sm">Email address</label>
+          <div className="relative flex items-center">
             <input 
               type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
+              value={user?.email || ''} 
+              disabled
               placeholder="Email address"
+              className="w-full pl-10 p-3 border-2 border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
             />
           </div>
-          <div className="verified-badge">
-            <FaCheck className="verified-icon" />
+          <div className="flex items-center gap-2 text-green-600 text-xs font-medium mt-1">
+            <FaCheck className="w-3 h-3" />
             <span>VERIFIED {formatDate(user?.updated_at)}</span>
           </div>
         </div>
 
-        <div className="form-group">
-          <label>Phone Number</label>
-          <input 
-            type="text" 
-            name="phone_number" 
-            value={formData.phone_number} 
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-gray-700 text-sm">Phone Number</label>
+          <div className="relative flex items-center">
+            <input 
+              type="text" 
+              name="phone_number" 
+              value={formData.phone_number} 
+              onChange={handleChange} 
+              placeholder="+84 123 456 789"
+              className={`w-full pl-10 p-3 border-2 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
+                errors.phone_number ? 'border-red-500' : 'border-gray-200'
+              }`}
+            />
+          </div>
+          {errors.phone_number && (
+            <span className="text-red-500 text-xs mt-1 flex items-center gap-1">
+              {errors.phone_number}
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-gray-700 text-sm">Date of Birth</label>
+            <div className="relative flex items-center">
+              <input 
+                type="date" 
+                name="dob" 
+                value={formData.dob ? formData.dob.split('T')[0] : ''} 
+                onChange={handleChange}
+                className={`w-full pl-10 p-3 right-4 border-2 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
+                  errors.dob ? 'border-red-500' : 'border-gray-200'
+                }`}
+              />
+            </div>
+            {errors.dob && (
+              <span className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                {errors.dob}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-gray-700 text-sm">Gender</label>
+            <Select
+              value={formData.gender || undefined}
+              onChange={value => handleChange({ target: { name: 'gender', value } })}
+              placeholder="Select Gender"
+              className="w-full "
+              size="large"
+              options={[
+                { value: 'male', label: 'Male' },
+                { value: 'female', label: 'Female' },
+                { value: 'other', label: 'Other' },
+              ]}
+              allowClear
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-gray-700 text-sm">Address</label>
+          <textarea 
+            name="address" 
+            value={formData.address} 
             onChange={handleChange} 
-            placeholder="Phone number"
+            placeholder="123 Main Street, City, Country"
+            rows="3"
+            className="p-3 border-2 border-gray-200 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 resize-y min-h-20 font-inherit"
           />
         </div>
 
-        <div className="form-group">
-          <label>Date of Birth</label>
-          <input 
-            type="date" 
-            name="dob" 
-            value={formData.dob ? formData.dob.split('T')[0] : ''} 
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button className="btn-cancel" onClick={onCancel} disabled={loading}>Cancel</button>
-          <button className="btn-save" onClick={handleSave} disabled={loading}>
-            {loading ? 'Saving...' : 'Save changes'}
+        <div className="flex gap-4 justify-end mt-8 pt-6 border-t-2 border-gray-100">
+          <button 
+            className="px-6 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border-none min-w-32 bg-white text-gray-600 border-2 border-gray-200 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none" 
+            onClick={onCancel} 
+            disabled={loading}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button 
+            className="px-6 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border-none min-w-32 bg-blue-600 text-white border-2 border-blue-600 hover:bg-blue-700 hover:border-blue-700 hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none" 
+            onClick={handleSave} 
+            disabled={loading || uploading}
+            type="button"
+          >
+            {loading ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
