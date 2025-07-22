@@ -12,12 +12,16 @@ import { registerWithGoogle } from "../../../Api/authApi";
 import { Modal } from "antd";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const showLoading = () => {
     setOpen(true);
@@ -31,17 +35,47 @@ function Register() {
   const validationSchema = Yup.object({
     first_name: Yup.string().required("Tên phải bắt buộc"),
     last_name: Yup.string().required("Họ phải bắt buộc"),
-    dob: Yup.date().required("Ngày sinh phải bắt buộc"),
+    dob: Yup.date()
+      .required("Ngày sinh phải bắt buộc")
+      .max(new Date(), "Ngày sinh không được ở tương lai")
+      .min(
+        new Date(new Date().setFullYear(new Date().getFullYear() - 70)),
+        "Tuổi tối đa là 70"
+      ),
     phone_number: Yup.string()
-      .matches(/^\d+$/, "Số điện thoại phải là số hợp lệ")
+      .matches(
+        /^\d+$/,
+        "Số điện thoại phải là số hợp lệ và không có chữ cái hoặc ký tự đặc biệt"
+      )
       .required("Số điện thoại bắt buộc nhập"),
     // address: Yup.string().required("Địa chỉ bắt buộc nhập"),
     email: Yup.string()
       .email("Email không hợp lệ")
       .required("Email bắt buộc nhập"),
     password: Yup.string()
-      .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
-      .required("Mật khẩu bắt buộc nhập"),
+      .required("Mật khẩu bắt buộc nhập")
+      .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .matches(/[a-z]/, "Mật khẩu phải có ít nhất một chữ thường")
+      .matches(/[A-Z]/, "Mật khẩu phải có ít nhất một chữ hoa")
+      .matches(/[0-9]/, "Mật khẩu phải có ít nhất một chữ số")
+      .matches(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "Mật khẩu phải có ít nhất một ký tự đặc biệt"
+      )
+      .notOneOf(
+        [
+          "123456789",
+          "12345678",
+          "password",
+          "1234567890",
+          "admin123456",
+          "abcdefgh",
+          "abc123",
+          "admin",
+        ],
+        "Mật khẩu quá đơn giản, hãy chọn mật khẩu mạnh hơn"
+      ),
+
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Mật khẩu không khớp")
       .required("Nhập lại mật khẩu bắt buộc"),
@@ -60,6 +94,7 @@ function Register() {
     },
     validationSchema,
     onSubmit: async (values) => {
+      // console.log("Submitting values:", values);
       try {
         const response = await registerUser(values);
         console.log(response);
@@ -148,7 +183,6 @@ function Register() {
                     : ""
                 }
                 {...formik.getFieldProps("first_name")}
-                style={{ width: "190px" }}
               />
               {formik.touched.first_name && formik.errors.first_name && (
                 <span className="error-text">{formik.errors.first_name}</span>
@@ -169,7 +203,7 @@ function Register() {
                   formik.touched.dob && formik.errors.dob ? "error" : ""
                 }
                 {...formik.getFieldProps("dob")}
-                style={{ maxWidth: "400px" }}
+                max={new Date().toISOString().split("T")[0]} // không chọn được ngày tương lai
               />
               {formik.touched.dob && formik.errors.dob && (
                 <span className="error-text">{formik.errors.dob}</span>
@@ -182,7 +216,11 @@ function Register() {
                 type="text"
                 name="phone_number"
                 value={formik.values.phone_number}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  // Chỉ cho phép số, không ký tự đặc biệt
+                  const numericValue = e.target.value.replace(/\D/g, "");
+                  formik.setFieldValue("phone_number", numericValue);
+                }}
                 onBlur={formik.handleBlur}
                 className={
                   formik.touched.phone_number && formik.errors.phone_number
@@ -236,52 +274,59 @@ function Register() {
             )}
           </div>
 
-          <div className="form-row-register">
-            <div className="form-group-register">
-              <label>Mật khẩu</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="********"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.password && formik.errors.password
-                    ? "error"
-                    : ""
-                }
-                {...formik.getFieldProps("password")}
-              />
-              {formik.touched.password && formik.errors.password && (
-                <span className="error-text">{formik.errors.password}</span>
-              )}
-            </div>
+          <div className="form-group-register">
+            <label>Mật khẩu</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="********"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={
+                formik.touched.password && formik.errors.password ? "error" : ""
+              }
+              {...formik.getFieldProps("password")}
+            />
+            <span
+              className="toggle-password-icon"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+            </span>
+            {formik.touched.password && formik.errors.password && (
+              <span className="error-text">{formik.errors.password}</span>
+            )}
+          </div>
 
-            <div className="form-group-register">
-              <label>Nhập lại mật khẩu</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="********"
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword
-                    ? "error"
-                    : ""
-                }
-                {...formik.getFieldProps("confirmPassword")}
-              />
-              {formik.touched.confirmPassword &&
-                formik.errors.confirmPassword && (
-                  <span className="error-text">
-                    {formik.errors.confirmPassword}
-                  </span>
-                )}
-            </div>
+          <div className="form-group-register">
+            <label>Nhập lại mật khẩu</label>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="********"
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={
+                formik.touched.confirmPassword && formik.errors.confirmPassword
+                  ? "error"
+                  : ""
+              }
+              {...formik.getFieldProps("confirmPassword")}
+            />
+            <span
+              className="toggle-password-icon"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+            </span>
+            {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword && (
+                <span className="error-text">
+                  {formik.errors.confirmPassword}
+                </span>
+              )}
           </div>
 
           <button

@@ -2,7 +2,7 @@
 
 .register-container {
   display: flex;
-  margin-top: 230px;
+  margin-top: 170px;
   z-index: 5;
   border-radius: 50px;
   justify-content: center;
@@ -86,21 +86,24 @@
 }
 .form-group-register {
   margin-bottom: 15px;
-  /* position: relative; */
+  position: relative;
 }
 
 .form-group-register label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  color: black;
 }
 
 .form-group-register input {
   width: 100%;
-  padding: 10px;
+  padding: 10px 40px 10px 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  /* box-sizing: border-box; */
+  font-size: 16px;
+  height: 40px;
+  box-sizing: border-box;
 }
 
 .form-group-register input.error {
@@ -164,4 +167,18 @@
 
 .social-icon {
   margin-right: 15px;
+}
+
+/* Toggle password eye icon */
+.toggle-password-icon {
+  position: absolute;
+  /* top: 50%; */
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  font-size: 18px;
+  z-index: 2;
+  pointer-events: auto;
+  margin-top: 19px;
 }

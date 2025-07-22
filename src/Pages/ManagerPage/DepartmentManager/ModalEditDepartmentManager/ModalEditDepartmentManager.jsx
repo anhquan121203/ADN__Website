@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
+import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalEditDepartmentManager = ({
   isModalOpen,
@@ -10,6 +12,7 @@ const ModalEditDepartmentManager = ({
   loadingManagers = false,
 }) => {
   const [form] = Form.useForm();
+  const editorRef = useRef(null);
 
   useEffect(() => {
     if (isModalOpen && editDepartment) {
@@ -66,7 +69,36 @@ const ModalEditDepartmentManager = ({
           name="description"
           rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
         >
-          <Input placeholder="Nhập mô tả phòng ban" />
+          <Editor
+            apiKey={API_TINY_URL}
+            onInit={(evt, editor) => {
+              editorRef.current = editor;
+              const desc = form.getFieldValue("description");
+              if (desc) editor.setContent(desc);
+            }}
+            init={{
+              height: 200,
+              menubar: false,
+              plugins:
+                "advlist autolink lists link image charmap preview anchor " +
+                "searchreplace visualblocks code fullscreen " +
+                "insertdatetime table help wordcount",
+              toolbar:
+                "undo redo | blocks | bold italic forecolor | " +
+                "alignleft aligncenter alignright alignjustify | " +
+                "bullist numlist outdent indent | link image | removeformat | fullscreen | help",
+              branding: false,
+              promotion: false,
+              resize: false,
+              statusbar: false,
+              paste_data_images: false,
+              automatic_uploads: false,
+              file_picker_types: "image",
+              valid_elements:
+                "p,br,strong,b,em,i,u,ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote," +
+                "a[href|title],img[src|alt|title|width|height|style]",
+            }}
+          />
         </Form.Item>
         <Form.Item
           label="Quản lý phòng ban"
