@@ -3,10 +3,11 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Button, Input, Modal, Pagination, Select, Spin, Table } from "antd";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import ModalEditDepartmentManager from "./ModalEditDepartmentManager/ModalEditDepartmentManager";
 import ModalDetailDepartmentManager from "./ModalDetailDepartmentManager/ModalDetailDepartmentManager";
 import FilterDepartmentManager from "./FilterDepartmentManager/FilterDepartmentManager";
+import { CiEdit } from "react-icons/ci";
 
 function DepartmentManager() {
   const {
@@ -38,6 +39,7 @@ function DepartmentManager() {
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
   const [statResult, setStatResult] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // State cho danh sách quản lý
   const [selectedManagerId, setSelectedManagerId] = useState(null);
@@ -61,6 +63,22 @@ function DepartmentManager() {
       pageSize: pageSize,
     });
   };
+
+  // hàm tính này mặc định sẽ lấy dữ liệu từ ngày hiện tại đến 7 ngày sau
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setStatDateFrom(today);
+    const defaultToDate = new Date(today);
+    defaultToDate.setDate(defaultToDate.getDate() + 7);
+    setStatDateTo(defaultToDate.toISOString().split("T")[0]);
+    getTotalDepartmentCount();
+  }, [departments]);
+
+  useEffect(() => {
+    if (isInitialLoad && statDateFrom && statDateTo) {
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad, statDateFrom, statDateTo]);
 
   // Lấy danh sách managers từ danh sách departments, loại bỏ trùng lặp
   const managers = useMemo(() => {
@@ -121,25 +139,25 @@ function DepartmentManager() {
   };
 
   // Xử lý thống kê
-  const handleStatistic = async () => {
-    if (!statDepartmentId) {
-      toast.error("Vui lòng chọn phòng ban!");
-      return;
-    }
-    setStatLoading(true);
-    const res = await fetchDepartmentStatistics({
-      departmentId: statDepartmentId,
-      date_from: statDateFrom || undefined,
-      date_to: statDateTo || undefined,
-    });
-    setStatLoading(false);
-    if (res.success) {
-      setStatResult(res.data);
-    } else {
-      setStatResult(null);
-      toast.error("Không lấy được dữ liệu thống kê!");
-    }
-  };
+  // const handleStatistic = async () => {
+  //   if (!statDepartmentId) {
+  //     toast.error("Vui lòng chọn phòng ban!");
+  //     return;
+  //   }
+  //   setStatLoading(true);
+  //   const res = await fetchDepartmentStatistics({
+  //     departmentId: statDepartmentId,
+  //     date_from: statDateFrom || undefined,
+  //     date_to: statDateTo || undefined,
+  //   });
+  //   setStatLoading(false);
+  //   if (res.success) {
+  //     setStatResult(res.data);
+  //   } else {
+  //     setStatResult(null);
+  //     toast.error("Không lấy được dữ liệu thống kê!");
+  //   }
+  // };
 
   useEffect(() => {
     getTotalDepartmentCount();
@@ -186,7 +204,11 @@ function DepartmentManager() {
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item.name}</td>
-                    <td>{item.description}</td>
+                    <td>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      />
+                    </td>
                     <td>
                       {item.manager_id ? (
                         <>
@@ -201,19 +223,17 @@ function DepartmentManager() {
                       )}
                     </td>
                     <td>
-                      <button
-                        className="detail-department"
-                        onClick={() => handleDetailDepartment(item._id)}
-                      >
-                        Chi tiết
-                      </button>
+                      <div className="action-manager-department">
+                        <FaRegEye
+                          className="icon-manager-department"
+                          onClick={() => handleDetailDepartment(item._id)}
+                        />
 
-                      <button
-                        className="edit-department"
-                        onClick={() => openEditModal(item)}
-                      >
-                        Sửa
-                      </button>
+                        <CiEdit
+                          className="icon-manager-department"
+                          onClick={() => openEditModal(item)}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -239,7 +259,7 @@ function DepartmentManager() {
         />
 
         {/* Dữ liệu thống kê phòng ban */}
-        <div
+        {/* <div
           style={{
             marginTop: 40,
             padding: 24,
@@ -316,10 +336,10 @@ function DepartmentManager() {
               <div style={{ color: "#888" }}>Chưa có dữ liệu thống kê</div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Danh sách phòng ban của quản lý */}
-        <div style={{ marginTop: 24 }}>
+        {/* <div style={{ marginTop: 24 }}>
           <h3>Phòng ban do quản lý phụ trách</h3>
 
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
@@ -402,7 +422,7 @@ function DepartmentManager() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Update department */}
@@ -420,6 +440,15 @@ function DepartmentManager() {
         isModalOpen={isDetailModalOpen}
         handleCancel={() => setIsDetailModalOpen(false)}
         selectedDepartment={selectedDepartment}
+        statDateFrom={statDateFrom}
+        setStatDateFrom={setStatDateFrom}
+        statDateTo={statDateTo}
+        setStatDateTo={setStatDateTo}
+        statLoading={statLoading}
+        setStatLoading={setStatLoading}
+        statResult={statResult}
+        setStatResult={setStatResult}
+        fetchDepartmentStatistics={fetchDepartmentStatistics}
       />
     </div>
   );
