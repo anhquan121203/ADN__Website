@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { API_TINY_URL } from "../../../../Constants/apiConstants";
+// import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalCreateDepartment = ({
   isModalOpen,
@@ -12,6 +12,7 @@ const ModalCreateDepartment = ({
 }) => {
   const editorRef = useRef(null);
   const [form] = Form.useForm();
+  const API_TINY_URL = import.meta.env.VITE_TINY;
 
   useEffect(() => {
     if (isModalOpen) {
