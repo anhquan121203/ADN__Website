@@ -82,10 +82,13 @@ const AppointmentManager = () => {
       key: 'status',
       render: (status) => {
         const statusConfig = {
-          'PENDING': { color: 'bg-yellow-100 text-yellow-800', text: 'Đang chờ' },
-          'CONFIRMED': { color: 'bg-blue-100 text-blue-800', text: 'Đã xác nhận' },
-          'COMPLETED': { color: 'bg-green-100 text-green-800', text: 'Hoàn thành' },
-          'CANCELLED': { color: 'bg-red-100 text-red-800', text: 'Đã hủy' },
+        'pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Đang chờ' },
+        'confirmed': { color: 'bg-blue-100 text-blue-800', text: 'Đã xác nhận' },
+        'completed': { color: 'bg-green-100 text-green-800', text: 'Hoàn thành' },
+        'cancelled': { color: 'bg-red-100 text-red-800', text: 'Đã hủy' },
+        'sample_collected': { color: 'bg-purple-100 text-purple-800', text: 'Đã lấy mẫu' },
+        'sample_received': { color: 'bg-indigo-100 text-indigo-800', text: 'Đã nhận mẫu' },
+        'sample_assigned': { color: 'bg-pink-100 text-pink-800', text: 'Đã phân công mẫu' },
         };
         const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', text: status };
         return (

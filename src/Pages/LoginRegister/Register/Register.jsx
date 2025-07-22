@@ -55,6 +55,7 @@ function Register() {
     password: Yup.string()
       .required("Mật khẩu bắt buộc nhập")
       .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+      .matches(/^\S*$/, "Mật khẩu không được chứa khoảng trắng")
       .matches(/[a-z]/, "Mật khẩu phải có ít nhất một chữ thường")
       .matches(/[A-Z]/, "Mật khẩu phải có ít nhất một chữ hoa")
       .matches(/[0-9]/, "Mật khẩu phải có ít nhất một chữ số")
@@ -190,51 +191,55 @@ function Register() {
             </div>
           </div>
 
-          <div className="form-row-register">
-            <div className="form-group-register">
-              <label>Ngày sinh</label>
-              <input
-                type="date"
-                name="dob"
-                value={formik.values.dob}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.dob && formik.errors.dob ? "error" : ""
-                }
-                {...formik.getFieldProps("dob")}
-                max={new Date().toISOString().split("T")[0]} // không chọn được ngày tương lai
-              />
-              {formik.touched.dob && formik.errors.dob && (
-                <span className="error-text">{formik.errors.dob}</span>
-              )}
-            </div>
-
-            <div className="form-group-register">
-              <label>Số điện thoại</label>
-              <input
-                type="text"
-                name="phone_number"
-                value={formik.values.phone_number}
-                onChange={(e) => {
-                  // Chỉ cho phép số, không ký tự đặc biệt
-                  const numericValue = e.target.value.replace(/\D/g, "");
-                  formik.setFieldValue("phone_number", numericValue);
-                }}
-                onBlur={formik.handleBlur}
-                className={
-                  formik.touched.phone_number && formik.errors.phone_number
-                    ? "error"
-                    : ""
-                }
-                placeholder="Số điện thoại của bạn..."
-                {...formik.getFieldProps("phone_number")}
-              />
-              {formik.touched.phone_number && formik.errors.phone_number && (
-                <span className="error-text">{formik.errors.phone_number}</span>
-              )}
-            </div>
+          {/* <div className="form-row-register"> */}
+          <div className="form-group-register">
+            <label>Ngày sinh</label>
+            <input
+              type="date"
+              name="dob"
+              value={formik.values.dob}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={formik.touched.dob && formik.errors.dob ? "error" : ""}
+              {...formik.getFieldProps("dob")}
+              max={new Date().toISOString().split("T")[0]} // không chọn được ngày tương lai
+            />
+            {formik.touched.dob && formik.errors.dob && (
+              <span className="error-text">{formik.errors.dob}</span>
+            )}
           </div>
+
+          <div className="form-group-register">
+            <label>Số điện thoại</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="\d*"
+              name="phone_number"
+              value={formik.values.phone_number}
+              onChange={(e) => {
+                const onlyNumbers = e.target.value.replace(/\D/g, "");
+                formik.setFieldValue("phone_number", onlyNumbers);
+              }}
+              onPaste={(e) => {
+                const pasted = e.clipboardData.getData("Text");
+                if (!/^\d+$/.test(pasted)) {
+                  e.preventDefault();
+                }
+              }}
+              onBlur={formik.handleBlur}
+              className={
+                formik.touched.phone_number && formik.errors.phone_number
+                  ? "error"
+                  : ""
+              }
+            />
+
+            {formik.touched.phone_number && formik.errors.phone_number && (
+              <span className="error-text">{formik.errors.phone_number}</span>
+            )}
+          </div>
+          {/* </div> */}
 
           {/* <div className="form-group-register">
             <label>Địa chỉ</label>
@@ -365,7 +370,18 @@ function Register() {
         </div>
 
         <p>
-          Bạn đã có tài khoản? <Link to="/login"><span style={{ fontWeight: "bold", color: "black", textDecoration: "underline" }}>Đăng nhập</span></Link>
+          Bạn đã có tài khoản?{" "}
+          <Link to="/login">
+            <span
+              style={{
+                fontWeight: "bold",
+                color: "black",
+                textDecoration: "underline",
+              }}
+            >
+              Đăng nhập
+            </span>
+          </Link>
         </p>
 
         <Modal
