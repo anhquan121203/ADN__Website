@@ -14,6 +14,17 @@ const AppointmentManager = () => {
     pageSize: 10
   });
 
+  const statusOptions = [
+  { value: 'pending', label: 'Chờ xác nhận', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'confirmed', label: 'Đã xác nhận', color: 'bg-blue-100 text-blue-800' },
+  { value: 'sample_assigned', label: 'Đã phân mẫu', color: 'bg-purple-100 text-purple-800' },
+  { value: 'sample_collected', label: 'Đã thu mẫu', color: 'bg-green-100 text-green-800' },
+  { value: 'sample_received', label: 'Đã nhận mẫu', color: 'bg-teal-100 text-teal-800' },
+  { value: 'testing', label: 'Đang xét nghiệm', color: 'bg-orange-100 text-orange-800' },
+  { value: 'completed', label: 'Hoàn thành', color: 'bg-green-100 text-green-800' },
+  { value: 'cancelled', label: 'Đã hủy', color: 'bg-red-100 text-red-800'  },
+];
+
   const fetchAppointments = async (params = {}) => {
     await getAppointments({ ...filters, ...params });
   };
@@ -81,19 +92,10 @@ const AppointmentManager = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status) => {
-        const statusConfig = {
-        'pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Đang chờ' },
-        'confirmed': { color: 'bg-blue-100 text-blue-800', text: 'Đã xác nhận' },
-        'completed': { color: 'bg-green-100 text-green-800', text: 'Hoàn thành' },
-        'cancelled': { color: 'bg-red-100 text-red-800', text: 'Đã hủy' },
-        'sample_collected': { color: 'bg-purple-100 text-purple-800', text: 'Đã lấy mẫu' },
-        'sample_received': { color: 'bg-indigo-100 text-indigo-800', text: 'Đã nhận mẫu' },
-        'sample_assigned': { color: 'bg-pink-100 text-pink-800', text: 'Đã phân công mẫu' },
-        };
-        const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', text: status };
+        const config = statusOptions.find(option => option.value === status) || { color: 'bg-gray-100 text-gray-800', text: status };
         return (
           <span className={`px-3 py-1 rounded-full text-sm ${config.color}`}>
-            {config.text}
+            {config.label}
           </span>
         );
       },

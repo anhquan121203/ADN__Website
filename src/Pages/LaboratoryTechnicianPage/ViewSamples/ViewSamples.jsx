@@ -10,6 +10,7 @@ import {
   InfoCircleOutlined, PercentageOutlined, SafetyOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import useSample from '../../../Hooks/useSample';
 import useAppointment from '../../../Hooks/useAppoinment';
 import useResult from '../../../Hooks/useResult';
@@ -67,10 +68,10 @@ const ViewSamples = () => {
         
         setSamples(samplesData);
       } else {
-        message.error(samplesResult.error || 'Failed to fetch samples');
+        toast.error(samplesResult.error || 'Không thể tải danh sách mẫu');
       }
     } catch (error) {
-      message.error('Error fetching data');
+      toast.error('Lỗi khi tải dữ liệu');
       console.error('Error:', error);
     } finally {
       setLoading(false);
@@ -113,7 +114,7 @@ const ViewSamples = () => {
     setCreateResultModalOpen(false);
     setSelectedSamples([]);
     fetchData(); // Refresh data
-    message.success('Test result created successfully!');
+    toast.success('Đã tạo kết quả xét nghiệm thành công!');
   };
 
   const handleViewResult = () => {
@@ -151,7 +152,7 @@ const ViewSamples = () => {
 
   const columns = [
     {
-      title: 'Sample ID',
+      title: 'Mã mẫu',
       dataIndex: '_id',
       key: '_id',
       width: 120,
@@ -163,7 +164,7 @@ const ViewSamples = () => {
       ),
     },
     {
-      title: 'Kit Code',
+      title: 'Mã Kit',
       key: 'kit',
       width: 110,
       render: (_, record) => (
@@ -173,18 +174,26 @@ const ViewSamples = () => {
       ),
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       width: 90,
       render: (type) => (
         <Tag color={getTypeColor(type)} className="text-xs font-medium">
-          {type?.toUpperCase()}
+          {(() => {
+            switch (type?.toLowerCase()) {
+              case 'blood': return 'MÁU';
+              case 'saliva': return 'NƯỚC BỌT';
+              case 'hair': return 'TÓC';
+              case 'tissue': return 'MÔ';
+              default: return type?.toUpperCase();
+            }
+          })()}
         </Tag>
       ),
     },
     {
-      title: 'Person Info',
+      title: 'Thông tin người',
       key: 'person',
       width: 180,
       render: (_, record) => (
@@ -197,25 +206,35 @@ const ViewSamples = () => {
             Quan Hệ: {record.person_info?.relationship || 'N/A'}
           </div>
           <div className="text-gray-500 text-xs">
-            {/* Age: {record.person_info?.age || 'N/A'} */}
             Tuổi: {moment().diff(record.person_info?.dob, 'years')}
           </div>
         </div>
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 100,
       render: (status) => (
         <Tag color={getStatusColor(status)} className="text-xs font-medium px-2 py-1">
-          {status?.toUpperCase()}
+          {(() => {
+            switch (status?.toLowerCase()) {
+              case 'pending': return 'CHỜ XỬ LÝ';
+              case 'collected': return 'ĐÃ THU THẬP';
+              case 'received': return 'ĐÃ NHẬN';
+              case 'processing': return 'ĐANG XỬ LÝ';
+              case 'testing': return 'ĐANG XÉT NGHIỆM';
+              case 'completed': return 'HOÀN THÀNH';
+              case 'failed': return 'THẤT BẠI';
+              default: return status?.toUpperCase();
+            }
+          })()}
         </Tag>
       ),
     },
     {
-      title: 'Collection',
+      title: 'Thu thập',
       dataIndex: 'collection_date',
       key: 'collection_date',
       width: 120,
@@ -228,12 +247,12 @@ const ViewSamples = () => {
             </div>
           </div>
         ) : (
-          <Text type="secondary" className="text-xs">Not collected</Text>
+          <Text type="secondary" className="text-xs">Chưa thu thập</Text>
         )
       ),
     },
     {
-      title: 'Received',
+      title: 'Nhận',
       dataIndex: 'received_date',
       key: 'received_date',
       width: 120,
@@ -246,7 +265,7 @@ const ViewSamples = () => {
             </div>
           </div>
         ) : (
-          <Text type="secondary" className="text-xs">Not received</Text>
+          <Text type="secondary" className="text-xs">Chưa nhận</Text>
         )
       ),
     },
@@ -285,7 +304,7 @@ const ViewSamples = () => {
   const hasResult = currentResult?.data && (appointment.status === 'completed' || currentResult.success);
 
   return (
-    <div className="p-4 md:p-6 bg-gray-50 max-w-[1250px] mx-auto min-h-screen">
+    <div className="p-4 md:p-6 bg-gray-50 max-w-full mx-auto min-h-screen">
       {/* Breadcrumb */}
       <Breadcrumb className="mb-6 bg-white px-4 py-2 rounded-lg shadow-sm">
         <Breadcrumb.Item>
@@ -295,10 +314,10 @@ const ViewSamples = () => {
             onClick={handleBack}
             className="text-blue-500 hover:text-blue-600 px-0"
           >
-            Manage Results
+            Quản lý kết quả
           </Button>
         </Breadcrumb.Item>
-        <Breadcrumb.Item className="text-gray-500">View Samples</Breadcrumb.Item>
+        <Breadcrumb.Item className="text-gray-500">Xem mẫu</Breadcrumb.Item>
         <Breadcrumb.Item className="text-gray-700 font-medium">
           {appointmentId?.slice(-8)}
         </Breadcrumb.Item>
@@ -309,10 +328,10 @@ const ViewSamples = () => {
           <div>
             <Title level={3} className="mb-2 text-gray-800">
               <ExperimentOutlined className="mr-2 text-purple-600" />
-              Sample Details
+              Chi tiết mẫu
             </Title>
             <p className="text-gray-600 text-sm md:text-base">
-              View and manage samples for appointment: 
+              Xem và quản lý mẫu cho cuộc hẹn: 
               <code className="ml-1 bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-mono">
                 {appointmentId?.slice(-8)}
               </code>
@@ -327,8 +346,8 @@ const ViewSamples = () => {
                 onClick={() => handleCreateResult(testingSamples)}
                 className="w-full lg:w-auto bg-green-500 hover:bg-green-600 border-green-500"
               >
-                <span className="hidden md:inline">Create All Results</span>
-                <span className="md:hidden">Create Results</span>
+                <span className="hidden md:inline">Tạo tất cả kết quả</span>
+                <span className="md:hidden">Tạo kết quả</span>
               </Button>
             )}
           </div>
@@ -340,32 +359,32 @@ const ViewSamples = () => {
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12} md={6}>
                 <Statistic
-                  title="Customer"
+                  title="Khách hàng"
                   value={appointment.user_id?.first_name + ' ' + appointment.user_id?.last_name || 'N/A'}
                   prefix={<UserOutlined />}
                   valueStyle={{ color: '#1890ff', fontSize: '16px', fontWeight: 'bold' }}
                 />
                 <div className="text-sm text-gray-600 mt-1">
-                  {appointment.user_id?.email || 'No email'}
+                  {appointment.user_id?.email || 'Không có email'}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {appointment.user_id?.phone_number || 'No phone'}
+                  {appointment.user_id?.phone_number || 'Không có số điện thoại'}
                 </div>
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Statistic
-                  title="Service"
+                  title="Dịch vụ"
                   value={appointment.service_id?.name || 'N/A'}
                   prefix={<ExperimentOutlined />}
                   valueStyle={{ color: '#52c41a', fontSize: '16px', fontWeight: 'bold' }}
                 />
                 <div className="text-sm text-gray-600 mt-1">
-                  ${appointment.service_id?.price || '0'}
+                  {appointment.service_id?.price || '0'} VND
                 </div>
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Statistic
-                  title="Appointment Date"
+                  title="Ngày hẹn"
                   value={moment(appointment.appointment_date).format('DD/MM/YYYY HH:mm')}
                   prefix={<CalendarOutlined />}
                   valueStyle={{ color: '#722ed1', fontSize: '16px', fontWeight: 'bold' }}
@@ -373,8 +392,17 @@ const ViewSamples = () => {
               </Col>
               <Col xs={24} sm={12} md={6}>
                 <Statistic
-                  title="Status"
-                  value={appointment.status?.toUpperCase() || 'N/A'}
+                  title="Trạng thái"
+                  value={(() => {
+                    switch (appointment.status?.toLowerCase()) {
+                      case 'pending': return 'CHỜ XỬ LÝ';
+                      case 'confirmed': return 'ĐÃ XÁC NHẬN';
+                      case 'testing': return 'ĐANG XÉT NGHIỆM';
+                      case 'completed': return 'HOÀN THÀNH';
+                      case 'cancelled': return 'ĐÃ HỦY';
+                      default: return appointment.status?.toUpperCase() || 'N/A';
+                    }
+                  })()}
                   valueStyle={{ 
                     color: appointment.status === 'testing' ? '#1890ff' : '#52c41a',
                     fontSize: '16px',
@@ -421,7 +449,7 @@ const ViewSamples = () => {
                     onClick={handleViewResult}
                     className="bg-blue-500 hover:bg-blue-600"
                   >
-                    View Results
+                    Xem Kết Quả
                   </Button>
                   <Button
                     type="default"
@@ -429,7 +457,7 @@ const ViewSamples = () => {
                     onClick={handleDownloadReport}
                     className="border-green-500 text-green-500 hover:bg-green-50"
                   >
-                    Download Report
+                    Tải Xuống Báo Cáo
                   </Button>
                 </Space>
               </Col>
@@ -442,7 +470,7 @@ const ViewSamples = () => {
           <Col xs={12} sm={6}>
             <Card className="text-center shadow-sm hover:shadow-md transition-shadow border-0 bg-gradient-to-br from-blue-50 to-blue-100">
               <div className="text-2xl md:text-3xl font-bold text-blue-600">{samplesArray.length}</div>
-              <div className="text-gray-700 text-sm font-medium">Total Samples</div>
+              <div className="text-gray-700 text-sm font-medium">Tổng số mẫu</div>
             </Card>
           </Col>
           <Col xs={12} sm={6}>
@@ -450,7 +478,7 @@ const ViewSamples = () => {
               <div className="text-2xl md:text-3xl font-bold text-cyan-600">
                 {samplesArray.filter(s => s.status === 'testing').length}
               </div>
-              <div className="text-gray-700 text-sm font-medium">Testing</div>
+              <div className="text-gray-700 text-sm font-medium">Đang xét nghiệm</div>
             </Card>
           </Col>
           <Col xs={12} sm={6}>
@@ -458,7 +486,7 @@ const ViewSamples = () => {
               <div className="text-2xl md:text-3xl font-bold text-green-600">
                 {samplesArray.filter(s => s.status === 'completed').length}
               </div>
-              <div className="text-gray-700 text-sm font-medium">Completed</div>
+              <div className="text-gray-700 text-sm font-medium">Đã hoàn thành</div>
             </Card>
           </Col>
           <Col xs={12} sm={6}>
@@ -466,7 +494,7 @@ const ViewSamples = () => {
               <div className="text-2xl md:text-3xl font-bold text-purple-600">
                 {testingSamples.length}
               </div>
-              <div className="text-gray-700 text-sm font-medium">Ready for Results</div>
+              <div className="text-gray-700 text-sm font-medium">Sẵn sàng cho Kết quả</div>
             </Card>
           </Col>
         </Row>
@@ -478,8 +506,8 @@ const ViewSamples = () => {
               <div className="text-gray-400 mb-2">
                 <ExperimentOutlined style={{ fontSize: '48px' }} />
               </div>
-              <p className="text-gray-500 text-lg">No samples found</p>
-              <p className="text-gray-400 text-sm">No samples available for this appointment</p>
+              <p className="text-gray-500 text-lg">Không tìm thấy mẫu nào</p>
+              <p className="text-gray-400 text-sm">Không có mẫu nào có sẵn cho cuộc hẹn này</p>
             </Card>
           ) : (
             <Card className="shadow-sm border-0">
@@ -521,17 +549,17 @@ const ViewSamples = () => {
           title={
             <div className="flex items-center">
               <ExperimentOutlined className="mr-2 text-purple-600" />
-              Test Result Details
+              Chi tiết kết quả xét nghiệm
             </div>
           }
           open={resultViewModalOpen}
           onCancel={() => setResultViewModalOpen(false)}
           footer={[
             <Button key="download" icon={<DownloadOutlined />} onClick={handleDownloadReport}>
-              Download Report
+              Tải xuống báo cáo
             </Button>,
             <Button key="close" onClick={() => setResultViewModalOpen(false)}>
-              Close
+              Đóng
             </Button>
           ]}
           width={800}
@@ -550,7 +578,7 @@ const ViewSamples = () => {
                       {currentResult.data.is_match ? 'DNA Match Confirmed' : 'No DNA Match Found'}
                     </Title>
                     <Text className="text-lg text-gray-600">
-                      Confidence Level: <strong>{currentResult.data.result_data.confidence_level?.toUpperCase()}</strong>
+                      Mức độ tin cậy: <strong>{currentResult.data.result_data.confidence_level?.toUpperCase()}</strong>
                     </Text>
                   </div>
                 </Card>
@@ -560,7 +588,7 @@ const ViewSamples = () => {
                   <Row gutter={[24, 16]}>
                     <Col xs={24} sm={12}>
                       <Statistic
-                        title="Probability"
+                        title="Xác suất"
                         value={currentResult.data.result_data.probability}
                         suffix="%"
                         prefix={<PercentageOutlined />}
@@ -569,7 +597,7 @@ const ViewSamples = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                       <Statistic
-                        title="DNA Match Percentage"
+                        title="Tỷ lệ trùng khớp DNA"
                         value={currentResult.data.result_data.dna_match_percentage}
                         suffix="%"
                         prefix={<SafetyOutlined />}
@@ -578,7 +606,7 @@ const ViewSamples = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                       <Statistic
-                        title="Markers Tested"
+                        title="Đã kiểm tra điểm đánh dấu"
                         value={currentResult.data.result_data.markers_tested}
                         prefix={<InfoCircleOutlined />}
                         valueStyle={{ color: '#722ed1', fontSize: '20px' }}
@@ -586,7 +614,7 @@ const ViewSamples = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                       <Statistic
-                        title="Markers Matched"
+                        title="Điểm đánh dấu đã khớp"
                         value={currentResult.data.result_data.markers_matched}
                         prefix={<CheckCircleOutlined />}
                         valueStyle={{ color: '#fa541c', fontSize: '20px' }}
@@ -596,7 +624,7 @@ const ViewSamples = () => {
                   <Divider />
                   <div className="text-center">
                     <Text strong className="text-lg">
-                      Confidence Interval: {currentResult.data.result_data.confidence_interval}
+                      Khoảng tin cậy: {currentResult.data.result_data.confidence_interval}
                     </Text>
                   </div>
                 </Card>
@@ -625,19 +653,19 @@ const ViewSamples = () => {
                           </div>
                           <Row gutter={[8, 8]}>
                             <Col span={12}>
-                              <Text type="secondary" className="text-xs">Sample Type:</Text>
+                              <Text type="secondary" className="text-xs">Loại mẫu:</Text>
                               <div><Tag color={sample.type === 'saliva' ? 'blue' : 'green'}>{sample.type?.toUpperCase()}</Tag></div>
                             </Col>
                             <Col span={12}>
-                              <Text type="secondary" className="text-xs">Status:</Text>
+                              <Text type="secondary" className="text-xs">Trạng thái:</Text>
                               <div><Tag color="success">{sample.status?.toUpperCase()}</Tag></div>
                             </Col>
                             <Col span={12}>
-                              <Text type="secondary" className="text-xs">Age:</Text>
-                              <div className="text-sm">{moment().diff(sample.person_info?.dob, 'years')} years</div>
+                              <Text type="secondary" className="text-xs">Tuổi:</Text>
+                              <div className="text-sm">{moment().diff(sample.person_info?.dob, 'years')} năm</div>
                             </Col>
                             <Col span={12}>
-                              <Text type="secondary" className="text-xs">Collection:</Text>
+                              <Text type="secondary" className="text-xs">Ngày lấy mẫu:</Text>
                               <div className="text-sm">{moment(sample.collection_date).format('DD/MM/YY')}</div>
                             </Col>
                           </Row>
@@ -652,7 +680,7 @@ const ViewSamples = () => {
                   <Row gutter={[16, 16]}>
                     <Col xs={24} sm={12}>
                       <div className="space-y-2">
-                        <Text type="secondary">Laboratory Technician:</Text>
+                        <Text type="secondary">Kỹ thuật viên xét nghiệm:</Text>
                         <div className="font-semibold">
                           {currentResult.data.laboratory_technician_id?.first_name} {currentResult.data.laboratory_technician_id?.last_name}
                         </div>
@@ -663,12 +691,12 @@ const ViewSamples = () => {
                     </Col>
                     <Col xs={24} sm={12}>
                       <div className="space-y-2">
-                        <Text type="secondary">Test Completion:</Text>
+                        <Text type="secondary">Hoàn thành xét nghiệm:</Text>
                         <div className="font-semibold">
                           {moment(currentResult.data.completed_at).format('DD/MM/YYYY HH:mm')}
                         </div>
                         <div className="text-sm text-gray-600">
-                          Report generated and available for download
+                          Báo cáo đã được tạo và có thể tải xuống
                         </div>
                       </div>
                     </Col>

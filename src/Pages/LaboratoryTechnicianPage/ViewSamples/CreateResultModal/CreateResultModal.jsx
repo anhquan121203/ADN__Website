@@ -4,6 +4,7 @@ import {
   Card, Row, Col, Tag, Switch, InputNumber, Select
 } from 'antd';
 import { ExperimentOutlined, FileTextOutlined, UserOutlined } from '@ant-design/icons';
+import { toast } from 'react-toastify';
 import useResult from '../../../../Hooks/useResult';
 
 const { Title, Text } = Typography;
@@ -53,14 +54,14 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
       const result = await createResult(resultData);
       
       if (result.success) {
-        message.success('Test result created successfully!');
+        toast.success('Tạo kết quả xét nghiệm thành công!');
         onSuccess();
         onClose();
       } else {
-        message.error(result.error || 'Failed to create test result');
+        toast.error(result.error || 'Không thể tạo kết quả xét nghiệm');
       }
     } catch (error) {
-      message.error('An error occurred while creating the test result');
+      toast.error('Đã xảy ra lỗi khi tạo kết quả xét nghiệm');
       console.error('Error:', error);
     } finally {
       setLoading(false);
@@ -82,7 +83,7 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
       title={
         <div className="flex items-center gap-2">
           <FileTextOutlined className="text-purple-600" />
-          <span>Create Test Result</span>
+          <span>Tạo Kết Quả Xét Nghiệm</span>
         </div>
       }
       open={open}
@@ -96,17 +97,17 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
           <div className="flex items-start gap-3">
             <ExperimentOutlined className="text-blue-600 mt-1" />
             <div>
-              <Text strong className="text-blue-800">Test Result Creation</Text>
+              <Text strong className="text-blue-800">Tạo Kết Quả Xét Nghiệm</Text>
               <div className="text-blue-700 mt-1">
-                Create a new test result with automatic PDF report generation. 
-                The report will include detailed information about the test and results.
+                Tạo kết quả xét nghiệm mới với tự động tạo báo cáo PDF.
+                Báo cáo sẽ bao gồm thông tin chi tiết về xét nghiệm và kết quả.
               </div>
             </div>
           </div>
         </Card>
 
         {/* Sample Information */}
-        <Card title="Sample Information" size="small">
+        <Card title="Thông Tin Mẫu" size="small">
           <div className="space-y-2">
             {samples.map((sample) => (
               <div key={sample._id} className="flex items-center justify-between bg-gray-50 p-3 rounded">
@@ -146,12 +147,12 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="is_match"
-                label="DNA Match Result"
-                rules={[{ required: true, message: 'Please select match result' }]}
+                label="Kết Quả Khớp DNA"
+                rules={[{ required: true, message: 'Vui lòng chọn kết quả khớp' }]}
               >
                 <Switch
-                  checkedChildren="Match"
-                  unCheckedChildren="No Match"
+                  checkedChildren="Khớp"
+                  unCheckedChildren="Không Khớp"
                   defaultChecked
                 />
               </Form.Item>
@@ -159,14 +160,14 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="confidence_level"
-                label="Confidence Level"
-                rules={[{ required: true, message: 'Please select confidence level' }]}
+                label="Mức Độ Tin Cậy"
+                rules={[{ required: true, message: 'Vui lòng chọn mức độ tin cậy' }]}
               >
-                <Select placeholder="Select confidence level">
-                  <Option value="low">Low</Option>
-                  <Option value="medium">Medium</Option>
-                  <Option value="high">High</Option>
-                  <Option value="very_high">Very High</Option>
+                <Select placeholder="Chọn mức độ tin cậy">
+                  <Option value="low">Thấp</Option>
+                  <Option value="medium">Trung Bình</Option>
+                  <Option value="high">Cao</Option>
+                  <Option value="very_high">Rất Cao</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -176,8 +177,8 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="probability"
-                label="Probability (%)"
-                rules={[{ required: true, message: 'Please enter probability' }]}
+                label="Xác Suất (%)"
+                rules={[{ required: true, message: 'Vui lòng nhập xác suất' }]}
               >
                 <InputNumber
                   min={0}
@@ -191,8 +192,8 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="dna_match_percentage"
-                label="DNA Match Percentage (%)"
-                rules={[{ required: true, message: 'Please enter DNA match percentage' }]}
+                label="Phần Trăm Khớp DNA (%)"
+                rules={[{ required: true, message: 'Vui lòng nhập phần trăm khớp DNA' }]}
               >
                 <InputNumber
                   min={0}
@@ -209,8 +210,8 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="markers_tested"
-                label="Markers Tested"
-                rules={[{ required: true, message: 'Please enter markers tested' }]}
+                label="Markers Đã Kiểm Tra"
+                rules={[{ required: true, message: 'Vui lòng nhập số markers đã kiểm tra' }]}
               >
                 <InputNumber
                   min={1}
@@ -222,8 +223,8 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
             <Col span={12}>
               <Form.Item
                 name="markers_matched"
-                label="Markers Matched"
-                rules={[{ required: true, message: 'Please enter markers matched' }]}
+                label="Markers Khớp"
+                rules={[{ required: true, message: 'Vui lòng nhập số markers khớp' }]}
               >
                 <InputNumber
                   min={0}
@@ -236,19 +237,19 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
 
           <Form.Item
             name="confidence_interval"
-            label="Confidence Interval"
-            rules={[{ required: true, message: 'Please enter confidence interval' }]}
+            label="Khoảng Tin Cậy"
+            rules={[{ required: true, message: 'Vui lòng nhập khoảng tin cậy' }]}
           >
             <Input placeholder="99.9% - 100%" />
           </Form.Item>
 
           <Form.Item
             name="notes"
-            label="Additional Notes (Optional)"
+            label="Ghi Chú Thêm (Tùy Chọn)"
           >
             <TextArea
               rows={4}
-              placeholder="Enter any additional notes about the test results..."
+              placeholder="Nhập bất kỳ ghi chú thêm nào về kết quả xét nghiệm..."
               maxLength={1000}
               showCount
             />
@@ -257,7 +258,7 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
           <Form.Item className="mb-0">
             <Space className="w-full justify-end">
               <Button onClick={onClose}>
-                Cancel
+                Hủy
               </Button>
               <Button
                 type="primary"
@@ -265,7 +266,7 @@ const CreateResultModal = ({ open, onClose, onSuccess, samples, appointmentId })
                 loading={loading}
                 icon={<FileTextOutlined />}
               >
-                Create Result & Generate PDF
+                Tạo Kết Quả & Tạo PDF
               </Button>
             </Space>
           </Form.Item>

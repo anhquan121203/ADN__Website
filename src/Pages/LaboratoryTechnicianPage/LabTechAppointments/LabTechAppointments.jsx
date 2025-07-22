@@ -88,7 +88,7 @@ const LabTechAppointments = () => {
 
   const columns = [
     {
-      title: 'Customer',
+      title: 'Khách hàng',
       key: 'customer',
       width: 180,
       render: (_, record) => (
@@ -102,7 +102,7 @@ const LabTechAppointments = () => {
       ),
     },
     {
-      title: 'Service',
+      title: 'Dịch vụ',
       key: 'service',
       width: 160,
       render: (_, record) => (
@@ -116,7 +116,7 @@ const LabTechAppointments = () => {
       ),
     },
     {
-      title: 'Staff',
+      title: 'Nhân viên',
       key: 'staff',
       width: 140,
       render: (_, record) => (
@@ -129,7 +129,7 @@ const LabTechAppointments = () => {
       ),
     },
     {
-      title: 'Lab Tech',
+      title: 'Kỹ thuật viên',
       key: 'labTech',
       width: 140,
       render: (_, record) => (
@@ -142,7 +142,7 @@ const LabTechAppointments = () => {
       ),
     },
     {
-      title: 'Date',
+      title: 'Ngày hẹn',
       dataIndex: 'appointment_date',
       key: 'appointmentDate',
       width: 120,
@@ -154,46 +154,56 @@ const LabTechAppointments = () => {
       ),
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       width: 80,
       render: (type) => (
         <Tag color={type === 'facility' ? 'blue' : 'orange'} size="small">
-          {type.charAt(0).toUpperCase() + type.slice(1)}
+          {type === 'facility' ? 'Tại cơ sở' : 'Tại nhà'}
         </Tag>
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 100,
       render: (status) => (
         <Tag color={getStatusColor(status)} size="small">
-          {status.replace('_', ' ').toUpperCase()}
+          {(() => {
+            switch (status) {
+              case 'confirmed': return 'Đã xác nhận';
+              case 'sample_collected': return 'Đã thu mẫu';
+              case 'sample_received': return 'Đã nhận mẫu';
+              case 'processing': return 'Đang xử lý';
+              case 'completed': return 'Hoàn thành';
+              case 'cancelled': return 'Đã hủy';
+              default: return status;
+            }
+          })()}
         </Tag>
       ),
     },
     {
-      title: 'Payment',
+      title: 'Thanh toán',
       dataIndex: 'payment_status',
       key: 'paymentStatus',
       width: 80,
       render: (status) => (
         <Tag color={getPaymentStatusColor(status)} size="small">
-          {status ? status.toUpperCase() : 'UNKNOWN'}
+          {status === 'paid' ? 'Đã thanh toán' : status === 'unpaid' ? 'Chưa thanh toán' : status === 'refunded' ? 'Đã hoàn tiền' : 'Không rõ'}
         </Tag>
       ),
     },
     {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       width: 100,
       fixed: 'right',
       render: (_, record) => (
         <Space size="small">
-          <Tooltip title="View Details">
+          <Tooltip title="Xem chi tiết">
             <Button
               type="text"
               size="small"
@@ -202,7 +212,7 @@ const LabTechAppointments = () => {
               style={{ color: '#1890ff' }}
             />
           </Tooltip>
-          <Tooltip title="View Samples">
+          <Tooltip title="Xem mẫu">
             <Button
               type="text"
               size="small"
@@ -221,7 +231,7 @@ const LabTechAppointments = () => {
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Title level={2} className="mb-0">
-          My Assigned Appointments
+          Danh sách cuộc hẹn được phân công
         </Title>
         <Button
           type="primary"
@@ -229,7 +239,7 @@ const LabTechAppointments = () => {
           onClick={() => fetchAppointments(pagination.current, pagination.pageSize)}
           loading={loading}
         >
-          Refresh
+          Làm mới
         </Button>
       </div>
 
@@ -241,7 +251,7 @@ const LabTechAppointments = () => {
               <div className="text-2xl font-bold text-blue-600">
                 {pageInfo.totalItems}
               </div>
-              <div className="text-gray-500">Total Assignments</div>
+              <div className="text-gray-500">Tổng số cuộc hẹn</div>
             </div>
           </Card>
         </Col>
@@ -251,7 +261,7 @@ const LabTechAppointments = () => {
               <div className="text-2xl font-bold text-green-600">
                 {appointments.filter(apt => apt.status === 'sample_received').length}
               </div>
-              <div className="text-gray-500">Sample Received</div>
+              <div className="text-gray-500">Đã nhận mẫu</div>
             </div>
           </Card>
         </Col>
@@ -261,7 +271,7 @@ const LabTechAppointments = () => {
               <div className="text-2xl font-bold text-green-600">
                 {appointments.filter(apt => apt.payment_status === 'paid').length}
               </div>
-              <div className="text-gray-500">Paid</div>
+              <div className="text-gray-500">Đã thanh toán</div>
             </div>
           </Card>
         </Col>
@@ -271,7 +281,7 @@ const LabTechAppointments = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {appointments.filter(apt => apt.type === 'facility').length}
               </div>
-              <div className="text-gray-500">Facility Type</div>
+              <div className="text-gray-500">Loại tại cơ sở</div>
             </div>
           </Card>
         </Col>
@@ -289,7 +299,7 @@ const LabTechAppointments = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `${range[0]}-${range[1]} of ${total} appointments`,
+              `${range[0]}-${range[1]} của ${total} cuộc hẹn`,
             pageSizeOptions: ['10', '15', '20', '50'],
             responsive: true,
           }}

@@ -18,6 +18,7 @@ import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointmen
 import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSampleAppointment/ViewSampleAppointment";
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
+import PayOSCancel from "./Pages/CustomerPage/PaymentPage/PayOSCancel";
 import CreateAppointmentAdminComponent from "./Components/Customer/AppointmentAdmin/CreateAppointmentAdminComponent";
 import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
 import Blogger from "./Pages/CustomerPage/Blogger/Blogger";
@@ -125,6 +126,7 @@ function App() {
           <Route path="/service" element={<CustomerService />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/api/payments/payos-return" element={<PayOSReturn />} />
+          <Route path="/api/payments/payos-cancel" element={<PayOSCancel />} />
           <Route
             path="/create-appointment-admin"
             element={<CreateAppointmentAdminComponent />}

@@ -26,7 +26,7 @@
   justify-content: flex-start;
 }
 
-.sidebar-manager.collapsed .top-manager {
+.sidebar-manager .collapsed .top-manager {
   justify-content: center;
 }
 
@@ -52,7 +52,7 @@
   transition: opacity 0.3s ease;
 }
 
-.sidebar-manager.collapsed .title-name {
+.sidebar-manager .collapsed .title-name {
   opacity: 0;
   width: 0;
   margin: 0;
@@ -86,7 +86,7 @@
   position: relative;
 }
 
-.sidebar-manager.collapsed .nav-item {
+.sidebar-manager .collapsed .nav-item {
   justify-content: center;
   padding: 10px;
   gap: 0;
@@ -133,7 +133,7 @@
   cursor: pointer;
 }
 
-.sidebar-manager.collapsed .dropdown-service {
+.sidebar-manager .collapsed .dropdown-service {
   justify-content: center;
   padding: 10px;
 }
@@ -183,7 +183,7 @@
 }
 
 /* Tooltip for collapsed state */
-.sidebar-manager.collapsed .nav-item[title]:hover::after {
+.sidebar-manager .collapsed .nav-item[title]:hover::after {
   content: attr(title);
   position: absolute;
   left: 60px;
@@ -199,7 +199,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-manager.collapsed .nav-item[title]:hover::before {
+.sidebar-manager .collapsed .nav-item[title]:hover::before {
   content: '';
   position: absolute;
   left: 55px;

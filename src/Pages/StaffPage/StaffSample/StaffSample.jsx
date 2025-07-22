@@ -10,13 +10,19 @@ import FilterSample from './FilterSample';
 
 const StaffSample = () => {
   const dispatch = useDispatch();
-  const { samples, isLoading, error, pagination, filters } = useSelector((state) => ({
-    samples: state.sample.samples?.pageData || [],
+  const { isLoading, error, filters } = useSelector((state) => ({
     isLoading: state.sample.isLoading,
     error: state.sample.error,
-    pagination: state.sample.pagination,
     filters: state.sample.filters
   }));
+  
+  const [samples, setSamples] = useState([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  
   const [localFilters, setLocalFilters] = useState({
     status: '',
     type: '',
@@ -32,33 +38,67 @@ const StaffSample = () => {
     setLocalFilters(filters);
   }, [filters]);
 
-  // Fetch samples when component mounts or filters change
-  useEffect(() => {
-    dispatch(searchSamples(localFilters)).then((action) => {
-      if (action.payload?.pageData) {
-        // Update pagination if needed
-        const { currentPage, totalPages, totalItems } = action.payload;
-        dispatch(updateFilters({
-          ...localFilters,
-          page: currentPage,
-          totalPages,
-          totalItems
-        }));
+  // Fetch samples when component mounts or filters/page change
+  const loadSamples = async () => {
+    try {
+      const params = {
+        ...localFilters,
+        page: pagination.current,
+        pageSize: pagination.pageSize
+      };
+      
+      const result = await dispatch(searchSamples(params)).unwrap();
+      
+      if (result && result.data) {
+        setSamples(result.data.pageData || []);
+        if (result.data.pageInfo) {
+          setPagination(prev => ({
+            ...prev,
+            total: result.data.pageInfo.totalItems || 0
+          }));
+        }
       }
-    });
-  }, [dispatch, localFilters]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= pagination.totalPages) {
-      dispatch(updateFilters({ ...localFilters, page: newPage }));
+    } catch (err) {
+      console.error('Failed to fetch samples:', err);
     }
   };
 
+  useEffect(() => {
+    loadSamples();
+  }, [localFilters, pagination.current, pagination.pageSize]);
+
+  const handleTableChange = (paginationTable) => {
+    setPagination({
+      current: paginationTable.current,
+      pageSize: paginationTable.pageSize,
+      total: pagination.total
+    });
+  };
+
   const handleFilterChange = (newFilters) => {
+    setLocalFilters(newFilters);
+    setPagination(prev => ({
+      ...prev,
+      current: 1
+    }));
     dispatch(updateFilters({ ...newFilters, page: 1 }));
   };
 
   const handleResetFilters = () => {
+    const resetFilters = {
+      status: '',
+      type: '',
+      appointmentId: '',
+      kitCode: '',
+      personName: '',
+      startDate: '',
+      endDate: '',
+    };
+    setLocalFilters(resetFilters);
+    setPagination(prev => ({
+      ...prev,
+      current: 1
+    }));
     dispatch(resetFilters());
   };
 
@@ -69,6 +109,8 @@ const StaffSample = () => {
       processing: 'purple',
       completed: 'green',
       rejected: 'red',
+      testing: 'cyan',
+      received: 'magenta',
     };
 
     const statusLabels = {
@@ -77,6 +119,8 @@ const StaffSample = () => {
       processing: 'Đang xử lý',
       completed: 'Hoàn thành',
       rejected: 'Từ chối',
+      testing: 'Đang kiểm tra',
+      received: 'Đã nhận',
     };
 
     return (
@@ -235,51 +279,18 @@ const StaffSample = () => {
       <div className="bg-white shadow overflow-hidden sm:rounded-lg p-4">
         <Table
           columns={columns}
-          dataSource={samples}
+          dataSource={Array.isArray(samples) ? samples : []}
           rowKey="_id"
           loading={isLoading}
           pagination={{
-            current: pagination.currentPage,
-            pageSize: pagination.pageSize || 10,
-            total: pagination.totalItems || 0,
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
             showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} mẫu`,
-            onChange: handlePageChange,
-            onShowSizeChange: (current, size) => {
-              dispatch(updateFilters({ ...localFilters, page: 1, pageSize: size }));
-            },
-            locale: {
-              items_per_page: 'mẫu/trang',
-              jump_to: 'Đến',
-              jump_to_confirm: 'xác nhận',
-              page: 'Trang',
-              prev_page: 'Trang trước',
-              next_page: 'Trang sau',
-              prev_5: 'Trước 5 trang',
-              next_5: 'Sau 5 trang',
-              prev_3: 'Trước 3 trang',
-              next_3: 'Sau 3 trang',
-            },
+            showTotal: (total) => `Tổng cộng ${total} mục`,
           }}
-          locale={{
-            emptyText: 'Không tìm thấy mẫu nào phù hợp',
-            filterReset: 'Đặt lại',
-            filterConfirm: 'Xác nhận',
-            filterEmptyText: 'Không có bộ lọc',
-            filterCheckall: 'Chọn tất cả',
-            filterSearchPlaceholder: 'Tìm kiếm',
-            selectAll: 'Chọn tất cả',
-            selectInvert: 'Đảo ngược',
-            selectNone: 'Bỏ chọn tất cả',
-            selectionAll: 'Chọn tất cả',
-            sortTitle: 'Sắp xếp',
-            expand: 'Mở rộng',
-            collapse: 'Thu gọn',
-            triggerDesc: 'Nhấn để sắp xếp giảm dần',
-            triggerAsc: 'Nhấn để sắp xếp tăng dần',
-            cancelSort: 'Nhấn để hủy sắp xếp',
-          }}
+          onChange={handleTableChange}
+          scroll={{ x: 'max-content' }}
         />
       </div>
     </div>
