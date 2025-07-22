@@ -10,7 +10,7 @@ import GoogleMapPicker from '../../../utils/GoogleMapsUtil.jsx';
 import './Appoinment.css';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { notification } from 'antd';
+import { toast } from 'react-toastify';
 
 const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType }) => {
   const [selectedSlot, setSelectedSlot] = useState('');
@@ -67,13 +67,10 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     e.preventDefault();
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      notification.warning({
-        message: 'Bạn phải đăng nhập mới đặt lịch được',
-        description: 'Vui lòng đăng nhập để tiếp tục sử dụng chức năng này.',
-        duration: 3
-      });
+      toast.warning('Bạn phải đăng nhập mới đặt lịch được. Vui lòng đăng nhập để tiếp tục sử dụng chức năng này.');
       return;
     }
+    
     try {
       const currentDate = new Date().toISOString().split('T')[0];
       const response = await createAppointment({
@@ -84,33 +81,25 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
         collection_address: type === 'home' ? (mapAddress || collection_address) : null
       });
 
-      if (response && !response.error) {
-        notification.success({
-          message: 'Thành công',
-          description: 'Đặt lịch khám thành công!',
-        });
+      // Check for success response structure: {"success": true, "data": []}
+      if (response && response.success === true) {
+        toast.success('Đặt lịch khám thành công!');
         onClose();
       } else {
-        let errorMessages = '';
-        if (Array.isArray(response?.data?.message)) {
-          errorMessages = response.data.message.map((error) => `${error.field}: ${error.message}`).join('\n');
-        } else if (typeof response?.data?.message === 'string') {
-          errorMessages = response.data.message;
-        } else if (typeof response?.message === 'string') {
-          errorMessages = response.message;
+        // Handle error response structure: {"success": false, "message"} or {"message"}
+        let errorMessage = '';
+        if (response && response.message) {
+          errorMessage = response.message;
+        } else if (response && response.success === false && response.message) {
+          errorMessage = response.message;
         } else {
-          errorMessages = 'Có lỗi xảy ra. Vui lòng thử lại!';
+          errorMessage = 'Có lỗi xảy ra. Vui lòng thử lại!';
         }
-        notification.error({
-          message: 'Lỗi',
-          description: errorMessages,
-        });
+        toast.error(errorMessage);
       }
     } catch (error) {
-      notification.error({
-        message: 'Lỗi',
-        description: error?.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
-      });
+      console.error('Error creating appointment:', error);
+      toast.error(error?.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.');
     }
   };
 
@@ -183,253 +172,151 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     setShowGoogleMap(false);
   };
 
-  const getMethodIcon = (method) => {
-    switch(method) {
-      case 'facility': return <FaHospital className="w-5 h-5" />;
-      case 'home': return <FaHome className="w-5 h-5" />;
-      case 'self': return <FaFlask className="w-5 h-5" />;
-      default: return <FaHospital className="w-5 h-5" />;
-    }
-  };
-
-  const getMethodColor = (method) => {
-    switch(method) {
-      case 'facility': return 'from-blue-500 to-blue-600';
-      case 'home': return 'from-green-500 to-green-600';
-      case 'self': return 'from-purple-500 to-purple-600';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
-
   return (
-    <div className=" appointment-modal fixed inset-0 bg-gray-700 bg-opacity-60 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-y-auto hide-scrollbar">
+    <div className=" appointment-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-teal-500 to-cyan-600 px-8 py-6 text-white relative">
+        <div className="bg-[#1caf9a] px-6 py-4 text-white relative rounded-t-lg">
           <button 
             onClick={onClose}
             className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
           >
             <FaTimes className="w-5 h-5" />
           </button>
-          <h2 className="text-2xl font-bold mb-2">Đặt lịch khám</h2>
-          <p className="text-teal-100">{serviceName}</p>
+          <h2 className="text-xl font-bold">Đặt lịch khám</h2>
+          <p className="text-sm opacity-90">{serviceName}</p>
         </div>
 
-        <div className="flex max-h-full">
-          {/* Left Panel - User Info */}
-          <div className="w-1/3 bg-gray-50 p-6 border-r border-gray-200 overflow-y-auto">
-            <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <FaUser className="w-5 h-5 mr-3 text-teal-500" />
-                Thông tin khách hàng
-              </h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {user?.first_name?.charAt(0)}{user?.last_name?.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800">{user?.first_name} {user?.last_name}</p>
-                    <p className="text-sm text-gray-500">Khách hàng</p>
-                  </div>
-                </div>
+        {/* Form Content */}
+        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto font-arial border border-gray-300 px-5 py-5 rounded-b-lg bg-white text-gray-800 text-sm leading-snug">
+          
+          {/* Section 1: Nội dung chi tiết đặt hẹn */}
+          <div className="font-bold text-lg border-b-2 border-[#1caf9a] pb-1 mb-5 text-[#1caf9a]">
+            Nội dung chi tiết đặt hẹn
+          </div>
+          
+          <div className="flex gap-5 mb-4 flex-wrap">
 
-                <div className="space-y-3">
-                  <div className="flex items-center text-gray-600">
-                    <FaEnvelope className="w-4 h-4 mr-3 text-gray-400" />
-                    <span className="text-sm">{user?.email}</span>
-                  </div>
-                  
-                  {user?.phone_number && (
-                    <div className="flex items-center text-gray-600">
-                      <FaPhone className="w-4 h-4 mr-3 text-gray-400" />
-                      <span className="text-sm">{user?.phone_number}</span>
-                    </div>
-                  )}
-
-                  {user?.address && (
-                    <div className="flex items-start text-gray-600">
-                      <FaMapMarkerAlt className="w-4 h-4 mr-3 mt-0.5 text-gray-400" />
-                      <span className="text-sm">{user?.address}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                Dịch vụ <span className="text-red-500">*</span>
+              </label>
+              <select 
+                required 
+                defaultValue="facility"
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] h-9"
+              >
+                <option value="facility">
+                  {serviceType === 'civil' ? 'Dân Sự' : 'Không có dịch vụ'}
+                </option>
+              </select>
             </div>
 
-            {/* Service Info */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Chi tiết dịch vụ</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Tên dịch vụ:</span>
-                  <p className="text-gray-800">{serviceName}</p>
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-gray-500">Loại dịch vụ:</span>
-                  <p className="text-gray-800 capitalize">{serviceType}</p>
-                </div>
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">Tên dịch vụ</label>
+              <select 
+                defaultValue="serviceName"
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] h-9"
+              >
+                <option value="serviceName">{serviceName}</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Section 2: Phương thức lấy mẫu */}
+          <div className="font-bold text-lg border-b-2 border-[#1caf9a] pb-1 mb-5 text-[#1caf9a]">
+            Phương thức lấy mẫu
+          </div>
+
+          <div className="flex gap-5 mb-4 flex-wrap">
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                Địa chỉ lấy mẫu <span className="text-red-500">*</span>
+              </label>
+              <div className="flex items-center gap-4 mb-2">
+                <label className="flex items-center gap-1 cursor-pointer select-none">
+                  <input
+                    type="radio"
+                    name="collection_method"
+                    value="facility"
+                    checked={type === 'facility'}
+                    onChange={(e) => setType(e.target.value)}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm">Cơ sở xét nghiệm</span>
+                </label>
+                {serviceType === 'civil' && (
+                  <>
+                    <label className="flex items-center gap-1 cursor-pointer select-none">
+                      <input
+                        type="radio"
+                        name="collection_method"
+                        value="home"
+                        checked={type === 'home'}
+                        onChange={(e) => setType(e.target.value)}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm">Tại nhà</span>
+                    </label>
+                    <label className="flex items-center gap-1 cursor-pointer select-none">
+                      <input
+                        type="radio"
+                        name="collection_method"
+                        value="self"
+                        checked={type === 'self'}
+                        onChange={(e) => setType(e.target.value)}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm">Tự lấy mẫu</span>
+                    </label>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Right Panel - Booking Form */}
-          <div className="flex-1 p-8 overflow-y-auto">
-            <form onSubmit={handleSubmit} className="space-y-8 max-w-full">
-              
-              {/* Collection Method */}
-              <div>
-                <label className="block text-lg font-semibold text-gray-800 mb-4">
-                  Phương thức lấy mẫu
+          {/* Address Input for Home Collection */}
+          {type === 'home' && (
+            <div className="flex gap-5 mb-4 flex-wrap">
+              <div className="flex-1 min-w-[300px] flex flex-col">
+                <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                  Địa chỉ chi tiết <span className="text-red-500">*</span>
                 </label>
-                <div className="grid grid-cols-1 gap-4">
-                  {/* Facility Option */}
-                  <div 
-                    className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 ${
-                      type === 'facility' 
-                        ? 'border-teal-500 bg-teal-50 shadow-lg' 
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-                    }`}
-                    onClick={() => setType('facility')}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white bg-gradient-to-r ${getMethodColor('facility')}`}>
-                        {getMethodIcon('facility')}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-800">Tại phòng khám</h4>
-                        <p className="text-sm text-gray-600">Đến trực tiếp cơ sở y tế để lấy mẫu</p>
-                      </div>
-                      <div className={`w-6 h-6 rounded-full border-2 ${
-                        type === 'facility' ? 'border-teal-500 bg-teal-500' : 'border-gray-300'
-                      } flex items-center justify-center`}>
-                        {type === 'facility' && <div className="w-3 h-3 bg-white rounded-full"></div>}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Home Collection Option */}
-                  {serviceType === 'civil' && (
-                    <div 
-                      className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 ${
-                        type === 'home' 
-                          ? 'border-green-500 bg-green-50 shadow-lg' 
-                          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-                      }`}
-                      onClick={() => setType('home')}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white bg-gradient-to-r ${getMethodColor('home')}`}>
-                          {getMethodIcon('home')}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-800">Tại nhà</h4>
-                          <p className="text-sm text-gray-600">Nhân viên y tế đến tận nơi lấy mẫu</p>
-                        </div>
-                        <div className={`w-6 h-6 rounded-full border-2 ${
-                          type === 'home' ? 'border-green-500 bg-green-500' : 'border-gray-300'
-                        } flex items-center justify-center`}>
-                          {type === 'home' && <div className="w-3 h-3 bg-white rounded-full"></div>}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Self Collection Option */}
-                  {serviceType === 'civil' && (
-                    <div 
-                      className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-300 ${
-                        type === 'self' 
-                          ? 'border-purple-500 bg-purple-50 shadow-lg' 
-                          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-                      }`}
-                      onClick={() => setType('self')}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white bg-gradient-to-r ${getMethodColor('self')}`}>
-                          {getMethodIcon('self')}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-800">Tự lấy mẫu</h4>
-                          <p className="text-sm text-gray-600">Tự thực hiện lấy mẫu tại nhà</p>
-                        </div>
-                        <div className={`w-6 h-6 rounded-full border-2 ${
-                          type === 'self' ? 'border-purple-500 bg-purple-500' : 'border-gray-300'
-                        } flex items-center justify-center`}>
-                          {type === 'self' && <div className="w-3 h-3 bg-white rounded-full"></div>}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Address Input for Home Collection */}
-              {type === 'home' && (
-                <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                  <label className="block text-lg font-semibold text-gray-800 mb-4">
-                    <FaMapMarkerAlt className="inline w-5 h-5 mr-2 text-green-600" />
-                    Địa chỉ lấy mẫu
-                  </label>
-                  
-                  <div className="space-y-4">
-                    <div className="flex space-x-3">
-                      <input
-                        type="text"
-                        value={collection_address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="flex-1 p-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all"
-                        placeholder="Nhập địa chỉ chi tiết..."
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowGoogleMap(true)}
-                        className="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all shadow-lg flex items-center space-x-2"
-                      >
-                        <FaGoogle className="w-4 h-4" />
-                        <span>Maps</span>
-                      </button>
-                    </div>
-                    
-                    {mapAddress && (
-                      <div className="p-4 bg-white rounded-lg border border-green-200">
-                        <p className="text-sm text-gray-600 mb-1">Địa chỉ từ Google Maps:</p>
-                        <p className="font-medium text-gray-800">{mapAddress}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Date Selection for Home Collection Only */}
-              {/* {type === 'home' && (
-                <div>
-                  <label className="block text-lg font-semibold text-gray-800 mb-4">
-                    <FaCalendarAlt className="inline w-5 h-5 mr-2 text-green-600" />
-                    Chọn ngày
-                  </label>
+                <div className="flex gap-2">
                   <input
-                    type="date"
-                    value={bookingDate}
-                    onChange={(e) => setBookingDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all"
+                    type="text"
+                    value={collection_address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a]"
+                    placeholder="Nhập địa chỉ chi tiết..."
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowGoogleMap(true)}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm flex items-center gap-2"
+                  >
+                    <FaGoogle className="w-3 h-3" />
+                    Maps
+                  </button>
                 </div>
-              )} */}
+                {mapAddress && (
+                  <div className="mt-2 p-2 bg-gray-50 rounded border">
+                    <p className="text-xs text-gray-600">Địa chỉ từ Google Maps:</p>
+                    <p className="text-sm font-medium">{mapAddress}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-              {/* Week Selection for Facility and Self */}
-              {(type === 'facility' || type === 'self') && (
-                <div className="w-full">
-                  <label className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <FaCalendarAlt className="inline w-5 h-5 mr-2 text-teal-600" />
-                    Chọn tuần
-                  </label>
-                  <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden shadow-md w-full">
+          {/* Date Selection for Facility and Self */}
+          {(type === 'facility' || type === 'self') && (
+            <>
+              <div className="flex gap-5 mb-4 flex-wrap">
+                <div className="flex-1 min-w-[300px] flex flex-col">
+                  <label className="font-semibold mb-1.5 text-[#1caf9a]">Chọn khoảng ngày</label>
+                  <div className="border border-gray-300 rounded overflow-hidden">
                     <DateRange
                       editableDateInputs={false}
                       onChange={handleRangeChange}
@@ -437,7 +324,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                       ranges={range}
                       minDate={new Date()}
                       showDateDisplay={false}
-                      rangeColors={['#14b8a6']}
+                      rangeColors={['#1caf9a']}
                       showMonthAndYearPickers={true}
                       showPreview={false}
                       months={1}
@@ -445,26 +332,22 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                     />
                   </div>
                   {range[0].startDate && range[0].endDate && (
-                    <div className="mt-3 p-4 bg-teal-50 rounded-lg border border-teal-200 shadow-sm">
-                      <p className="text-sm font-medium text-teal-800">
+                    <div className="mt-2 p-2 bg-[#1caf9a]/10 rounded border border-[#1caf9a]/20">
+                      <p className="text-sm font-medium text-[#1caf9a]">
                         Tuần đã chọn: {format(range[0].startDate, 'dd/MM/yyyy')} - {format(range[0].endDate, 'dd/MM/yyyy')}
                       </p>
                     </div>
                   )}
                 </div>
-              )}
+              </div>
 
-              {/* Time Slot Selection for Facility and Self */}
-              {(type === 'facility' || type === 'self') && range[0].startDate && range[0].endDate && (
-                <div>
-                  <label className="block text-lg font-semibold text-gray-800 mb-4">
-                    <FaClock className="inline w-5 h-5 mr-2 text-teal-600" />
-                    Chọn khung giờ
-                  </label>
-                  
-                  {availableSlots?.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {availableSlots.map((slot) => {
+              {/* Time Slot Selection */}
+              {range[0].startDate && range[0].endDate && (
+                <div className="flex flex-col mb-4">
+                  <label className="font-semibold mb-1.5 text-[#1caf9a]">Chọn thời gian khám</label>
+                  <div className="flex gap-2 flex-wrap">
+                    {availableSlots?.length > 0 ? (
+                      availableSlots.map((slot) => {
                         const timeSlot = slot.time_slots?.[0];
                         
                         let displayTime = 'Invalid time';
@@ -481,7 +364,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                           displayTime = `${startHour}:${paddedStartMinute} - ${endHour}:${paddedEndMinute}`;
                           
                           const date = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
-                          displayDate = format(date, 'dd/MM/yyyy');
+                          displayDate = format(date, 'dd/MM');
 
                           staffNames = slot.staff_profile_ids.map(staff => 
                             `${staff.user_id.first_name} ${staff.user_id.last_name}`
@@ -489,90 +372,127 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                         }
 
                         return (
-                          <div
+                          <button
                             key={slot._id}
-                            className={`relative cursor-pointer rounded-xl border-2 p-5 transition-all duration-300 transform hover:scale-105 ${
+                            type="button"
+                            className={`p-3 border border-gray-300 rounded text-sm cursor-pointer text-gray-800 select-none transition-all ${
                               selectedSlot === slot._id
-                                ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-cyan-50 shadow-xl'
-                                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg'
+                                ? 'bg-[#1caf9a] text-white border-[#1caf9a] font-bold'
+                                : 'bg-gray-100 hover:bg-gray-200'
                             }`}
                             onClick={() => setSelectedSlot(slot._id)}
                           >
-                            <div className="text-center space-y-3">
-                              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${
-                                selectedSlot === slot._id 
-                                  ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white' 
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}>
-                                <FaCalendarAlt className="w-5 h-5" />
-                              </div>
-                              
-                              <div>
-                                <div className={`font-bold text-lg ${
-                                  selectedSlot === slot._id ? 'text-teal-700' : 'text-gray-800'
-                                }`}>
-                                  {displayDate}
+                            <div className="text-center">
+                              <div>{displayDate}</div>
+                              <div className="text-xs">{displayTime}</div>
+                              {staffNames.length > 0 && (
+                                <div className="text-xs mt-1">
+                                  {staffNames.join(', ')}
                                 </div>
-                                <div className={`font-semibold ${
-                                  selectedSlot === slot._id ? 'text-teal-600' : 'text-gray-600'
-                                }`}>
-                                  {displayTime}
-                                </div>
-                              </div>
-
-                              <div className="space-y-1">
-                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                  Bác sĩ phụ trách
-                                </p>
-                                {staffNames.map((name, index) => (
-                                  <div key={index} className={`text-sm font-medium ${
-                                    selectedSlot === slot._id ? 'text-teal-700' : 'text-gray-700'
-                                  }`}>
-                                    {name}
-                                  </div>
-                                ))}
-                              </div>
+                              )}
                             </div>
-
-                            {selectedSlot === slot._id && (
-                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center">
-                                <div className="w-3 h-3 bg-white rounded-full"></div>
-                              </div>
-                            )}
-                          </div>
+                          </button>
                         );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-                      <FaClock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 font-medium">
+                      })
+                    ) : (
+                      <div className="text-center py-6 text-gray-500">
                         Không có khung giờ trống cho khoảng thời gian đã chọn
-                      </p>
-                    </div>
-                  )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
+            </>
+          )}
 
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-8 py-3 text-gray-600 hover:text-gray-800 font-semibold transition-colors"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="px-8 py-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-cyan-700 transition-all transform hover:scale-105 shadow-lg"
-                >
-                  Xác nhận đặt lịch
-                </button>
-              </div>
-            </form>
+          {/* Section 3: Thông tin khách hàng */}
+          <div className="font-bold text-lg border-b-2 border-[#1caf9a] pb-1 mb-5 text-[#1caf9a]">
+            Thông tin khách hàng
           </div>
-        </div>
+          
+          <div className="flex gap-5 mb-4 flex-wrap">
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                Họ và tên <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Họ và tên"
+                required
+                value={`${user?.first_name || ''} ${user?.last_name || ''}`}
+                disabled
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] bg-gray-100"
+              />
+            </div>
+
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                Ngày tháng năm sinh <span className="text-red-500">*</span>
+              </label>
+              <input
+                placeholder="Ngày tháng năm sinh"
+                required
+                value={user?.dob || ''}
+                disabled
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] bg-gray-100"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-5 mb-4 flex-wrap">
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">
+                Số điện thoại <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Nhập số điện thoại"
+                required
+                value={user?.phone_number || ''}
+                disabled
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] bg-gray-100"
+              />
+              <div className="text-xs text-gray-600 mt-1">
+                *Lưu ý: Hệ thống chỉ gửi SMS được cho Thuê bao nội địa, nếu quý
+                khách sử dụng thuê bao quốc tế, vui lòng bổ sung email chính xác để
+                nhận mã xác nhận và thông tin xác nhận đặt lịch.
+              </div>
+            </div>
+
+            <div className="flex-1 min-w-[300px] flex flex-col">
+              <label className="font-semibold mb-1.5 text-[#1caf9a]">Email</label>
+              <input 
+                type="email" 
+                placeholder="Nhập email" 
+                value={user?.email || ''} 
+                disabled
+                className="border border-gray-300 rounded px-2.5 py-2 text-sm text-gray-800 outline-[#1caf9a] bg-gray-100"
+              />
+            </div>
+          </div>
+
+          {/* Checkbox Agreement */}
+          <div className="flex items-start gap-2.5 mt-4 text-xs leading-tight">
+            <input type="checkbox" id="agree" required className="mt-0.5" />
+            <label htmlFor="agree" className="text-xs leading-tight">
+              Tôi đã đọc và đồng ý với{" "}
+              <a href="#" className="text-[#1caf9a] no-underline hover:underline" target="_blank" rel="noreferrer">
+                Chính sách bảo vệ dữ liệu cá nhân của Blood
+              </a>{" "}
+              và chấp thuận để Blood xử lý dữ liệu cá nhân của tôi theo quy định của
+              pháp luật về bảo vệ dữ liệu cá nhân.{" "}
+              <span className="text-red-500">*</span>
+            </label>
+          </div>
+
+          {/* Submit Button */}
+          <button 
+            className="bg-[#1caf9a] text-white font-semibold border-none px-7 py-2.5 text-sm rounded-full cursor-pointer mx-auto mt-7 block transition-colors hover:bg-[#179e8a] disabled:bg-gray-400 disabled:cursor-not-allowed" 
+            type="submit"
+          >
+            Gửi thông tin
+          </button>
+        </form>
 
         {/* Google Map Modal */}
         {showGoogleMap && (
