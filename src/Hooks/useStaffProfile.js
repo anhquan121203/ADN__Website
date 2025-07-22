@@ -10,11 +10,9 @@ import { useCallback } from "react";
 
 const useStaffProfile = () => {
   const dispatch = useDispatch();
-  const { staffProfile, loading, error, total } = useSelector(
+  const { staffProfile, staffLabTech, loading, error, total } = useSelector(
     (state) => state.staffProfile
   );
-
-  const { staffLabTech } = useSelector((state) => state.staffProfile);
 
 
   // get list staff profile
