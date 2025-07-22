@@ -1,0 +1,329 @@
+.guide-page {
+  margin-top: 180px;
+  width: 100%;
+}
+
+.guide-page__hero {
+  width: 100%;
+  height: 400px;
+  background-image: url("../../../assets/images/guide-banner.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+.guide-page__hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(9, 68, 94, 0.75);
+  z-index: 1;
+}
+.guide-page__hero h1 {
+  position: relative;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  z-index: 2;
+  text-transform: uppercase;
+  font-family: "Segoe UI Black", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Reset and base */
+.guide-page__container,
+.guide-page__container * {
+  box-sizing: border-box;
+}
+
+.guide-page__container a {
+  color: #0645ad;
+  text-decoration: none;
+}
+
+.guide-page__container a:hover,
+.guide-page__container a:focus {
+  text-decoration: underline;
+}
+
+.guide-page__container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* Main container */
+.guide-page__container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  /* margin-top: 200px; */
+}
+
+/* Headings */
+.guide-page__heading {
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 700;
+  color: #004080;
+  margin: 1rem 0;
+}
+.guide-page__section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #004080;
+  margin-top: 2rem;
+  border-bottom: 3px solid #004080;
+  padding-bottom: 0.3rem;
+}
+
+/* Banner Section */
+.guide-page__banner {
+  background: linear-gradient(135deg, #004080 0%, #0077cc 100%);
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
+}
+.guide-page__banner-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin: 0.5rem 0 1rem;
+}
+.guide-page__highlight {
+  color: #ffdd57;
+  font-size: 1.9rem;
+  font-weight: 900;
+  margin: 0.6rem 0;
+}
+.guide-page__note {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffd857dd;
+  margin-top: 0.4rem;
+}
+.guide-page__banner-img {
+  max-width: 300px;
+  margin: 1rem auto 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Explanation section */
+.guide-page__explanation img,
+.guide-page__section-img {
+  margin: 1.5rem 0;
+  max-width: 1100px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Bảng giá================================================================= */
+/* Section content styling */
+.guide-page .content-section {
+  margin-bottom: 3rem;
+}
+
+/* Price list table styling */
+.guide-page table.price-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 3rem;
+  box-shadow: 0 2px 14px rgb(0 0 0 / 0.08);
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.guide-page table.price-list thead {
+  background-color: #004aad;
+  color: white;
+}
+
+.guide-page table.price-list th,
+.guide-page table.price-list td {
+  text-align: left;
+  padding: 0.85rem 1.2rem;
+  border-bottom: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+.guide-page table.price-list th {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.guide-page table.price-list tbody tr:hover {
+  background-color: #f3f8ff;
+}
+
+.guide-page table.price-list tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Feature list */
+.guide-page__features-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  gap: 1rem;
+  justify-content: space-between;
+}
+.guide-page__feature-item {
+  flex: 1 1 calc(33% - 1rem);
+  background-color: #f0f8ff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 3px 8px rgba(0, 102, 204, 0.15);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #004080;
+  font-weight: 600;
+  min-height: 160px;
+}
+.guide-page__feature-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+}
+.guide-page__feature-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.8rem;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.15));
+  border-radius: 50%;
+  background: white;
+  padding: 0.5rem;
+}
+
+/* Consultation section */
+.guide-page__consultation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 3rem;
+  border: 2px solid #0077cc;
+  border-radius: 16px;
+  background: #e6f0ff;
+  overflow: hidden;
+}
+.guide-page__consultation-left,
+.guide-page__consultation-right {
+  flex: 1 1 400px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.guide-page__consultation-left p {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #004aad;
+  margin: 1rem 0 0.5rem;
+}
+.guide-page__consultation-left small {
+  font-weight: 400;
+  color: #0050a6dd;
+  margin-bottom: 1rem;
+}
+.guide-page__btn {
+  background-color: #004aad;
+  color: white;
+  font-weight: 700;
+  padding: 0.75rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  max-width: 220px;
+  margin-top: 1rem;
+  align-self: flex-start;
+  box-shadow: 0 5px 14px #004aadaa;
+  transition: background-color 0.3s ease;
+}
+.guide-page__btn:hover,
+.guide-page__btn:focus {
+  background-color: #003378;
+  outline: none;
+}
+
+/* Form */
+#consultForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#consultForm label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #003366;
+}
+.guide-page__input,
+.guide-page__select {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #0077cc;
+  border-radius: 8px;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+.guide-page__input:focus,
+.guide-page__select:focus {
+  outline: none;
+  border-color: #004aad;
+  background-color: #f0f8ff;
+}
+.guide-page__submit {
+  background-color: #0077cc;
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 5px 14px #0077ccaa;
+  transition: background-color 0.3s ease;
+}
+.guide-page__submit:hover,
+.guide-page__submit:focus {
+  background-color: #005ea5;
+  outline: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .guide-page__features-list {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .guide-page__feature-item {
+    flex: 1 1 100%;
+  }
+  .guide-page__consultation {
+    flex-direction: column;
+  }
+  .guide-page__consultation-left,
+  .guide-page__consultation-right {
+    flex: 1 1 100%;
+    padding: 1rem 1.5rem;
+  }
+  .guide-page__banner-img {
+    max-width: 100%;
+  }
+}

@@ -18,6 +18,8 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const { services, searchListService } = useService();
 
+  console.log(services)
+
   useEffect(() => {
     if (isModalOpen) {
       form.resetFields();
@@ -41,8 +43,8 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
       const values = await form.validateFields();
       const formData = new FormData();
 
-      values.price = Number(values.price)
-      values.estimated_time = Number(values.estimated_time)
+      values.price = Number(values.price);
+      values.estimated_time = Number(values.estimated_time);
 
       // Append all normal fields
       Object.keys(values).forEach((key) => {
@@ -63,7 +65,7 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
         form.resetFields();
         handleCancel();
         toast.success("Tạo thiết bị mới thành công");
-      } 
+      }
     } catch (error) {
       toast.error("Tạo thiết bị mới không thành công!");
     }
@@ -103,7 +105,10 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
         <Form.Item label="Dịch vụ cha" name="parent_service_id">
           <Select placeholder="Chọn dịch vụ cha">
             {services
-              ?.filter((service) => !service.parent_service_id)
+              ?.filter(
+                (service) =>
+                  !service.parent_service_id || !service.parent_service_id._id
+              )
               .map((service) => (
                 <Select.Option key={service._id} value={service._id}>
                   {service.name}
@@ -157,7 +162,6 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
             </Select.Option>
           </Select>
         </Form.Item>
-
 
         <Form.Item
           label="Thời gian ước tính"

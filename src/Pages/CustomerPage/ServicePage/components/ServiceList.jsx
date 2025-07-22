@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import AppointmentModal from "../../CreateAppointment/AppointmentModal";
-import CreateAppointmentAdmin from "../../CreateAppointment/CreateAppointmentAdmin/CreateApoinmentAdmin";
+import CreateAppointmentAdmin from "../../CreateAppointment/CreateAppointmentAdmin/CreateApointmentAdmin";
 import ServiceSearch from "./ServiceSearch";
 import { Link, useNavigate } from "react-router-dom";
 
-const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onPageChange }) => {
+const ServiceList = ({
+  services,
+  loading,
+  onSearch,
+  totalPages,
+  currentPage,
+  onPageChange,
+}) => {
   const [selectedService, setSelectedService] = useState(null);
   const navigate = useNavigate();
 
@@ -19,14 +26,14 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
 
   const handleClearSearch = () => {
     if (onSearch) {
-      onSearch('');
+      onSearch("");
     }
   };
 
   return (
     <div className="flex-1 p-6">
       {/* Search Component */}
-      <ServiceSearch 
+      <ServiceSearch
         onSearch={handleSearch}
         onClear={handleClearSearch}
         placeholder="Tìm kiếm dịch vụ theo tên hoặc mô tả..."
@@ -43,7 +50,9 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
         <>
           {services.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-gray-500 text-lg mb-2">Không tìm thấy dịch vụ nào</div>
+              <div className="text-gray-500 text-lg mb-2">
+                Không tìm thấy dịch vụ nào
+              </div>
               <p className="text-gray-400">Thử tìm kiếm với từ khóa khác</p>
             </div>
           ) : (
@@ -113,15 +122,11 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
                         setSelectedService(service);
                         if (service.type === "civil") {
                           setIsCivilModalOpen(true);
-                        } else if (service && service.type === "administrative") {
-                          navigate("/create-appointment-admin", {
-                            state: {
-                              serviceId: service._id,
-                              serviceName: service.name,
-                              serviceType: service.type,
-                              collectionAddress: service.sample_method,
-                            },
-                          });
+                        } else if (
+                          service &&
+                          service.type === "administrative"
+                        ) {
+                          setIsAdminModalOpen(true);
                         }
                       }}
                       className="w-full bg-[#00a9a4] text-white py-2 px-4 rounded-lg hover:bg-[#1c6b68] transition-colors duration-300"
@@ -143,8 +148,8 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
                 disabled={currentPage === 1}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200'
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200"
                 }`}
               >
                 Trước
@@ -184,8 +189,8 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200'
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-teal-50 hover:text-teal-600 border border-gray-200"
                 }`}
               >
                 Sau
@@ -224,20 +229,19 @@ const ServiceList = ({ services, loading, onSearch, totalPages, currentPage, onP
       )}
 
       {/* Modal dành cho hành chính */}
-      {/* {selectedService && selectedService.type === "administrative" && (
-        // <CreateAppointmentAdmin
-        //   visible={isAdminModalOpen}
-        //   onCancel={() => {
-        //     setIsAdminModalOpen(false);
-        //     setSelectedService(null);
-        //   }}
-        //   serviceId={selectedService._id}
-        //   serviceName={selectedService.name}
-        //   serviceType={selectedService.type}
-        // />
-
-        <Link to="/create-appointment-admin" />
-      )} */}
+      {selectedService && selectedService.type === "administrative" && (
+        <CreateAppointmentAdmin
+          visible={isAdminModalOpen}
+          onCancel={() => {
+            setIsAdminModalOpen(false);
+            setSelectedService(null);
+          }}
+          serviceId={selectedService._id}
+          serviceName={selectedService.name}
+          serviceType={selectedService.type}
+          collectionAddress={selectedService.sample_method}
+        />
+      )}
     </div>
   );
 };

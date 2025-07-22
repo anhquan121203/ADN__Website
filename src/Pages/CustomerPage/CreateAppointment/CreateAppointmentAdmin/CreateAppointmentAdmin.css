@@ -1,3 +1,15 @@
+/* header */
+.modal-header-line {
+  background-color: #00a9a4;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+
 .booking-form {
   max-width: 900px;
   margin: 20px auto;
@@ -9,7 +21,7 @@
   color: #333;
   font-size: 14px;
   line-height: 1.4;
-  margin-top: 230px;
+  /* margin-top: 230px; */
 }
 
 .section-title {

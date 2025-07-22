@@ -145,14 +145,9 @@ const serviceSlice = createSlice({
         state.error = null;
       })
       .addCase(searchService.fulfilled, (state, action) => {
-        state.loading = false;
-        const allServices = action.payload.pageData || [];
-        
-        // Filter only services with parent_service_id
-        const filteredServices = allServices.filter(service => service.parent_service_id);
-        
-        state.services = filteredServices; // Lấy danh sách service đã filter
-        state.total = filteredServices.length; // Đếm số service có parent_service_id
+        state.loading = false;      
+        state.services = action.payload.pageData; // Lấy danh sách service
+        state.total = action.payload.pageInfo.totalItems; // Tổng service
       })
       .addCase(searchService.rejected, (state, action) => {
         state.loading = false;

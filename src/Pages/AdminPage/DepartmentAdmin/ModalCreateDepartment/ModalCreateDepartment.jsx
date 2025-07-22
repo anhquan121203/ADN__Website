@@ -12,7 +12,7 @@ const ModalCreateDepartment = ({
 }) => {
   const editorRef = useRef(null);
   const [form] = Form.useForm();
-  const API_TINY_URL = import.meta.env.VITE_TINY;
+  const API_TINY_URL = import.meta.env.VITE_TINY_API_KEY;
 
   useEffect(() => {
     if (isModalOpen) {
