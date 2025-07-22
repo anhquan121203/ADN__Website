@@ -44,8 +44,6 @@ function DepartmentDashboard() {
             date_to: null,
           });
 
-          console.log("Thống kê:", dept.name, statRes);
-
           chartDataTemp.push({
             name: dept.name?.slice(0, 15) || dept._id,
             st: statRes?.data?.totalStaff ?? 0,

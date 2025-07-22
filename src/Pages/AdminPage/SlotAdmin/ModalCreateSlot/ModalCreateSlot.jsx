@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import useAdmin from "../../../../Hooks/useAdmin";
 import useStaffProfile from "../../../../Hooks/useStaffProfile";
 import dayjs from "dayjs";
+import useDepartment from "../../../../Hooks/useDepartment";
 
 const { RangePicker } = DatePicker;
 
@@ -22,6 +23,8 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const { staffProfile, getListStaff } = useStaffProfile();
+  // const { departments, searchListDepartment } = useDepartment();
+
 
   useEffect(() => {
     getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
@@ -37,7 +40,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      values.appointment_limit = Number(values.appointment_limit)
+      values.appointment_limit = Number(values.appointment_limit);
 
       const date = values.date;
       const [startTime, endTime] = values.time_range;
@@ -102,7 +105,8 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           <Select placeholder="Chọn nhân viên" mode="multiple">
             {staffProfile?.map((staff) => (
               <Select.Option key={staff._id} value={staff._id}>
-                {`${staff.user_id?.first_name} ${staff.user_id?.last_name}`}
+                {`${staff.user_id?.first_name} ${staff.user_id?.last_name} - `}
+                {staff.department_id.name}
               </Select.Option>
             ))}
           </Select>
@@ -131,7 +135,6 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
         >
           <TimePicker.RangePicker format="HH:mm" />
         </Form.Item>
-
 
         <Form.Item
           label="Giới hạn cuộc hẹn"

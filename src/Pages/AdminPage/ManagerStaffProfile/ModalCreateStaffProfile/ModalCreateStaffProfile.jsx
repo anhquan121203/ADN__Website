@@ -75,7 +75,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Tạo hồ sơ nhân viên"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
