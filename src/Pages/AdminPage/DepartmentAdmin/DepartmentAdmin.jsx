@@ -3,12 +3,14 @@ import { Button, Input, Modal, Pagination, Select, Spin } from "antd";
 import "./DepartmentAdmin.css";
 import useDepartment from "../../../Hooks/useDepartment";
 import { toast } from "react-toastify";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRegEye } from "react-icons/fa";
 import ModalCreateDepartment from "./ModalCreateDepartment/ModalCreateDepartment";
 import ModalEditDepartment from "./ModalEditDepartment/ModalEditDepartment";
 import ModalDetailDepartment from "./ModalDetailDepartment/ModalDetailDepartment";
 import useAdmin from "../../../Hooks/useAdmin";
 import FilterDepartment from "./FilterDepartment/FilterDepartment";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 function DepartmentAdmin() {
   const { accounts, searchUserPag } = useAdmin();
@@ -40,11 +42,12 @@ function DepartmentAdmin() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // State cho thống kê
-  const [statDepartmentId, setStatDepartmentId] = useState(null);
+  // const [statDepartmentId, setStatDepartmentId] = useState(null);
   const [statDateFrom, setStatDateFrom] = useState("");
   const [statDateTo, setStatDateTo] = useState("");
   const [statLoading, setStatLoading] = useState(false);
   const [statResult, setStatResult] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true); //dùng cho Dữ liệu thống kê phòng ban
   // State cho danh sách quản lý
   const [selectedManagerId, setSelectedManagerId] = useState(null);
   const [managerDepartmentsList, setManagerDepartmentsList] = useState([]);
@@ -70,6 +73,56 @@ function DepartmentAdmin() {
       pageSize: pageSize,
     });
   };
+  // hàm tính này mặc định sẽ lấy dữ liệu từ ngày hiện tại đến 7 ngày sau
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    setStatDateFrom(today);
+    const defaultToDate = new Date(today);
+    defaultToDate.setDate(defaultToDate.getDate() + 7);
+    setStatDateTo(defaultToDate.toISOString().split("T")[0]);
+    getTotalDepartmentCount();
+  }, [departments]);
+
+  useEffect(() => {
+    if (isInitialLoad && statDateFrom && statDateTo) {
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad, statDateFrom, statDateTo]);
+
+  //xử lý việc gọi quản lý đầu tiên
+  useEffect(() => {
+    if (!selectedManagerId && accounts.length > 0) {
+      const firstManagerId = accounts[0]._id;
+      setSelectedManagerId(firstManagerId);
+
+      // Gọi API để lấy danh sách phòng ban của người quản lý đầu tiên
+      (async () => {
+        setManagerLoading(true);
+        try {
+          const res = await getDepartmentsByManagerId(firstManagerId);
+          const departments = res?.data?.data?.departments || [];
+          const count = res?.data?.data?.count ?? departments.length;
+
+          if (
+            res?.success &&
+            res?.data?.success &&
+            Array.isArray(departments)
+          ) {
+            setManagerDepartmentsList(departments);
+            setManagerDepartmentsCount(count);
+          } else {
+            throw new Error("Không thể lấy danh sách phòng ban.");
+          }
+        } catch (error) {
+          setManagerDepartmentsList([]);
+          setManagerDepartmentsCount(0);
+          toast.error(error.message || "Lỗi khi gọi API.");
+          console.error(error);
+        }
+        setManagerLoading(false);
+      })();
+    }
+  }, [accounts]);
 
   // Handle Add Department
   const handleAddDepartment = async (departmentData) => {
@@ -159,25 +212,25 @@ function DepartmentAdmin() {
   };
 
   // Xử lý thống kê
-  const handleStatistic = async () => {
-    if (!statDepartmentId) {
-      toast.error("Vui lòng chọn phòng ban!");
-      return;
-    }
-    setStatLoading(true);
-    const res = await fetchDepartmentStatistics({
-      departmentId: statDepartmentId,
-      date_from: statDateFrom || undefined,
-      date_to: statDateTo || undefined,
-    });
-    setStatLoading(false);
-    if (res.success) {
-      setStatResult(res.data);
-    } else {
-      setStatResult(null);
-      toast.error("Không lấy được dữ liệu thống kê!");
-    }
-  };
+  // const handleStatistic = async () => {
+  //   if (!statDepartmentId) {
+  //     toast.error("Vui lòng chọn phòng ban!");
+  //     return;
+  //   }
+  //   setStatLoading(true);
+  //   const res = await fetchDepartmentStatistics({
+  //     departmentId: statDepartmentId,
+  //     date_from: statDateFrom || undefined,
+  //     date_to: statDateTo || undefined,
+  //   });
+  //   setStatLoading(false);
+  //   if (res.success) {
+  //     setStatResult(res.data);
+  //   } else {
+  //     setStatResult(null);
+  //     toast.error("Không lấy được dữ liệu thống kê!");
+  //   }
+  // };
 
   const fetchManagers = () => {
     searchUserPag({
@@ -187,7 +240,7 @@ function DepartmentAdmin() {
       },
       searchCondition: {
         keyword: "",
-        role: "manager",
+        role: ["manager"],
         is_verified: true,
         status: true,
         is_deleted: false,
@@ -199,10 +252,8 @@ function DepartmentAdmin() {
   }, []);
 
   useEffect(() => {
-    // if (isAddModalOpen || isEditModalOpen) {
     fetchManagers();
-    // }
-  }, [isAddModalOpen, isEditModalOpen]);
+  }, []);
 
   useEffect(() => {
     searchListDepartment({
@@ -254,7 +305,12 @@ function DepartmentAdmin() {
                   <tr key={item._id}>
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item.name}</td>
-                    <td>{item.description}</td>
+                    {/* <td>{item.description}</td> */}
+                    <td>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      />
+                    </td>
                     <td>
                       {item.manager_id ? (
                         <>
@@ -269,26 +325,20 @@ function DepartmentAdmin() {
                       )}
                     </td>
                     <td>
-                      <button
-                        className="detail-department"
-                        onClick={() => handleDetailDepartment(item._id)}
-                      >
-                        Chi tiết
-                      </button>
-                      <button
-                        className="edit-department"
-                        onClick={() => openEditModal(item)}
-                        style={{ marginLeft: 8 }}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="delete-department"
-                        style={{ marginLeft: 8 }}
-                        onClick={() => openDeleteModal(item)}
-                      >
-                        Xóa
-                      </button>
+                      <div className="action-admin-department">
+                        <FaRegEye
+                          className="icon-admin-department"
+                          onClick={() => handleDetailDepartment(item._id)}
+                        />
+                        <CiEdit
+                          className="icon-admin-department"
+                          onClick={() => openEditModal(item)}
+                        />
+                        <MdDeleteOutline
+                          className="icon-admin-department"
+                          onClick={() => openDeleteModal(item)}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -314,7 +364,7 @@ function DepartmentAdmin() {
         />
 
         {/* Dữ liệu thống kê phòng ban */}
-        <div className="department-container" style={{ marginTop: 40 }}>
+        {/* <div className="department-container" style={{ marginTop: 40 }}>
           <h2 className="table-title">Dữ liệu thống kê phòng ban</h2>
           <div
             style={{
@@ -328,7 +378,7 @@ function DepartmentAdmin() {
               style={{ minWidth: 220 }}
               placeholder="Chọn phòng ban"
               value={statDepartmentId}
-              onChange={setStatDepartmentId}
+              onChange={(value) => setStatDepartmentId(value)}
               options={departments.map((d) => ({
                 value: d._id,
                 label: d.name,
@@ -339,7 +389,16 @@ function DepartmentAdmin() {
             <Input
               type="date"
               value={statDateFrom}
-              onChange={(e) => setStatDateFrom(e.target.value)}
+              onChange={(e) => {
+                const newDateFrom = e.target.value;
+                setStatDateFrom(newDateFrom);
+                const dateFrom = new Date(newDateFrom);
+                const dateTo = new Date(dateFrom);
+                dateTo.setDate(dateFrom.getDate() + 7);
+                if (new Date(statDateTo) <= dateFrom) {
+                  setStatDateTo(dateTo.toISOString().split("T")[0]);
+                }
+              }}
               placeholder="Từ ngày"
               style={{ minWidth: 140 }}
               max={statDateTo || undefined}
@@ -347,10 +406,23 @@ function DepartmentAdmin() {
             <Input
               type="date"
               value={statDateTo}
-              onChange={(e) => setStatDateTo(e.target.value)}
+              onChange={(e) => {
+                const newDateTo = e.target.value;
+                setStatDateTo(newDateTo);
+                const dateFrom = new Date(statDateFrom);
+                if (new Date(newDateTo) <= dateFrom) {
+                  const dateTo = new Date(dateFrom);
+                  dateTo.setDate(dateFrom.getDate() + 1);
+                  setStatDateTo(dateTo.toISOString().split("T")[0]);
+                }
+              }}
               placeholder="Đến ngày"
               style={{ minWidth: 140 }}
-              min={statDateFrom || undefined}
+              min={
+                statDateFrom
+                  ? new Date(statDateFrom).toISOString().split("T")[0]
+                  : undefined
+              }
             />
             <Button type="primary" onClick={handleStatistic}>
               Thống kê
@@ -384,10 +456,10 @@ function DepartmentAdmin() {
               <div style={{ color: "#888" }}>Chưa có dữ liệu thống kê</div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Danh sách phòng ban của quản lý */}
-        <div className="department-container" style={{ marginTop: 24 }}>
+        {/* <div className="department-container" style={{ marginTop: 24 }}>
           <h2 className="table-title">Phòng ban do quản lý phụ trách</h2>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <Select
@@ -469,7 +541,7 @@ function DepartmentAdmin() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Modal create department */}
@@ -496,6 +568,15 @@ function DepartmentAdmin() {
         isModalOpen={isDetailModalOpen}
         handleCancel={() => setIsDetailModalOpen(false)}
         selectedDepartment={selectedDepartment}
+        statDateFrom={statDateFrom}
+        setStatDateFrom={setStatDateFrom}
+        statDateTo={statDateTo}
+        setStatDateTo={setStatDateTo}
+        statLoading={statLoading}
+        setStatLoading={setStatLoading}
+        statResult={statResult}
+        setStatResult={setStatResult}
+        fetchDepartmentStatistics={fetchDepartmentStatistics}
       />
 
       {/* Modal Delete */}

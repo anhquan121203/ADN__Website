@@ -76,7 +76,7 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
         contentStyle={{ width: "70%" }}
         size="middle"
       >
-        <Descriptions.Item label="ID Dịch vụ">{slug}</Descriptions.Item>
+        <Descriptions.Item label="ID Dịch vụ">{name || "N/A"}</Descriptions.Item>
         <Descriptions.Item label="Loại">{renderType(type)}</Descriptions.Item>
 
         <Descriptions.Item label="Tên">{name || "N/A"}</Descriptions.Item>

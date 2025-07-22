@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+}
+
+.blogger-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 170px 1rem 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  background: #f9faff;
+  color: #333;
+  position: relative;
+  min-height: 100vh;
+  z-index: 10;
+}
+
+.blogger-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.blogger-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: #117a8b;
+}
+
+.blogger-header p {
+  font-size: 1rem;
+  color: #444;
+}
+
+.blogger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+.blogger-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.05);
+  padding: 1.25rem 1.5rem 1.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.blogger-card:hover {
+  transform: translateY(-5px);
+}
+
+.blogger-thumbnail {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 5px;
+  display: block;
+  background: #f8f8f8;
+}
+
+.blogger-content {
+  padding: 0;
+}
+
+.blogger-content h3 {
+  font-size: 1.5rem;
+  margin: 0.25rem 0 0.8rem;
+  color: #117a8b;
+}
+
+.blogger-short {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1.1rem;
+  height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blogger-link {
+  display: inline-block;
+  background-color: #1ca2b8;
+  color: white;
+  padding: 0.45rem 1rem;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.blogger-link:hover,
+.blogger-link:focus {
+  background-color: #128295;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .blogger-container {
+    padding-top: 180px;
+    margin: 1rem auto;
+  }
+  .blogger-header h1 {
+    font-size: 2rem;
+  }
+  .blogger-thumbnail {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .blogger-container {
+    padding-top: 200px;
+  }
+  .blogger-header h1 {
+    font-size: 1.8rem;
+  }
+  .blogger-thumbnail {
+    max-height: 180px;
+  }
+}

@@ -1,17 +1,17 @@
 import React, { use, useEffect, useState } from "react";
-import "./ManagerStaffProfile.css";
+// import "./AdminStaffProfile.css";
 import { Modal, Pagination, Popconfirm, Select, Switch, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import useStaffProfile from "../../../Hooks/useStaffProfile";
-import ModalCreateStaffProfile from "./ModalCreateStaffProfile/ModalCreateStaffProfile";
-import ModalEditStaffProfile from "./ModalEditStaffProfile/ModalEditStaffProfile";
-import ModalDetailStafProfile from "./ModalDetailStafProfile/ModalDetailStafProfile";
-import FilterStaffProfile from "./FilterStaffProfile/FilterStaffProfile";
+import CreateStaffManager from "./CreateStaffManager/CreateStaffManager";
+import FilterStaffManager from "./FilterStaffManager/FilterStaffManager";
+import EditStaffManager from "./EditStaffManager/EditStaffManager";
+import DetailStaffManager from "./DetailStaffManager/DetailStaffManager";
 
-function ManagerStaffProfile() {
+function StaffProfileManager() {
   const {
     staffProfile,
     total,
@@ -167,7 +167,7 @@ function ManagerStaffProfile() {
       {/* Table account */}
       <div className="form-account">
         <div>
-          <FilterStaffProfile
+          <FilterStaffManager
             filters={filters}
             setFilters={setFilters}
             onSearch={handleSearch}
@@ -201,7 +201,7 @@ function ManagerStaffProfile() {
                     </td>
                     <td>{item.department_id?.name}</td>
                     <td>{item.job_title}</td>
-                    <td>{item.salary.toLocaleString()} VNĐ</td>
+                    <td>{item.salary.toLocaleString("vi-VN")} VNĐ</td>
                     <td>{renderStatus(item.status)}</td>
 
                     <td>
@@ -241,20 +241,20 @@ function ManagerStaffProfile() {
         />
 
         {/* modal add staff */}
-        <ModalCreateStaffProfile
+        <CreateStaffManager
           isModalOpen={isAddModalOpen}
           handleCancel={() => setIsAddModalOpen(false)}
           handleAdd={handleAddStaff}
         />
 
-        <ModalEditStaffProfile
+        <EditStaffManager
           isModalOpen={isEditModalOpen}
           handleCancel={() => setIsEditModalOpen(false)}
           handleEdit={handleEditStaff}
           editStaffProfile={editStaff}
         />
 
-        <ModalDetailStafProfile
+        <DetailStaffManager
           isModalOpen={isDetailModalOpen}
           handleCancel={() => setIsDetailModalOpen(false)}
           selectedStaff={selectedStaff}
@@ -264,4 +264,4 @@ function ManagerStaffProfile() {
   );
 }
 
-export default ManagerStaffProfile;
+export default StaffProfileManager;

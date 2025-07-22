@@ -13,6 +13,7 @@ import paymentSlice from "../Feartures/payment/paymentSlice";
 import caseSlice from "../Feartures/case/caseSlice";
 import resultSlice from "../Feartures/result/resultSlice";
 import dashboardSlice from "../Feartures/dashboard/dashboardSlice";
+import blogsSlice from "../Feartures/blog/blogSlice";
 
 export const store = configureStore({
   reducer: {
@@ -30,7 +31,10 @@ export const store = configureStore({
     payment: paymentSlice.reducer,
     case: caseSlice.reducer,
     result: resultSlice.reducer,
+    blog: blogsSlice.reducer,
     dashboard: dashboardSlice.reducer, 
     
   },
 });
+
+

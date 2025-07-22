@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
+import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalCreateDepartment = ({
   isModalOpen,
@@ -8,28 +10,32 @@ const ModalCreateDepartment = ({
   managers = [],
   loadingManagers = false,
 }) => {
+  const editorRef = useRef(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (isModalOpen) form.resetFields();
+    if (isModalOpen) {
+      form.resetFields();
+      editorRef.current?.setContent("");
+    }
   }, [isModalOpen, form]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      // console.log("Dữ liệu gửi lên tạo phòng ban:", values);
-      // console.log(
-      //   "manager_id gửi lên:",
-      //   values.manager_id,
-      //   typeof values.manager_id
-      // );
+      const description = editorRef.current?.getContent();
+
       await handleAdd({
         name: values.name,
-        description: values.description,
+        description,
         manager_id: values.manager_id,
       });
+
       form.resetFields();
-    } catch (error) {}
+      editorRef.current?.setContent("");
+    } catch (error) {
+      console.error("Submit error:", error);
+    }
   };
 
   return (
@@ -54,13 +60,37 @@ const ModalCreateDepartment = ({
         >
           <Input placeholder="Nhập tên phòng ban" />
         </Form.Item>
-        <Form.Item
-          label="Mô tả"
-          name="description"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
-        >
-          <Input placeholder="Nhập mô tả phòng ban" />
+
+        <Form.Item label="Mô tả" required tooltip="Nhập mô tả cho phòng ban">
+          <Editor
+            apiKey={API_TINY_URL}
+            onInit={(evt, editor) => (editorRef.current = editor)}
+            init={{
+              height: 200,
+              menubar: false,
+              plugins:
+                "advlist autolink lists link image charmap preview anchor " +
+                "searchreplace visualblocks code fullscreen " +
+                "insertdatetime table help wordcount",
+              toolbar:
+                "undo redo | blocks | bold italic forecolor | " +
+                "alignleft aligncenter alignright alignjustify | " +
+                "bullist numlist outdent indent | link image | removeformat | fullscreen | help",
+              placeholder: "Nhập mô tả phòng ban...",
+              branding: false,
+              promotion: false,
+              resize: false,
+              statusbar: false,
+              paste_data_images: false,
+              automatic_uploads: false,
+              file_picker_types: "image",
+              valid_elements:
+                "p,br,strong,b,em,i,u,ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote," +
+                "a[href|title],img[src|alt|title|width|height|style]",
+            }}
+          />
         </Form.Item>
+
         <Form.Item
           label="Quản lý phòng ban"
           name="manager_id"

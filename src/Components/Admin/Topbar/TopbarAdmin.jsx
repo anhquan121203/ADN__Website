@@ -8,16 +8,34 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../../Feartures/user/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { FcManager } from "react-icons/fc";
+import { signOut } from "../../../Api/authApi";
 
 function TopbarAdmin() {
-  const { firstName, lastName, email } = useAuth();
+  const { firstName, lastName, email, avatar } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  // const handleLogout = async () => {
+  //   await signOut();
+  //   dispatch(logout());
+  //   navigate("/login");
+  // };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout API error:", error);
+      toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+    } finally {
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      dispatch(logout());
+      navigate("/login");
+      toast.success("Đăng xuất thành công!");
+    }
   };
 
   return (
@@ -44,7 +62,7 @@ function TopbarAdmin() {
         >
           <div className="topbar-profile">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5B_Pc5VMtw8ze74lJ0QYcdSif6a3qMQ-kg&s"
+              src={avatar || "https://via.placeholder.com/40"}
               alt="Profile"
             />
             <span>

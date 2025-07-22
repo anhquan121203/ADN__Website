@@ -14,3 +14,4 @@ export const API_BASE_URL = "https://restapi-dnatesting.up.railway.app";
 
 // await checkAPIAvailability();
 // export { API_BASE_URL };
+ export const API_TINY_URL = "kbwlwa1zq81ve1dux2j21b9fp7dfn1pmhzn70qnoiajaousx";

@@ -11,10 +11,10 @@ import {
 import "./Header.css";
 import { IoPhonePortraitOutline } from "react-icons/io5";
 import { FaFacebookF, FaRegUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../../Feartures/user/authSlice";
 import { signOut } from "../../../Api/authApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useAuth from "../../../Hooks/useAuth";
 import { FaCircleUser } from "react-icons/fa6";
 import { FcManager } from "react-icons/fc";
@@ -24,6 +24,8 @@ function Header() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [isOpen, setIsOpen] = useState();
   const { role, firstName, lastName, avatar } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   // console.log(role);
 
   const toggleDropdown = () => {
@@ -41,9 +43,19 @@ function Header() {
   }, []);
 
   const handleLogout = async () => {
-    await signOut();
-    dispatch(logout());
-    navigate("/");
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout API error:", error);
+      toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+    } finally {
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      dispatch(logout());
+      navigate("/");
+      toast.success("Đăng xuất thành công!");
+    }
   };
 
   // Add this function to get avatar fallback
@@ -96,41 +108,41 @@ function Header() {
       {/* HEADER TOP */}
       <div className="header-top">
         <div className="header__top-menu">
-        <div className="top-menu">
-          <div className="top--logo">
-            <img src={logo} alt="ADN Logo" />
+          <div className="top-menu">
+            <div className="top--logo">
+              <img src={logo} alt="ADN Logo" />
+            </div>
+
+            {/* INFOR MENU */}
+            <div className="top--infor">
+              <div className="top--infor__item">
+                <CiClock2 className="header-icon" />
+                <div>
+                  <strong>Thứ 2 - Thứ 6 08:00-19:00</strong>
+                  <br />
+                  <span>Thứ 7 và Chủ nhật - Đóng cửa</span>
+                </div>
+              </div>
+
+              <div className="top--infor__item">
+                <CiLocationOn className="header-icon" />
+                <div>
+                  <strong>Địa chỉ</strong>
+                  <br />
+                  <span>123 Đường ABC, Quận 1, TP.HCM</span>
+                </div>
+              </div>
+
+              <div className="top--infor__item">
+                <IoPhonePortraitOutline className="header-icon" />
+                <div>
+                  <strong>Điện thoại</strong>
+                  <br />
+                  <span>+84 123 456 789</span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* INFOR MENU */}
-          <div className="top--infor">
-            <div className="top--infor__item">
-              <CiClock2 className="header-icon" />
-              <div>
-                <strong>Thứ 2 - Thứ 6 08:00-19:00</strong>
-                <br />
-                <span>Thứ 7 và Chủ nhật - Đóng cửa</span>
-              </div>
-            </div>
-
-            <div className="top--infor__item">
-              <CiLocationOn className="header-icon" />
-              <div>
-                <strong>Địa chỉ</strong>
-                <br />
-                <span>123 Đường ABC, Quận 1, TP.HCM</span>
-              </div>
-            </div>
-
-            <div className="top--infor__item">
-              <IoPhonePortraitOutline className="header-icon" />
-              <div>
-                <strong>Điện thoại</strong>
-                <br />
-                <span>+84 123 456 789</span>
-              </div>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
 
