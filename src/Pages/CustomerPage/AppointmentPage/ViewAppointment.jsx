@@ -96,14 +96,17 @@ export default function ViewAppointment() {
       key: "requestKit",
       render: (_, record) => (
         <div style={{ display: "flex", gap: 8 }}>
-          <button
-            onClick={() => {
-              setSelectedAppointmentId(record._id);
-              setShowModal(true);
-            }}
-          >
-            Nhận bộ dụng cụ
-          </button>
+          {/* Chỉ hiển thị button "Nhận bộ dụng cụ" khi type là "self" hoặc "home" */}
+          {(record.type === "self" || record.type === "home") && (
+            <button
+              onClick={() => {
+                setSelectedAppointmentId(record._id);
+                setShowModal(true);
+              }}
+            >
+              Nhận bộ dụng cụ
+            </button>
+          )}
           <button
             onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}
             style={{ marginLeft: 8 }}

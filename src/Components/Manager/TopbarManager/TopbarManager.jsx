@@ -12,16 +12,27 @@ import { FaUser } from "react-icons/fa";
 import { useSidebar } from "../../../Contexts/SidebarContext";
 
 function TopbarManager() {
-  const { firstName, lastName, email } = useAuth();
+  const { firstName, lastName, email, avatar } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { toggleSidebar, sidebarCollapsed } = useSidebar();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
+  const handleLogout = async () => {
+      try {
+        await signOut();
+      } catch (error) {
+        console.error("Logout API error:", error);
+        toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+      } finally {
+  
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        dispatch(logout());
+        navigate("/login");
+        toast.success("Đăng xuất thành công!");
+      }
+    };
 
   return (
     <div className="topbar-container">
@@ -41,7 +52,7 @@ function TopbarManager() {
         >
           <div className="topbar-profile">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5B_Pc5VMtw8ze74lJ0QYcdSif6a3qMQ-kg&s"
+              src={avatar || "https://via.placeholder.com/40"}
               alt="Profile"
             />
             <span>

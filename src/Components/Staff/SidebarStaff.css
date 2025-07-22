@@ -18,7 +18,7 @@
 }
 
 /* Brand Section */
-.top-staff {
+.sidebar-staff.top-staff {
   display: flex;
   align-items: center;
   margin-bottom: 24px;
@@ -30,7 +30,7 @@
   justify-content: center;
 }
 
-.top-staff__icon {
+.sidebar-staff.top-staff__icon {
   width: 32px;
   height: 32px;
   background-color: #059669;
@@ -43,7 +43,7 @@
   flex-shrink: 0;
 }
 
-.title-name {
+.sidebar-staff.title-name {
   margin-left: 12px;
   font-weight: 700;
   font-size: 18px;
@@ -58,21 +58,21 @@
   margin: 0;
 }
 
-.nav-staff {
+.sidebar-staff.nav-staff {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-.nav-staff .nav-group {
+.sidebar-staff.nav-staff .nav-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 /* Menu Item */
-.nav-item {
+.sidebar-staff.nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -92,19 +92,19 @@
   gap: 0;
 }
 
-.nav-item:hover {
+.sidebar-staff.nav-item:hover {
   background-color: #f1f5f9;
   color: #1e293b;
 }
 
 /* Active Item */
-.nav-item.active {
+.sidebar-staff.nav-item.active {
   background-color: #dcfce7;
   color: #059669;
   font-weight: 600;
 }
 
-.nav-label {
+.sidebar-staff.nav-label {
   margin-top: 32px;
   margin-bottom: 8px;
   font-size: 12px;
@@ -115,13 +115,13 @@
 }
 
 /* dropdown service */
-.dropdown-left {
+.sidebar-staff.dropdown-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.dropdown-service {
+.sidebar-staff.dropdown-service {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -138,34 +138,34 @@
   padding: 10px;
 }
 
-.dropdown-service:hover {
+.sidebar-staff.dropdown-service:hover {
   background-color: #f1f5f9;
   color: #1e293b;
 }
 
-.dropdown-service.open {
+.sidebar-staff.dropdown-service.open {
   background-color: #dcfce7;
   color: #059669;
   font-weight: 600;
 }
 
-.dropdown-icon {
+.sidebar-staff .dropdown-icon {
   transition: transform 0.3s ease;
   font-size: 16px;
 }
 
-.dropdown-icon.rotate {
+.sidebar-staff .dropdown-icon.rotate {
   transform: rotate(180deg);
 }
 
-.submenu {
+.sidebar-staff .submenu {
   display: flex;
   flex-direction: column;
   padding-left: 28px;
   margin-top: 4px;
 }
 
-.submenu-item {
+.sidebar-staff .submenu-item {
   font-size: 14px;
   color: #334155;
   padding: 6px 0;
@@ -173,11 +173,11 @@
   transition: color 0.2s;
 }
 
-.submenu-item:hover {
+.sidebar-staff .submenu-item:hover {
   color: #059669;
 }
 
-.submenu-item.active {
+.sidebar-staff .submenu-item.active {
   color: #059669;
   font-weight: 600;
 }
