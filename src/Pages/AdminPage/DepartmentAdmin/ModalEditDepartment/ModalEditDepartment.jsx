@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-// import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalEditDepartment = ({
   isModalOpen,
