@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Modal, Button, Form, Input, Select } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { API_TINY_URL } from "../../../../Constants/apiConstants";
 
 const ModalEditDepartment = ({
   isModalOpen,
@@ -13,12 +12,13 @@ const ModalEditDepartment = ({
 }) => {
   const [form] = Form.useForm();
   const editorRef = useRef(null);
+  const API_TINY_URL = import.meta.env.VITE_TINY_API_KEY;
 
   useEffect(() => {
     if (isModalOpen && editDepartment) {
       form.setFieldsValue({
         name: editDepartment.name,
-        description: editDepartment.description, // Sẽ set lại vào editor sau
+        description: editDepartment.description, 
         manager_id:
           typeof editDepartment.manager_id === "object"
             ? editDepartment.manager_id._id

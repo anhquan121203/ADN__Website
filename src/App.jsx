@@ -68,6 +68,8 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
+import GuidePage from "./Pages/CustomerPage/GuidePage/GuidePage";
+import KitManager from "./Pages/ManagerPage/KitManager/KitManager";
 
 
 
@@ -130,6 +132,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<Blogger />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
+          <Route path="/guide" element={<GuidePage />} />
         </Route>
 
         <Route path="/customer" element={<CustomerSideBarLayout />}>
@@ -196,6 +199,7 @@ function App() {
           <Route path="service-manager" element={<ServiceManager />} />
           <Route path="staff-profile-manager" element={<StaffProfileManager />} />
           <Route path="slot-manager" element={<SlotManager />} />
+          <Route path="kit-manager" element={<KitManager />} />
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}

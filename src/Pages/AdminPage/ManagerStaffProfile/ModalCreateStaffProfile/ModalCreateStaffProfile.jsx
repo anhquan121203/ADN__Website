@@ -21,6 +21,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
   const { departments, searchListDepartment } = useDepartment();
   const { staffLabTech, getListStaffLabTech } = useStaffProfile();
 
+  
   const filterStaff = staffLabTech.filter(
     (staff) =>
       staff.staff_profile === null &&

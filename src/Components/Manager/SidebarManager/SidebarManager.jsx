@@ -26,9 +26,7 @@ function SidebarManager() {
   const [appointmentDropdownOpen, setAppointmentDropdownOpen] = useState(false);
 
   useEffect(() => {
-    setAppointmentDropdownOpen(
-      pathname.startsWith("/manager/appointments")
-    );
+    setAppointmentDropdownOpen(pathname.startsWith("/manager/appointments"));
   }, [pathname]);
 
   // Close dropdowns when sidebar is collapsed
@@ -40,13 +38,17 @@ function SidebarManager() {
 
   return (
     <div>
-      <aside className={`sidebar-manager ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <aside
+        className={`sidebar-manager ${sidebarCollapsed ? "collapsed" : ""}`}
+      >
         <div>
           <div className="top-manager">
             <div className="top-manager__icon">
               <FaUserTie />
             </div>
-            {!sidebarCollapsed && <span className="title-name">Manager Dashboard</span>}
+            {!sidebarCollapsed && (
+              <span className="title-name">Manager Dashboard</span>
+            )}
           </div>
           <nav className="nav-manager">
             <div className="nav-group">
@@ -68,7 +70,7 @@ function SidebarManager() {
                 }`}
                 title={sidebarCollapsed ? "Quản lý nhân viên" : ""}
               >
-                <FaUserTie  /> {!sidebarCollapsed && "Quản lý nhân viên"}
+                <FaUserTie /> {!sidebarCollapsed && "Quản lý nhân viên"}
               </Link>
 
               <Link
@@ -78,7 +80,7 @@ function SidebarManager() {
                 }`}
                 title={sidebarCollapsed ? "Quản lý lịch làm việc" : ""}
               >
-                <CiCalendar  /> {!sidebarCollapsed && "Quản lý lịch làm việc"}
+                <CiCalendar /> {!sidebarCollapsed && "Quản lý lịch làm việc"}
               </Link>
 
               {/* Quản lý đặt lịch */}
@@ -87,7 +89,9 @@ function SidebarManager() {
                   className={`nav-item dropdown-service ${
                     appointmentDropdownOpen ? "open" : ""
                   }`}
-                  onClick={() => setAppointmentDropdownOpen(!appointmentDropdownOpen)}
+                  onClick={() =>
+                    setAppointmentDropdownOpen(!appointmentDropdownOpen)
+                  }
                 >
                   <div className="dropdown-left">
                     <FaCog />
@@ -126,6 +130,17 @@ function SidebarManager() {
                 title={sidebarCollapsed ? "Phòng ban" : ""}
               >
                 <FaAddressBook /> {!sidebarCollapsed && "Phòng ban"}
+              </Link>
+
+              {/* Kit test */}
+              <Link
+                to="/manager/kit-manager"
+                className={`nav-item ${
+                  pathname === "/manager/kit-manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Quản lý dụng cụ y tế" : ""}
+              >
+                <CiCalendar /> {!sidebarCollapsed && "Quản lý dụng cụ y tế"}
               </Link>
             </div>
           </nav>

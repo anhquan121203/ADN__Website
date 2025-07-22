@@ -1,13 +1,14 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CreateAppointmentAdmin from "../../../Pages/CustomerPage/CreateAppointment/CreateAppointmentAdmin/CreateApoinmentAdmin";
+import CreateAppointmentAdmin from "../../../Pages/CustomerPage/CreateAppointment/CreateAppointmentAdmin/CreateApointmentAdmin";
 
 const CreateAppointmentAdminComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   // Lấy state được truyền từ navigate
-  const { serviceId, serviceName, serviceType, collectionAddress } = location.state || {};
+  const { serviceId, serviceName, serviceType, collectionAddress } =
+    location.state || {};
 
   // Nếu thiếu dữ liệu, chuyển về trang trước
   if (!serviceId) {

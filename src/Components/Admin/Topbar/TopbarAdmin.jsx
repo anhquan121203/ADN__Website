@@ -16,11 +16,6 @@ function TopbarAdmin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const handleLogout = async () => {
-  //   await signOut();
-  //   dispatch(logout());
-  //   navigate("/login");
-  // };
 
   const handleLogout = async () => {
     try {

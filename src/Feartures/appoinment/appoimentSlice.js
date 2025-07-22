@@ -95,7 +95,7 @@ export const assignStaffToAppointment = createAsyncThunk(
       const token = localStorage.getItem("accessToken");
       const response = await axios.put(
         `${API_BASE_URL}/api/appointment/${appointmentId}/assign-staff`,
-        { staff_id: staffId },
+        { staff_ids: [staffId] },
         {
           headers: {
             Authorization: `Bearer ${token}`,

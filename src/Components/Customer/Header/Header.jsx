@@ -175,7 +175,7 @@ function Header() {
             </li>
             <li>
               <Link
-                to="/news"
+                to="/guide"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 Hướng dẫn xét nghiệm

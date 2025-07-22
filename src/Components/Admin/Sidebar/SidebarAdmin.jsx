@@ -82,7 +82,7 @@ function SidebarAdmin() {
                   <Link
                     to="/admin/admin-staff-profile"
                     className={`submenu-item ${
-                      pathname === "/admin/manager-staff-profile"
+                      pathname === "/admin/admin-staff-profile"
                         ? "active"
                         : ""
                     }`}
