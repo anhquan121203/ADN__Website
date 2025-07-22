@@ -20,10 +20,10 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
     try {
       const result = await getAppointmentDetail(appointmentId);
       if (!result.success) {
-        message.error('Failed to load appointment details');
+        message.error('Không thể tải chi tiết cuộc hẹn');
       }
     } catch (error) {
-      message.error('Error loading appointment details');
+      message.error('Lỗi khi tải chi tiết cuộc hẹn');
     } finally {
       setLocalLoading(false);
     }
@@ -65,7 +65,7 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
         open={open}
         onCancel={onClose}
         footer={null}
-        title="Appointment Details"
+        title="Chi tiết cuộc hẹn"
         width={900}
       >
         <div className="flex justify-center items-center py-8">
@@ -88,7 +88,7 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
       footer={null}
       title={
         <div className="flex items-center gap-2">
-          <Title level={4} className="mb-0">Appointment Details</Title>
+          <Title level={4} className="mb-0">Chi tiết cuộc hẹn</Title>
           <Tag color="blue">{appointment._id?.slice(-8)}</Tag>
         </div>
       }
@@ -96,70 +96,80 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
       destroyOnClose
     >
       <div className="space-y-6">
-        {/* Basic Appointment Information */}
+        {/* Thông tin cơ bản cuộc hẹn */}
         <Card 
           title={
             <div className="flex items-center gap-2">
               <CalendarOutlined />
-              <span>Appointment Information</span>
+              <span>Thông tin cuộc hẹn</span>
             </div>
           } 
           size="small"
         >
           <Row gutter={[16, 16]}>
             <Col span={8}>
-              <Text type="secondary">Appointment ID:</Text>
+              <Text type="secondary">Mã cuộc hẹn:</Text>
               <div><Text code>{appointment._id}</Text></div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Type:</Text>
-              <div><Tag color={appointment.type === 'facility' ? 'blue' : 'orange'}>{appointment.type.toUpperCase()}</Tag></div>
+              <Text type="secondary">Loại:</Text>
+              <div><Tag color={appointment.type === 'facility' ? 'blue' : 'orange'}>{appointment.type === 'facility' ? 'Tại cơ sở' : 'Tại nhà'}</Tag></div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Collection Address:</Text>
-              <div>{appointment.collection_address || 'N/A'}</div>
+              <Text type="secondary">Địa chỉ lấy mẫu:</Text>
+              <div>{appointment.collection_address || 'Không có'}</div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Appointment Date:</Text>
+              <Text type="secondary">Ngày hẹn:</Text>
               <div>{new Date(appointment.appointment_date).toLocaleString()}</div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Status:</Text>
-              <div><Tag color={getStatusColor(appointment.status)}>{appointment.status.toUpperCase()}</Tag></div>
+              <Text type="secondary">Trạng thái:</Text>
+              <div><Tag color={getStatusColor(appointment.status)}>{(() => {
+                switch (appointment.status) {
+                  case 'confirmed': return 'Đã xác nhận';
+                  case 'sample_collected': return 'Đã thu mẫu';
+                  case 'sample_received': return 'Đã nhận mẫu';
+                  case 'processing': return 'Đang xử lý';
+                  case 'completed': return 'Hoàn thành';
+                  case 'cancelled': return 'Đã hủy';
+                  default: return appointment.status;
+                }
+              })()}</Tag></div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Payment Status:</Text>
-              <div><Tag color={getPaymentStatusColor(appointment.payment_status)}>{appointment.payment_status?.toUpperCase() || 'UNKNOWN'}</Tag></div>
+              <Text type="secondary">Thanh toán:</Text>
+              <div><Tag color={getPaymentStatusColor(appointment.payment_status)}>{appointment.payment_status === 'paid' ? 'Đã thanh toán' : appointment.payment_status === 'unpaid' ? 'Chưa thanh toán' : appointment.payment_status === 'refunded' ? 'Đã hoàn tiền' : 'Không rõ'}</Tag></div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Created:</Text>
+              <Text type="secondary">Ngày tạo:</Text>
               <div>{new Date(appointment.created_at).toLocaleString()}</div>
             </Col>
             <Col span={8}>
-              <Text type="secondary">Last Updated:</Text>
+              <Text type="secondary">Cập nhật lần cuối:</Text>
               <div>{new Date(appointment.updated_at).toLocaleString()}</div>
             </Col>
           </Row>
         </Card>
 
-        {/* Customer Information */}
+        {/* Thông tin khách hàng */}
         {appointment.user_id && (
           <Card 
             title={
               <div className="flex items-center gap-2">
                 <UserOutlined />
-                <span>Customer Information</span>
+                <span>Thông tin khách hàng</span>
               </div>
             } 
             size="small"
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Text type="secondary">Customer ID:</Text>
+                <Text type="secondary">Mã khách hàng:</Text>
                 <div><Text code>{appointment.user_id._id?.slice(-8)}</Text></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Full Name:</Text>
+                <Text type="secondary">Họ tên:</Text>
                 <div><strong>{appointment.user_id.first_name} {appointment.user_id.last_name}</strong></div>
               </Col>
               <Col span={8}>
@@ -167,67 +177,67 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
                 <div>{appointment.user_id.email}</div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Phone Number:</Text>
+                <Text type="secondary">Số điện thoại:</Text>
                 <div>{appointment.user_id.phone_number}</div>
               </Col>
             </Row>
           </Card>
         )}
 
-        {/* Service Information */}
+        {/* Thông tin dịch vụ */}
         {appointment.service_id && (
           <Card 
             title={
               <div className="flex items-center gap-2">
                 <ToolOutlined />
-                <span>Service Information</span>
+                <span>Thông tin dịch vụ</span>
               </div>
             } 
             size="small"
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Text type="secondary">Service Name:</Text>
+                <Text type="secondary">Tên dịch vụ:</Text>
                 <div><strong>{appointment.service_id.name}</strong></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Price:</Text>
-                <div><Tag color="green">${appointment.service_id.price}</Tag></div>
+                <Text type="secondary">Giá:</Text>
+                <div><Tag color="green">{appointment.service_id.price} VND</Tag></div>
               </Col>
             </Row>
           </Card>
         )}
 
-        {/* Slot Information */}
+        {/* Thông tin ca */}
         {appointment.slot_id && (
           <Card 
             title={
               <div className="flex items-center gap-2">
                 <CalendarOutlined />
-                <span>Time Slot Information</span>
+                <span>Thông tin ca hẹn</span>
               </div>
             } 
             size="small"
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Text type="secondary">Slot ID:</Text>
+                <Text type="secondary">Mã ca:</Text>
                 <div><Text code>{appointment.slot_id._id?.slice(-8)}</Text></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Status:</Text>
+                <Text type="secondary">Trạng thái:</Text>
                 <div><Tag color="blue">{appointment.slot_id.status}</Tag></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Appointment Limit:</Text>
+                <Text type="secondary">Giới hạn số lượng:</Text>
                 <div>{appointment.slot_id.appointment_limit}</div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Assigned Count:</Text>
+                <Text type="secondary">Số lượng đã phân công:</Text>
                 <div>{appointment.slot_id.assigned_count}</div>
               </Col>
               <Col span={16}>
-                <Text type="secondary">Time Slots:</Text>
+                <Text type="secondary">Khung giờ:</Text>
                 <div>
                   {appointment.slot_id.time_slots?.map((timeSlot, index) => (
                     <Tag key={index} color="purple">
@@ -240,24 +250,24 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
           </Card>
         )}
 
-        {/* Staff Information */}
+        {/* Thông tin nhân viên */}
         {appointment.staff_id && (
           <Card 
             title={
               <div className="flex items-center gap-2">
                 <UserOutlined />
-                <span>Assigned Staff Information</span>
+                <span>Thông tin nhân viên được phân công</span>
               </div>
             } 
             size="small"
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Text type="secondary">Staff ID:</Text>
+                <Text type="secondary">Mã nhân viên:</Text>
                 <div><Text code>{appointment.staff_id._id?.slice(-8)}</Text></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Staff Name:</Text>
+                <Text type="secondary">Tên nhân viên:</Text>
                 <div><strong>{appointment.staff_id.first_name} {appointment.staff_id.last_name}</strong></div>
               </Col>
               <Col span={8}>
@@ -265,31 +275,31 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
                 <div>{appointment.staff_id.email}</div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Phone Number:</Text>
+                <Text type="secondary">Số điện thoại:</Text>
                 <div>{appointment.staff_id.phone_number}</div>
               </Col>
             </Row>
           </Card>
         )}
 
-        {/* Laboratory Technician Information */}
+        {/* Thông tin kỹ thuật viên */}
         {appointment.laboratory_technician_id && (
           <Card 
             title={
               <div className="flex items-center gap-2">
                 <UserOutlined />
-                <span>Laboratory Technician Information</span>
+                <span>Thông tin kỹ thuật viên xét nghiệm</span>
               </div>
             } 
             size="small"
           >
             <Row gutter={[16, 16]}>
               <Col span={8}>
-                <Text type="secondary">Lab Tech ID:</Text>
+                <Text type="secondary">Mã KTV:</Text>
                 <div><Text code>{appointment.laboratory_technician_id._id?.slice(-8)}</Text></div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Lab Tech Name:</Text>
+                <Text type="secondary">Tên KTV:</Text>
                 <div><strong>{appointment.laboratory_technician_id.first_name} {appointment.laboratory_technician_id.last_name}</strong></div>
               </Col>
               <Col span={8}>
@@ -297,7 +307,7 @@ const ModalAppointmentDetail = ({ open, onClose, appointmentId }) => {
                 <div>{appointment.laboratory_technician_id.email}</div>
               </Col>
               <Col span={8}>
-                <Text type="secondary">Phone Number:</Text>
+                <Text type="secondary">Số điện thoại:</Text>
                 <div>{appointment.laboratory_technician_id.phone_number}</div>
               </Col>
             </Row>

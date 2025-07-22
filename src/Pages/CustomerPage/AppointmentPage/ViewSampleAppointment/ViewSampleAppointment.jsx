@@ -307,7 +307,7 @@ const ViewSampleAppointment = () => {
             </Button>
           )}
 
-          {appointmentStatus === "sample_received" && paymentStatus !== "paid" && (
+          {appointmentStatus === "sample_received" && paymentStatus !== "paid" && paymentStatus !== "cancelled" && (
             <Button
               type="primary"
               size="large"

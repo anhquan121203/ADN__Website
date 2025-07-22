@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Checkbox, Button, message, Space, Typography, Card, Row, Col, Tag, Input } from 'antd';
 import { ExperimentOutlined, WarningOutlined } from '@ant-design/icons';
+import { toast } from 'react-toastify';
 import useResult from '../../../../../Hooks/useResult';
 
 const { Title, Text } = Typography;
@@ -49,27 +50,65 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
 
   const handleStartTesting = async () => {
     if (selectedSampleIds.length === 0) {
-      message.warning('Please select at least one sample to start testing');
+      toast.warning('Vui lòng chọn ít nhất một mẫu để bắt đầu xét nghiệm');
       return;
     }
 
     const testingData = {
       testing_start_date: new Date().toISOString(),
-      notes: notes || "Starting DNA testing process",
+      notes: notes || "Bắt đầu quy trình xét nghiệm DNA",
       sample_ids: selectedSampleIds
     };
 
     try {
       const result = await startTesting(testingData);
       if (result.success) {
-        message.success('Testing process started successfully!');
-        onSuccess(); // Callback to refresh the parent component
-        onClose();
+        // Kiểm tra kết quả chi tiết
+        const { data } = result;
+        const successCount = data.results.filter(r => r.success).length;
+        const failedCount = data.results.filter(r => !r.success).length;
+        
+        if (successCount > 0 && failedCount === 0) {
+          // Tất cả thành công
+          toast.success(`Đã bắt đầu xét nghiệm thành công cho ${successCount} mẫu!`);
+          onSuccess();
+          onClose();
+        } else if (successCount > 0 && failedCount > 0) {
+          // Một phần thành công
+          toast.warning(`Đã bắt đầu xét nghiệm cho ${successCount} mẫu, ${failedCount} mẫu thất bại`);
+          
+          // Hiển thị chi tiết lỗi
+          data.results.forEach(result => {
+            if (!result.success) {
+              toast.error(`Mẫu ${result.id.slice(-6)}: ${result.error}`, {
+                autoClose: 8000,
+              });
+            }
+          });
+          
+          // Đóng modal sau khi hiển thị lỗi
+          setTimeout(() => {
+            onSuccess();
+            onClose();
+          }, 2000);
+        } else {
+          // Tất cả thất bại
+          toast.error(`Không thể bắt đầu xét nghiệm cho bất kỳ mẫu nào. ${failedCount} mẫu thất bại`);
+          
+          // Hiển thị chi tiết lỗi
+          data.results.forEach(result => {
+            if (!result.success) {
+              toast.error(`Mẫu ${result.id.slice(-6)}: ${result.error}`, {
+                autoClose: 8000,
+              });
+            }
+          });
+        }
       } else {
-        message.error(result.error || 'Failed to start testing process');
+        toast.error(result.error || 'Không thể bắt đầu quy trình xét nghiệm');
       }
     } catch (error) {
-      message.error('An error occurred while starting the testing process');
+      toast.error('Đã xảy ra lỗi khi bắt đầu quy trình xét nghiệm');
     }
   };
 
@@ -102,7 +141,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
       title={
         <div className="flex items-center gap-2">
           <ExperimentOutlined className="text-purple-600" />
-          <span>Start Testing Process</span>
+          <span>Bắt đầu quy trình xét nghiệm</span>
         </div>
       }
       open={open}
@@ -110,7 +149,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
       width={800}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          Hủy
         </Button>,
         <Button
           key="start"
@@ -120,7 +159,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
           disabled={selectedSampleIds.length === 0}
           onClick={handleStartTesting}
         >
-          Start Testing ({selectedSampleIds.length} samples)
+          Bắt đầu xét nghiệm ({selectedSampleIds.length} mẫu)
         </Button>,
       ]}
     >
@@ -130,10 +169,10 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
           <div className="flex items-start gap-3">
             <WarningOutlined className="text-blue-600 mt-1" />
             <div>
-              <Text strong className="text-blue-800">Testing Process Information</Text>
+              <Text strong className="text-blue-800">Thông tin quy trình xét nghiệm</Text>
               <div className="text-blue-700 mt-1">
-                Starting the testing process will change the status of selected samples to "TESTING" 
-                and update the appointment status accordingly. Only samples with "RECEIVED" status can be tested.
+                Bắt đầu quy trình xét nghiệm sẽ thay đổi trạng thái của các mẫu đã chọn thành "ĐANG XÉT NGHIỆM" 
+                và cập nhật trạng thái cuộc hẹn tương ứng. Chỉ các mẫu có trạng thái "ĐÃ NHẬN" mới có thể được xét nghiệm.
               </div>
             </div>
           </div>
@@ -145,7 +184,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
             <Card>
               <div className="text-center">
                 <div className="text-xl font-bold text-blue-600">{samples.length}</div>
-                <div className="text-gray-500">Total Samples</div>
+                <div className="text-gray-500">Tổng số mẫu</div>
               </div>
             </Card>
           </Col>
@@ -153,7 +192,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
             <Card>
               <div className="text-center">
                 <div className="text-xl font-bold text-green-600">{receivedSamples.length}</div>
-                <div className="text-gray-500">Ready for Testing</div>
+                <div className="text-gray-500">Sẵn sàng xét nghiệm</div>
               </div>
             </Card>
           </Col>
@@ -161,7 +200,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
             <Card>
               <div className="text-center">
                 <div className="text-xl font-bold text-purple-600">{selectedSampleIds.length}</div>
-                <div className="text-gray-500">Selected</div>
+                <div className="text-gray-500">Đã chọn</div>
               </div>
             </Card>
           </Col>
@@ -169,11 +208,11 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
 
         {/* Notes Input */}
         <div>
-          <Title level={5} className="mb-2">Testing Notes</Title>
+          <Title level={5} className="mb-2">Ghi chú xét nghiệm</Title>
           <TextArea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Enter any notes about the testing process (optional)"
+            placeholder="Nhập ghi chú về quy trình xét nghiệm (tùy chọn)"
             rows={3}
             maxLength={500}
             showCount
@@ -185,14 +224,14 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
           <div>
             <div className="flex items-center justify-between mb-3">
               <Title level={5} className="mb-0">
-                Select Samples for Testing ({receivedSamples.length} available)
+                Chọn mẫu để xét nghiệm ({receivedSamples.length} có sẵn)
               </Title>
               <Checkbox
                 indeterminate={indeterminate}
                 onChange={handleCheckAllChange}
                 checked={checkAll}
               >
-                Select All
+                Chọn tất cả
               </Checkbox>
             </div>
 
@@ -209,7 +248,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
                         <div className="flex items-center gap-2">
                           <Text code className="text-xs">{sample._id.slice(-6)}</Text>
                           <Tag color={getTypeColor(sample.type)} size="small">
-                            {sample.type.toUpperCase()}
+                            {sample.type === 'blood' ? 'MÁU' : sample.type === 'saliva' ? 'NƯỚC BỌT' : sample.type === 'hair' ? 'TÓC' : sample.type.toUpperCase()}
                           </Tag>
                           <Tag color="cyan" size="small">
                             {sample.kit_id?.code}
@@ -232,7 +271,7 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
         {nonReceivedSamples.length > 0 && (
           <div>
             <Title level={5} className="text-orange-600">
-              Samples Not Ready for Testing ({nonReceivedSamples.length})
+              Mẫu chưa sẵn sàng để xét nghiệm ({nonReceivedSamples.length})
             </Title>
             <div className="max-h-32 overflow-y-auto border rounded-lg p-3 bg-orange-50">
               <Space direction="vertical" size="small" className="w-full">
@@ -241,10 +280,20 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
                     <div className="flex items-center gap-2">
                       <Text code className="text-xs">{sample._id.slice(-6)}</Text>
                       <Tag color={getTypeColor(sample.type)} size="small">
-                        {sample.type.toUpperCase()}
+                        {sample.type === 'blood' ? 'MÁU' : sample.type === 'saliva' ? 'NƯỚC BỌT' : sample.type === 'hair' ? 'TÓC' : sample.type.toUpperCase()}
                       </Tag>
                       <Tag color={getStatusColor(sample.status)} size="small">
-                        {sample.status.toUpperCase()}
+                        {(() => {
+                          switch (sample.status) {
+                            case 'pending': return 'CHỜ XỬ LÝ';
+                            case 'collected': return 'ĐÃ THU THẬP';
+                            case 'received': return 'ĐÃ NHẬN';
+                            case 'processing': return 'ĐANG XỬ LÝ';
+                            case 'completed': return 'HOÀN THÀNH';
+                            case 'failed': return 'THẤT BẠI';
+                            default: return sample.status.toUpperCase();
+                          }
+                        })()}
                       </Tag>
                     </div>
                     <Text className="text-sm">{sample.person_info?.name}</Text>

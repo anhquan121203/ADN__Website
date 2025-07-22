@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, Button, Space, Tooltip, Card, Tag, Typography, Row, Col, message } from 'antd';
 import { ArrowLeftOutlined, EyeOutlined, ExperimentOutlined } from '@ant-design/icons';
 import useSample from '../../../../Hooks/useSample';
 import ModalDetailSample from '../../../CustomerPage/AppointmentPage/ViewSampleAppointment/ModalDetailSample/ModalDetailSample';
 import ModalStartTesting from './ModalStartTesting/ModalStartTesting';
-
+import { toast } from 'react-toastify';
 const { Title, Text } = Typography;
 
 const getInitial = (name) => {
@@ -59,7 +59,7 @@ const LabTechViewSamplesByAppointment = () => {
   const handleStartTesting = () => {
     const receivedSamples = sampleArray.filter(sample => sample.status === 'received');
     if (receivedSamples.length === 0) {
-      message.warning('No samples with "received" status are available for testing');
+      toast.warning('Không có mẫu nào với trạng thái "đã nhận" để bắt đầu xét nghiệm');
       return;
     }
     setStartTestingModalOpen(true);
@@ -68,7 +68,7 @@ const LabTechViewSamplesByAppointment = () => {
   // Handle start testing success
   const handleStartTestingSuccess = () => {
     fetchSamples(); // Refresh the samples list
-    message.success('Samples updated successfully. Redirecting to samples page...');
+    toast.success('Cập nhật mẫu thành công. Đang chuyển về trang mẫu...');
     setTimeout(() => {
       navigate(-1); // Navigate back to the previous page
     }, 1500);
@@ -96,7 +96,7 @@ const LabTechViewSamplesByAppointment = () => {
   };
 
   if (loading) {
-    return <div className="p-4 sm:p-6 max-w-full overflow-hidden">Loading samples...</div>;
+    return <div className="p-4 sm:p-6 max-w-full overflow-hidden">Đang tải mẫu...</div>;
   }
   
   const sampleArray = Array.isArray(samples) ? samples : [];
@@ -108,20 +108,20 @@ const LabTechViewSamplesByAppointment = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(-1)}
           >
-            Return
+            Quay lại
           </Button>
           <Title level={3} className="mb-0">
-            Sample List for Appointment
+            Danh sách mẫu cho cuộc hẹn
           </Title>
         </div>
-        <div>No samples found for this appointment.</div>
+        <div>Không tìm thấy mẫu nào cho cuộc hẹn này.</div>
       </div>
     );
   }
 
   const columns = [
     {
-      title: 'ID',
+      title: 'Mã',
       dataIndex: '_id',
       key: 'sampleId',
       width: 80,
@@ -132,7 +132,7 @@ const LabTechViewSamplesByAppointment = () => {
       ),
     },
     {
-      title: 'Kit Code',
+      title: 'Mã Kit',
       dataIndex: ['kit_id', 'code'],
       key: 'kitCode',
       width: 100,
@@ -141,16 +141,18 @@ const LabTechViewSamplesByAppointment = () => {
       ),
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       width: 80,
       render: (type) => (
-        <Tag color={getTypeColor(type)} size="small">{type.charAt(0).toUpperCase() + type.slice(1)}</Tag>
+        <Tag color={getTypeColor(type)} size="small">
+          {type === 'blood' ? 'Máu' : type === 'saliva' ? 'Nước bọt' : type === 'hair' ? 'Tóc' : type}
+        </Tag>
       ),
     },
     {
-      title: 'Person',
+      title: 'Người',
       key: 'personInfo',
       width: 180,
       render: (_, record) => {
@@ -181,7 +183,7 @@ const LabTechViewSamplesByAppointment = () => {
       },
     },
     {
-      title: 'Method',
+      title: 'Phương pháp',
       dataIndex: 'collection_method',
       key: 'collectionMethod',
       width: 90,
@@ -190,7 +192,7 @@ const LabTechViewSamplesByAppointment = () => {
       ),
     },
     {
-      title: 'Collection',
+      title: 'Thu thập',
       dataIndex: 'collection_date',
       key: 'collectionDate',
       width: 110,
@@ -202,7 +204,7 @@ const LabTechViewSamplesByAppointment = () => {
       ),
     },
     {
-      title: 'Received',
+      title: 'Nhận',
       dataIndex: 'received_date',
       key: 'receivedDate',
       width: 110,
@@ -213,26 +215,38 @@ const LabTechViewSamplesByAppointment = () => {
             <div className="text-xs text-gray-500">{new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
         ) : (
-          <Text type="secondary" className="text-xs">Not received</Text>
+          <Text type="secondary" className="text-xs">Chưa nhận</Text>
         )
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 90,
       render: (status) => (
-        <Tag color={getStatusColor(status)} size="small">{status.toUpperCase()}</Tag>
+        <Tag color={getStatusColor(status)} size="small">
+          {(() => {
+            switch (status) {
+              case 'pending': return 'Chờ xử lý';
+              case 'collected': return 'Đã thu thập';
+              case 'received': return 'Đã nhận';
+              case 'processing': return 'Đang xử lý';
+              case 'completed': return 'Hoàn thành';
+              case 'failed': return 'Thất bại';
+              default: return status;
+            }
+          })()}
+        </Tag>
       ),
     },
     {
-      title: 'Action',
+      title: 'Hành động',
       key: 'action',
       width: 70,
       fixed: 'right',
       render: (_, record) => (
-        <Tooltip title="View Details">
+        <Tooltip title="Xem chi tiết">
           <Button
             type="text"
             size="small"
@@ -254,10 +268,10 @@ const LabTechViewSamplesByAppointment = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(-1)}
           >
-            Return
+            Quay lại
           </Button>
           <Title level={3} className="mb-0">
-            Sample List for Appointment
+            Danh sách mẫu cho cuộc hẹn
           </Title>
         </div>
         <Button
@@ -266,7 +280,7 @@ const LabTechViewSamplesByAppointment = () => {
           onClick={handleStartTesting}
           disabled={sampleArray.filter(sample => sample.status === 'received').length === 0}
         >
-          Start Testing
+          Bắt đầu xét nghiệm
         </Button>
       </div>
 
@@ -276,7 +290,7 @@ const LabTechViewSamplesByAppointment = () => {
           <Card>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{sampleArray.length}</div>
-              <div className="text-gray-500">Total Samples</div>
+              <div className="text-gray-500">Tổng số mẫu</div>
             </div>
           </Card>
         </Col>
@@ -286,7 +300,7 @@ const LabTechViewSamplesByAppointment = () => {
               <div className="text-2xl font-bold text-orange-600">
                 {sampleArray.filter(s => s.status === 'pending').length}
               </div>
-              <div className="text-gray-500">Pending</div>
+              <div className="text-gray-500">Chờ xử lý</div>
             </div>
           </Card>
         </Col>
@@ -296,7 +310,7 @@ const LabTechViewSamplesByAppointment = () => {
               <div className="text-2xl font-bold text-green-600">
                 {sampleArray.filter(s => s.status === 'received').length}
               </div>
-              <div className="text-gray-500">Ready for Testing</div>
+              <div className="text-gray-500">Sẵn sàng xét nghiệm</div>
             </div>
           </Card>
         </Col>
@@ -306,7 +320,7 @@ const LabTechViewSamplesByAppointment = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {new Set(sampleArray.map(s => s.type)).size}
               </div>
-              <div className="text-gray-500">Sample Types</div>
+              <div className="text-gray-500">Loại mẫu</div>
             </div>
           </Card>
         </Col>
@@ -324,7 +338,7 @@ const LabTechViewSamplesByAppointment = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `${range[0]}-${range[1]} of ${total} samples`,
+              `${range[0]}-${range[1]} của ${total} mẫu`,
             responsive: true,
           }}
           scroll={{ 

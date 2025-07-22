@@ -38,7 +38,7 @@ const PayOSReturn = () => {
                 }
                 return c - 1;
               });
-            }, 5000);
+            }, 1000);
 
             return () => clearInterval(timerId);
           } else {

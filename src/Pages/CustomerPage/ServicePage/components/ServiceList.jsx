@@ -30,6 +30,9 @@ const ServiceList = ({
     }
   };
 
+  // Filter services to only show those with parent_service_id
+  const filteredServices = services.filter(service => service.parent_service_id);
+
   return (
     <div className="flex-1 p-6">
       {/* Search Component */}
@@ -48,7 +51,7 @@ const ServiceList = ({
         </div>
       ) : (
         <>
-          {services.length === 0 ? (
+          {filteredServices.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-500 text-lg mb-2">
                 Không tìm thấy dịch vụ nào
@@ -57,7 +60,7 @@ const ServiceList = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service) => (
+              {filteredServices.map((service) => (
                 <div
                   key={service._id}
                   className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"

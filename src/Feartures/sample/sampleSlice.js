@@ -132,6 +132,7 @@ export const searchSamples = createAsyncThunk(
             startDate: filters.startDate || '',
             endDate: filters.endDate || '',
             page: filters.page || 1,
+            limit: filters.limit || filters.pageSize || 10,
           },
           headers: {
             Authorization: `Bearer ${token}`,
