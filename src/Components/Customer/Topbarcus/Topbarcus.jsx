@@ -10,15 +10,26 @@ import { useNavigate } from "react-router-dom";
 import { FcManager } from "react-icons/fc";
 
 function Topbarcus() {
-  const { firstName, lastName, email } = useAuth();
+  const { firstName, lastName, email, avatar } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
+  const handleLogout = async () => {
+        try {
+          await signOut();
+        } catch (error) {
+          console.error("Logout API error:", error);
+          toast.error("Đăng xuất thất bại, vui lòng thử lại!");
+        } finally {
+    
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          dispatch(logout());
+          navigate("/login");
+          toast.success("Đăng xuất thành công!");
+        }
+      };
 
   return (
     <div className="topbar-container">
@@ -26,25 +37,16 @@ function Topbarcus() {
         <button className="topbar-icon__menu">
           <FaBars />
         </button>
-        <div className="topbar-searchbox">
-          <input type="text" placeholder="Tìm kiếm thông tin..." />
-          <CiSearch className="fas fa-search search-icon" />
-        </div>
       </div>
 
       <div className="topbar-right">
-        <button className="btn-icon notif-icon">
-          <IoIosNotificationsOutline style={{ fontSize: "20px" }} />
-          <span className="notif-dot" />
-        </button>
-
         <div
           className="topbar-profile-wrapper"
           onClick={() => setDropdownOpen(!dropdownOpen)}
         >
           <div className="topbar-profile">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5B_Pc5VMtw8ze74lJ0QYcdSif6a3qMQ-kg&s"
+              src={avatar || "https://via.placeholder.com/40"}
               alt="Profile"
             />
             <span>
@@ -56,7 +58,7 @@ function Topbarcus() {
           {dropdownOpen && (
             <div className="topbar-dropdown">
               <div className="topbar-dropdown__header">
-                <strong>
+                <strong>  
                   {firstName} {lastName}
                 </strong>
                 <p>{email}</p>

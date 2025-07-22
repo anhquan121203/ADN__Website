@@ -1,59 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebarcus from "../Components/Customer/Sidebarcus/Sidebarcus";
 import Topbarcus from "../Components/Customer/Topbarcus/Topbarcus";
+import { SidebarProvider, useSidebar } from "../Contexts/SidebarContext";
+import LoadingComponent from "../Components/Customer/LoadingComponent/LoadingComponent";
 
-const layoutStyle = {
-  display: "flex",
-  height: "100vh",
-  backgroundColor: "#f8fafc",
-};
+function CustomerSideBarLayoutContent() {
+  const { sidebarCollapsed } = useSidebar();
 
-const sidebarStyle = {
-  width: "290px",
-  backgroundColor: "#ffffff",
-  borderRight: "1px solid #e2e8f0",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  bottom: 0,
-  overflowY: "auto",
-  zIndex: 1000,
-};
+  const layoutStyle = {
+    display: "flex",
+    height: "100vh",
+    backgroundColor: "#f8fafc",
+  };
 
-const mainWrapperStyle = {
-  marginLeft: "290px",
-  width: "calc(100% - 290px)",
-  display: "flex",
-  flexDirection: "column",
-  height: "100vh",
-};
+  const sidebarStyle = {
+    width: sidebarCollapsed ? "80px" : "290px",
+    backgroundColor: "#ffffff",
+    borderRight: "1px solid #e2e8f0",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    overflowY: "auto",
+    zIndex: 1000,
+  };
 
-const topbarStyle = {
-  height: "70px",
-  backgroundColor: "#ffffff",
-  borderBottom: "1px solid #e2e8f0",
-  position: "fixed",
-  top: 0,
-  left: "290px",
-  right: 0,
-  zIndex: 4,
-  display: "flex",
-  alignItems: "center",
-  padding: "0 20px",
-};
+  const mainWrapperStyle = {
+    marginLeft: sidebarCollapsed ? "80px" : "290px",
+    width: sidebarCollapsed ? "calc(100% - 80px)" : "calc(100% - 290px)",
+    display: "flex",
+    flexDirection: "column",
+    height: "100vh",
+  };
 
-const outletWrapperStyle = {
-  marginTop: "70px",
-  padding: "20px",
-  flex: 1,
-  overflowY: "auto",
-  backgroundColor: "#f9fafb",
-  marginLeft: "30px",
-  marginRight: "30px",
-};
+  const topbarStyle = {
+    height: "70px",
+    backgroundColor: "#ffffff",
+    borderBottom: "1px solid #e2e8f0",
+    position: "fixed",
+    top: 0,
+    left: sidebarCollapsed ? "80px" : "290px",
+    right: 0,
+    zIndex: 4,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 20px",
+  };
 
-function CustomerSideBarLayout() {
+  const outletWrapperStyle = {
+    marginTop: "70px",
+    padding: "20px",
+    flex: 1,
+    overflowY: "auto",
+    backgroundColor: "#f9fafb",
+    marginLeft: "30px",
+    marginRight: "30px",
+  };
+
   return (
     <div style={layoutStyle}>
       <div style={sidebarStyle}>
@@ -68,6 +72,22 @@ function CustomerSideBarLayout() {
         </div>
       </div>
     </div>
+  );
+}
+
+function CustomerSideBarLayout() {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+  if (loading) {
+    return <LoadingComponent />;
+  }
+  return (
+    <SidebarProvider>
+      <CustomerSideBarLayoutContent />
+    </SidebarProvider>
   );
 }
 

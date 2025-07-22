@@ -103,6 +103,7 @@ const useResult = () => {
     createResultLoading,
     createResultError,
     currentResult,
+    resultData: currentResult?.data || null, // Add resultData
     resultLoading,
     resultError,
     
