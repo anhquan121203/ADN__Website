@@ -6,10 +6,17 @@ import {
   FaUser,
   FaCog,
   FaAddressBook,
-  FaUserTie
+  FaUserTie,
+  FaProjectDiagram,
+  FaHandshake,
+  FaQuestionCircle,
+  FaSignOutAlt,
+  FaChevronRight,
+  FaUsersCog,
 } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { useSidebar } from "../../../Contexts/SidebarContext";
+import { CiCalendar } from "react-icons/ci";
 
 function SidebarManager() {
   const location = useLocation();
@@ -52,6 +59,26 @@ function SidebarManager() {
                 title={sidebarCollapsed ? "Hồ sơ cá nhân" : ""}
               >
                 <FaUser /> {!sidebarCollapsed && "Hồ sơ cá nhân"}
+              </Link>
+
+              <Link
+                to="/manager/staff-profile-manager"
+                className={`nav-item ${
+                  pathname === "/manager/staff-profile-manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Quản lý nhân viên" : ""}
+              >
+                <FaUserTie  /> {!sidebarCollapsed && "Quản lý nhân viên"}
+              </Link>
+
+              <Link
+                to="/manager/slot-manager"
+                className={`nav-item ${
+                  pathname === "/manager/slot-manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Quản lý lịch làm việc" : ""}
+              >
+                <CiCalendar  /> {!sidebarCollapsed && "Quản lý lịch làm việc"}
               </Link>
 
               {/* Quản lý đặt lịch */}

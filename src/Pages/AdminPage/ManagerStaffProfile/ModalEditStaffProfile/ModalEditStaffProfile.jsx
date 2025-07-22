@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import useDepartment from "../../../../Hooks/useDepartment";
 import moment from "moment";
 import useStaffProfile from "../../../../Hooks/useStaffProfile";
-import { get } from "lodash";
+import dayjs from "dayjs";
 
 const ModalEditStaffProfile = ({
   isModalOpen,
@@ -43,7 +43,7 @@ const ModalEditStaffProfile = ({
           ...editStaffProfile,
           //   id user
           _id: editStaffProfile._id || "",
-          
+
           // id depart
           department_id:
             editStaffProfile.department_id?._id ||
@@ -101,7 +101,7 @@ const ModalEditStaffProfile = ({
       ]}
     >
       <Form form={form} layout="vertical">
-        <Form.Item name="_id">
+        <Form.Item name="_id" hidden>
           <Input />
         </Form.Item>
 
@@ -130,19 +130,34 @@ const ModalEditStaffProfile = ({
         </Form.Item>
 
         <Form.Item
-          label="Tiền"
-          name="salary"
-          rules={[{ required: true, message: "Vui lòng chọn tiền!" }]}
-        >
-          <InputNumber style={{ width: "100%" }} />
-        </Form.Item>
+              label="Tiền"
+              name="salary"
+              rules={[
+                { required: true, message: "Vui lòng nhập số tiền!" },
+                {
+                  pattern: /^[0-9]+$/,
+                  message: "Số tiền chỉ được chứa chữ số!",
+                },
+              ]}
+            >
+              <Input
+                onChange={(e) => {
+                  const onlyNums = e.target.value.replace(/\D/g, ""); 
+                  form.setFieldsValue({ salary: onlyNums }); 
+                }}
+              />
+            </Form.Item>
+
 
         <Form.Item
-          label="Ngày"
+          label="Ngày làm"
           name="hire_date"
-          rules={[{ required: true, message: "Vui lòng chọn ngày!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập ngày làm!" }]}
         >
-          <DatePicker style={{ width: "100%" }} />
+          <DatePicker
+            style={{ width: "100%", height: "40px" }}
+            placeholder="Ngày làm"
+          />
         </Form.Item>
 
         <Form.List name="qualifications">

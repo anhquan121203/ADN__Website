@@ -9,28 +9,21 @@ import { loginUser, loginWithGoogle } from "../../../Api/authApi";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { login } from "../../../Feartures/user/authSlice";
-import { FaGoogle } from "react-icons/fa";
-
-// ROUTER API GG
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
+import { GoogleLogin } from "@react-oauth/google";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
 
-  // Schema Yup cho form validation
   const validationSchema = Yup.object({
     email: Yup.string()
-      .email("Invalid email address")
+      .email("Vui lòng nhập email hợp lệ!")
       .required("Bắt buộc nhập email!"),
-
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Bắt buộc nhập mật khẩu!"),
+    password: Yup.string().required("Bắt buộc nhập mật khẩu!"),
   });
 
-  // Sử dụng Formik để quản lý form
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -40,26 +33,18 @@ function LoginPage() {
     onSubmit: async (values) => {
       try {
         const response = await loginUser(values);
-        // console.log(response);
-
-        // Make sure we receive the correct tokens
         const token = response.data.token;
+
         if (token) {
-          // Save token in localStorage
           localStorage.setItem("accessToken", token);
-          // localStorage.setItem("refreshToken", refreshToken);
-
-          // Dispatch login action
           dispatch(login({ token }));
-
           toast.success("Đăng nhập thành công ✅");
-
           navigate("/");
         } else {
           toast.error("Login failed. Please try again.");
         }
       } catch (error) {
-        toast.error("Email or password is incorrect");
+        toast.error("Email hoặc mật khẩu không đúng");
       }
     },
   });
@@ -72,7 +57,6 @@ function LoginPage() {
         </div>
       </div>
 
-      {/* LOGIN RIGHT***************** */}
       <div className="login-right">
         <h2>Đăng nhập</h2>
         <form onSubmit={formik.handleSubmit}>
@@ -87,25 +71,42 @@ function LoginPage() {
               placeholder="Enter your email..."
               required
             />
-            {formik.touched.email && formik.errors.email ? (
+            {formik.touched.email && formik.errors.email && (
               <div className="error-message">{formik.errors.email}</div>
-            ) : null}
+            )}
           </div>
 
           <div className="form-group">
             <label>Mật khẩu</label>
-            <input
-              type="password"
-              name="password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder="**********"
-              required
-            />
-            {formik.touched.password && formik.errors.password ? (
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder="**********"
+                required
+                style={{ paddingRight: "40px" }}
+              />
+              <span
+                onClick={() => setShowPassword((prev) => !prev)}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  color: "#555",
+                }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+            {formik.touched.password && formik.errors.password && (
               <div className="error-message">{formik.errors.password}</div>
-            ) : null}
+            )}
           </div>
 
           <div className="form-options">
@@ -113,14 +114,15 @@ function LoginPage() {
               <input type="checkbox" style={{ marginRight: "5px" }} />
               Giữ đăng nhập lần sau!!!
             </label>
-            <Link to ="/forgot-password">Quên mật khẩu</Link>
+            <Link to="/forgot-password">Quên mật khẩu</Link>
           </div>
+
           <button
             type="submit"
             className="login-button"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? "Đăng nhập..." : "Đăng nhập"}{" "}
+            {formik.isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
 
@@ -132,15 +134,17 @@ function LoginPage() {
               const id_token = credentialResponse.credential;
               try {
                 const response = await loginWithGoogle(id_token);
-                const token = response.data.acceesToken|| response.token || response.data.token;
+                const token =
+                  response.data.acceesToken ||
+                  response.token ||
+                  response.data.token;
 
                 localStorage.setItem("accessToken", token);
                 dispatch(login({ token }));
                 toast.success("Đăng nhập bằng Google thành công");
-
                 navigate("/");
               } catch (error) {
-                toast.error("Đăng nhập thất bại!!!");
+                toast.error("Đăng nhập bằng Google thất bại");
               }
             }}
             onError={() => {
@@ -150,7 +154,7 @@ function LoginPage() {
         </div>
 
         <p>
-          Không có tài Khoản? <Link to="/register">Đăng ký</Link>
+          Không có tài khoản? <Link to="/register"> <span style={{fontWeight: "bold", color: "black", textDecoration: "underline"}}>Đăng ký</span></Link>
         </p>
       </div>
     </div>
