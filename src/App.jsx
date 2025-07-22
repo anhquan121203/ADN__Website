@@ -19,6 +19,7 @@ import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSamp
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
 import CreateAppointmentAdminComponent from "./Components/Customer/AppointmentAdmin/CreateAppointmentAdminComponent";
+import AboutPage from "./Pages/CustomerPage/AboutPage/AboutPage";
 import Blogger from "./Pages/CustomerPage/Blogger/Blogger";
 import BlogDetail from "./Pages/CustomerPage/Blogger/BlogDetail/BlogDetail";
 
@@ -32,6 +33,7 @@ import SlotAdmin from "./Pages/AdminPage/SlotAdmin/SlotAdmin";
 import KitAdmin from "./Pages/AdminPage/KitAdmin/KitAdmin";
 import AdministrativeCaseAdmin from "./Pages/AdminPage/AdministrativeCaseAdmin/AdministrativeCaseAdmin";
 import AppointmentAdmin from "./Pages/AdminPage/AppointmentAdmin/AppointmentAdmin";
+import AdminStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/AdminStaffProfile";
 import BlogAdmin from "./Pages/AdminPage/BlogAdmin/BlogAdmin";
 import BlogCategoriesAdmin from "./Pages/AdminPage/BlogCategoriesAdmin/BlogCategoriesAdmin";
 
@@ -48,13 +50,16 @@ import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/Appointme
 import StaffSample from "./Pages/StaffPage/StaffSample/StaffSample";
 import ViewSampleAppoinment from "./Pages/StaffPage/StaffSample/ViewSampleAppoinment/ViewSampleAppoinment";
 import ViewSamplesByAppointment from "./Pages/StaffPage/StaffConfirmSlots/ViewSamplesByAppointment/ViewSamplesByAppointment";
+
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
-import ManagerStaffProfile from "./Pages/AdminPage/ManagerStaffProfile/ManagerStaffProfile";
 import DepartmentManager from "./Pages/ManagerPage/DepartmentManager/DepartmentManager";
 import AppointmentManager from "./Pages/ManagerPage/AppointmentManager/AppointmentManager";
 import AppointmentDetail from "./Pages/ManagerPage/AppointmentManager/AppointmentDetail";
+import ServiceManager from "./Pages/ManagerPage/ServiceManager/ServiceManager";
+import StaffProfileManager from "./Pages/ManagerPage/StaffProfileManager/StaffProfileManager";
+import SlotManager from "./Pages/ManagerPage/SlotManager/SlotManager";
 
 // LABORATORY TECHNICIAN PAGE
 import LaboratoryTechnicianLayout from "./Layouts/LaboratoryTechnicianLayout";
@@ -63,6 +68,8 @@ import LabTechAppointments from "./Pages/LaboratoryTechnicianPage/LabTechAppoint
 import LabTechViewSamplesByAppointment from "./Pages/LaboratoryTechnicianPage/LabTechAppointments/LabTechViewSamplesByAppointment/LabTechViewSamplesByAppointment";
 import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageResult";
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
+
+
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -120,6 +127,7 @@ function App() {
             path="/create-appointment-admin"
             element={<CreateAppointmentAdminComponent />}
           />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<Blogger />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
         </Route>
@@ -143,8 +151,8 @@ function App() {
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
           <Route
-            path="manager-staff-profile"
-            element={<ManagerStaffProfile />}
+            path="admin-staff-profile"
+            element={<AdminStaffProfile />}
           />
           <Route path="kit-admin" element={<KitAdmin />} />
           <Route
@@ -185,6 +193,9 @@ function App() {
           <Route path="department-manager" element={<DepartmentManager />} />
           <Route path="appointments" element={<AppointmentManager />} />
           <Route path="appointments/:id" element={<AppointmentDetail />} />
+          <Route path="service-manager" element={<ServiceManager />} />
+          <Route path="staff-profile-manager" element={<StaffProfileManager />} />
+          <Route path="slot-manager" element={<SlotManager />} />
         </Route>
 
         {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
@@ -200,6 +211,7 @@ function App() {
           />
           <Route path="results" element={<ManageResult />} />
           <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
+          
         </Route>
       </Routes>
 

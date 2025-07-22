@@ -45,32 +45,35 @@ function SlotAdmin() {
       is_active: true,
       pageNum: currentPage,
       pageSize: pageSize,
-      sort_by: "start_time",
-      sort_order: "asc",
+      sort_by: "created_at",
+      sort_order: "desc",
     });
   }, [currentPage]);
 
   // Filter slot
   const [filters, setFilters] = useState({
-    staff_profile_ids: "",
+    staff_profile_ids: [],
     department_id: "",
     appointment_id: "",
     status: true,
     date_from: "",
     date_to: "",
+    sort_order: "desc",
   });
 
   const handleSearch = () => {
     searchListSlot({
       ...filters,
-      staff_profile_ids: Array.isArray(filters.staff_profile_ids)
-        ? filters.staff_profile_ids.join(",")
-        : filters.staff_profile_ids,
+      staff_profile_ids:
+        Array.isArray(filters.staff_profile_ids) &&
+        filters.staff_profile_ids.length > 0
+          ? filters.staff_profile_ids.join(",")
+          : undefined, 
       is_active: true,
       pageNum: currentPage,
       pageSize: pageSize,
       sort_by: "created_at",
-      sort_order: "desc",
+      sort_order: filters.sort_order || "desc",
     });
   };
 
@@ -128,8 +131,8 @@ function SlotAdmin() {
           is_active: true,
           pageNum: currentPage,
           pageSize: pageSize,
-          sort_by: "start_time",
-          sort_order: "asc",
+          sort_by: "created_at",
+          sort_order: "desc",
         });
       }
       return result.data;
@@ -154,7 +157,7 @@ function SlotAdmin() {
           pageNum: currentPage,
           pageSize: pageSize,
           sort_by: "start_time",
-          sort_order: "asc",
+          sort_order: "desc",
         });
       } else {
         return { success: false, message: "Cập nhật slot không thành công" };
@@ -210,7 +213,6 @@ function SlotAdmin() {
             Thêm ca trực mới
           </button>
         </div>
-       
       </div>
 
       <div className="form-account">

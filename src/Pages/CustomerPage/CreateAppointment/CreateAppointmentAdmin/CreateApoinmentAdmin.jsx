@@ -21,7 +21,7 @@ const CreateAppointmentAdmin = ({
 }) => {
   const [form] = Form.useForm();
 
-  const { fetchAvailableSlots } = useSlot();
+  const { slots, fetchAvailableSlots } = useSlot();
   const { createAppointment } = useAppointment();
   const { firstName, lastName, address, email, phoneNumber, dob } = useAuth();
   const fullName = firstName + lastName;
@@ -60,7 +60,6 @@ const CreateAppointmentAdmin = ({
     });
   }, [currentPage]);
 
-  console.log(cases);
 
   // slot xet nghiem =============================================
   useEffect(() => {
@@ -92,6 +91,9 @@ const CreateAppointmentAdmin = ({
         case_number: values.case_number,
         authorization_code: values.authorization_code,
       });
+
+      console.log("Appointment creation result:", result);
+      console.log("Slot ID:", selectedSlot);
 
       if (result.success === true) {
         form.resetFields();
@@ -208,42 +210,46 @@ const CreateAppointmentAdmin = ({
         <label>Chọn thời gian khám</label>
         <div className="time-picker">
           {availableSlots.flatMap((slot) =>
-            slot.time_slots.map((time) => {
-              const slotDateTime = dayjs(
-                `${time.year}-${time.month}-${time.day} ${time.start_time.hour}:${time.start_time.minute}`,
-                "YYYY-M-D H:m"
-              );
+            slot.time_slots
+              .filter((time) => time._id)
+              .map((time) => {
+                const slotDateTime = dayjs(
+                  `${time.year}-${time.month}-${time.day} ${time.start_time.hour}:${time.start_time.minute}`,
+                  "YYYY-M-D H:m"
+                );
 
-              const isPast = slotDateTime.isBefore(dayjs());
-              const dateLabel = slotDateTime.format("DD/MM");
-              const dayOfWeek = slotDateTime.format("dddd");
-              const slotId = time._id;
-
-              return (
-                <button
-                  key={slotId}
-                  type="button"
-                  className={selectedSlot === slotId ? "selected" : ""}
-                  onClick={() => !isPast && setSelectedSlot(slotId)}
-                  disabled={isPast}
-                  style={{
-                    cursor: isPast ? "not-allowed" : "pointer",
-                    opacity: isPast ? 0.5 : 1,
-                  }}
-                >
-                  {dateLabel}
-                  <br />
-                  {dayOfWeek}
-                  <br />
-                  {`${time.start_time.hour}:${time.start_time.minute
+                const isPast = slotDateTime.isBefore(dayjs());
+                const dateLabel = slotDateTime.format("DD/MM");
+                const dayOfWeek = slotDateTime.format("dddd");
+                // const slotId = time._id;
+                const timeLabel = `${time.start_time.hour}:${time.start_time.minute
+                  .toString()
+                  .padStart(2, "0")} - ${time.end_time.hour}:${time.end_time.minute
                     .toString()
-                    .padStart(2, "0")} - ${
-                    time.end_time.hour
-                  }:${time.end_time.minute.toString().padStart(2, "0")}`}
-                </button>
-              );
-            })
+                    .padStart(2, "0")}`;
+
+                return (
+                  <button
+                    key={time._id}
+                    type="button"
+                    className={selectedSlot === slot._id ? "selected" : ""}
+                    onClick={() => !isPast && setSelectedSlot(slot._id)} 
+                    disabled={isPast}
+                    style={{
+                      cursor: isPast ? "not-allowed" : "pointer",
+                      opacity: isPast ? 0.5 : 1,
+                    }}
+                  >
+                    {dateLabel}
+                    <br />
+                    {dayOfWeek}
+                    <br />
+                    {timeLabel}
+                  </button>
+                );
+              })
           )}
+
         </div>
       </div>
 

@@ -150,3 +150,14 @@ form {
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.social-login {
+  margin: 10px 0;
+}

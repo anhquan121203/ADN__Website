@@ -90,14 +90,14 @@ const RevenueDashboardAdmin = () => {
             type="monotone"
             dataKey="total"
             stroke="#8884d8"
-            name="Revenue"
+            name="Doanh thu"
           />
           <Line
             yAxisId="right"
             type="monotone"
             dataKey="count"
             stroke="#82ca9d"
-            name="Count"
+            name="Số lượng"
           />
         </LineChart>
       </ResponsiveContainer>

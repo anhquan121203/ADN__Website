@@ -164,6 +164,7 @@ function ServiceAdmin() {
     if (result.success) {
       setIsEditModalOpen(false);
     }
+    return result;
   };
 
   // delete service

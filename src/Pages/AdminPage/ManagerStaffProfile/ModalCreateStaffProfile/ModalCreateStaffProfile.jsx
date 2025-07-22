@@ -54,6 +54,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
       // Ép chắc chắn về string, phòng trường hợp không phải string (nhưng thường không cần)
       values.user_id = String(values.user_id);
       values.department_id = String(values.department_id);
+      values.salary = Number(values.salary)
 
       const response = await handleAdd(values);
 
@@ -127,14 +128,25 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
         <Form.Item
           label="Tiền"
           name="salary"
-          rules={[{ required: true, message: "Vui lòng chọn tiền!" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số Tiền!" },
+            {
+              pattern: /^[0-9]+$/,
+              message: "Số Tiền chỉ được chứa chữ số!",
+            },
+          ]}
         >
-          <InputNumber />
+          <Input
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/\D/g, "");
+              form.setFieldsValue({ salary: onlyNums });
+            }}
+          />
         </Form.Item>
 
         {/* Chọn ngày */}
         <Form.Item
-          label="Ngày"
+          label="Ngày làm"
           name="hire_date"
           rules={[{ required: true, message: "Vui lòng chọn ngày!" }]}
         >

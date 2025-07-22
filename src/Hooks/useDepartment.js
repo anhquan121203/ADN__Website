@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import {
   createDepartment,
   deleteDepartment,
@@ -26,9 +26,11 @@ const useDepartment = () => {
 
   const searchListDepartment = async (searchPayload) => {
     try {
-      await dispatch(searchDepartment(searchPayload));
+      const response = await dispatch(searchDepartment(searchPayload)).unwrap();
+      return { success: true, data: response };
     } catch (error) {
-      console.error("Error search department");
+      console.error("Error search department", error);
+      return { success: false, data: [] };
     }
   };
 

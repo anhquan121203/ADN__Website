@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useAdmin from "../../../../Hooks/useAdmin";
 import useStaffProfile from "../../../../Hooks/useStaffProfile";
+import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
@@ -24,7 +25,6 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
 
   useEffect(() => {
     getListStaff({ pageInfo: { pageNum: 1, pageSize: 100 } });
-    
   }, []);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      values.appointment_limit = Number(values.appointment_limit)
 
       const date = values.date;
       const [startTime, endTime] = values.time_range;
@@ -80,7 +81,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
 
   return (
     <Modal
-      title="Tạo tài khoản mới"
+      title="Tạo lịch làm việc mới"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={[
@@ -88,7 +89,7 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo tài khoản
+          Tạo lịch làm việc
         </Button>,
       ]}
     >
@@ -113,7 +114,11 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           name="date"
           rules={[{ required: true, message: "Vui lòng chọn ngày!" }]}
         >
-          <DatePicker />
+          <DatePicker
+            disabledDate={(current) => {
+              return current && current < dayjs().startOf("day");
+            }}
+          />
         </Form.Item>
 
         {/* Chọn khoảng thời gian trong ngày */}
@@ -127,14 +132,24 @@ const ModalCreateSlot = ({ isModalOpen, handleCancel, handleAdd }) => {
           <TimePicker.RangePicker format="HH:mm" />
         </Form.Item>
 
+
         <Form.Item
           label="Giới hạn cuộc hẹn"
           name="appointment_limit"
           rules={[
-            { required: true, message: "Vui lòng nhập Giới hạn cuộc hẹn!" },
+            { required: true, message: "Vui lòng nhập giới hạn cuộc hẹn!" },
+            {
+              pattern: /^[0-9]+$/,
+              message: "Giới hạn cuộc hẹn chỉ được chứa chữ số!",
+            },
           ]}
         >
-          <InputNumber />
+          <Input
+            onChange={(e) => {
+              const onlyNums = e.target.value.replace(/\D/g, "");
+              form.setFieldsValue({ appointment_limit: onlyNums });
+            }}
+          />
         </Form.Item>
       </Form>
     </Modal>

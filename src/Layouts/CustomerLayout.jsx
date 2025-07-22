@@ -6,32 +6,30 @@ import LoadingComponent from "../Components/Customer/LoadingComponent/LoadingCom
 
 function CustomerLayout() {
   const [loading, setLoading] = useState(true);
-  
-    useEffect(() => {
-      const timer = setTimeout(() => setLoading(false), 2000);
-      return () => clearTimeout(timer);
-    }, []);
-  
-  
-    if (loading) {
-      return <LoadingComponent />;
-    }
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
-      <div className="header ">
+      {loading && <LoadingComponent />} 
+
+      <div className="header">
         <Header />
       </div>
 
-      <div className="outlet" >
+      <div className="outlet">
         <Outlet />
       </div>
 
-      <div style={{margin: 0}}>
+      <div style={{ margin: 0 }}>
         <Footer />
       </div>
     </>
   );
 }
+
 
 export default CustomerLayout;

@@ -44,40 +44,41 @@ export const registerUser = async (userData) => {
 
 //  logout
 
-export const signOut = async () => {
-  try {
-    localStorage.removeItem("accessToken");
-    window.location.href = "/login";
-  } catch (error) {
-    console.error("Error logging out:", error);
-  }
-};
-
 // export const signOut = async () => {
 //   try {
-//     const token = localStorage.getItem("accessToken");
-//     if (!token) {
-//       throw new Error("No access token found");
-//     }
-//     const response = await axiosInstance.get(
-//       `${API_BASE_URL}/api/auth/logout`,
-//       {
-//         headers: { Authorization: `Bearer ${token}` },
-//       }
-//     );
 //     localStorage.removeItem("accessToken");
-//     localStorage.removeItem("refreshToken");
-//     window.location.href = "/login"; 
-//     return response.data;
+//     window.location.href = "/login";
 //   } catch (error) {
-//     throw (
-//       error.response?.data?.Errors ||
-//       error.response?.data?.Message ||
-//       "An error occurred while logging out"
-//     );
+//     console.error("Error logging out:", error);
 //   }
 // };
 
+export const signOut = async () => {
+  try {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      throw "Không tìm thấy accessToken trong localStorage";
+    }
+
+    const response = await axiosInstance.get(
+      `${API_BASE_URL}/api/auth/logout`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data?.Errors ||
+      error.response?.data?.Message ||
+      "Đăng xuất thất bại"
+    );
+  }
+};
 
 // Login with Google
 export const loginWithGoogle = async (id_token) => {
@@ -123,4 +124,3 @@ export const registerWithGoogle = async (id_token) => {
     );
   }
 };
-

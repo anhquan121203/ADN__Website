@@ -25,8 +25,8 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
     status: undefined,
     date_from: undefined,
     date_to: undefined,
-    sort_by: "start_time",
-    sort_order: "asc",
+    sort_by: "created_at",
+    sort_order: "desc",
   };
 
   const { departments, searchListDepartment } = useDepartment();
@@ -43,14 +43,6 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
       sort_order: "desc",
     });
   }, [currentPage]);
-
-  // const staffOptions = Array.from(
-  //   new Map(
-  //     slots
-  //       .flatMap((slot) => slot.staff_profile_ids || [])
-  //       .map((profile) => [profile._id, profile])
-  //   ).values()
-  // );
 
   const handleDateChange = (dates) => {
     setFilters({
@@ -74,11 +66,11 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
       <Select
         placeholder="Nhân viên"
         mode="multiple"
-        value={filters.staff_profile_ids}
+        value={filters.staff_profile_ids || []}
         onChange={(value) =>
           setFilters({ ...filters, staff_profile_ids: value })
         }
-        style={{ width: 180 }}
+        style={{ width: 200}}
         allowClear
         showSearch
         optionFilterProp="label"
@@ -98,7 +90,7 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         placeholder="Phòng lab"
         value={filters.department_id}
         onChange={(value) => setFilters({ ...filters, department_id: value })}
-        style={{ width: 180 }}
+        style={{ width: 200 }}
         allowClear
         showSearch
         optionFilterProp="label"
@@ -114,14 +106,14 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         ))}
       </Select>
 
-      <Input
+      {/* <Input
         placeholder="Department ID"
         value={filters.department_id}
         onChange={(e) =>
           setFilters({ ...filters, department_id: e.target.value })
         }
-        style={{ width: 160 }}
-      />
+        style={{ width: 160, height: 35 }}
+      /> */}
 
       <Select
         placeholder="Trạng thái"
@@ -151,7 +143,14 @@ function FilterSlotAdmin({ filters, setFilters, onSearch, slots }) {
         Tìm kiếm
       </Button>
 
-      <Button onClick={() => setFilters(defaultFilters)}>Reset</Button>
+      <Button
+        onClick={() => {
+          setFilters(defaultFilters);
+          setCurrentPage(1); 
+        }}
+      >
+        Reset
+      </Button>
     </div>
   );
 }

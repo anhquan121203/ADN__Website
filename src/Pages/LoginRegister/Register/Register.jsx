@@ -365,7 +365,7 @@ function Register() {
         </div>
 
         <p>
-          Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+          Bạn đã có tài khoản? <Link to="/login"><span style={{ fontWeight: "bold", color: "black", textDecoration: "underline" }}>Đăng nhập</span></Link>
         </p>
 
         <Modal

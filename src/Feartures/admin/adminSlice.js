@@ -26,6 +26,7 @@ export const searchUser = createAsyncThunk(
   }
 );
 
+// create User ==================================================================
 export const createUser = createAsyncThunk(
   "admin/createUser",
   async (createNewUser, { rejectWithValue }) => {
@@ -37,7 +38,7 @@ export const createUser = createAsyncThunk(
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -78,7 +79,7 @@ export const updateUser = createAsyncThunk(
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -151,8 +152,8 @@ const adminSlice = createSlice({
       })
       .addCase(searchUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.accounts = action.payload.pageData; // Lấy danh sách user
-        state.total = action.payload.pageInfo.totalItems; // Tổng số user
+        state.accounts = action.payload.pageData; 
+        state.total = action.payload.pageInfo.totalItems; 
       })
       .addCase(searchUser.rejected, (state, action) => {
         state.loading = false;
