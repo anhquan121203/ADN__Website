@@ -5,8 +5,10 @@ import useAuth from '../../../Hooks/useAuth';
 import useService from '../../../Hooks/useService';
 import { format, addDays, differenceInDays, startOfWeek, endOfWeek } from 'date-fns';
 import { DateRange } from 'react-date-range';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaHome, FaHospital, FaFlask, FaTimes, FaGoogle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaHome, FaHospital, FaFlask, FaTimes, FaGoogle, FaExclamationTriangle } from 'react-icons/fa';
+import { Alert } from 'antd';
 import GoogleMapPicker from '../../../utils/GoogleMapsUtil.jsx';
+import { useNavigate } from 'react-router-dom';
 import './Appoinment.css';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -19,6 +21,8 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
   const [availableSlots, setAvailableSlots] = useState([]);
   const [showGoogleMap, setShowGoogleMap] = useState(false);
   const [mapAddress, setMapAddress] = useState('');
+  const [isOutsideBusinessHours, setIsOutsideBusinessHours] = useState(false);
+  const [addressValidation, setAddressValidation] = useState({ isValid: true, message: '' });
   
   // Search and pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,6 +32,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
   const { createAppointment } = useAppointment();
   const { user } = useAuth();
   const { searchListService } = useService();
+  const navigate = useNavigate();
   const [range, setRange] = useState([
     {
       startDate: null,
@@ -35,11 +40,29 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
       key: 'selection'
     }
   ]);
+  // Validation functions
+  const validateHCMCAddress = (address) => {
+    const hcmcKeywords = ['hồ chí minh', 'tp hcm', 'thành phố hồ chí minh', 'ho chi minh', 'hcmc', 'sài gòn', 'saigon'];
+    const normalizedAddress = address.toLowerCase().trim();
+    return hcmcKeywords.some(keyword => normalizedAddress.includes(keyword));
+  };
+
+  const checkBusinessHoursAndDay = (slot) => {
+    if (!slot?.time_slots?.[0]) return false;
+    const timeSlot = slot.time_slots[0];
+    const startHour = timeSlot.start_time?.hour;
+    const endHour = timeSlot.end_time?.hour;
+    const day = timeSlot.start_time?.day;
+    // Check if the slot is on a weekend (Saturday or Sunday)
+    if (day === 6 || day === 0) return true; // Saturday or Sunday
+    // Check business hours: 8:00 - 17:00 (8 AM - 5 PM)
+    return startHour < 7 || startHour >= 17 || endHour < 7 || endHour > 17;
+  };
 
   
   useEffect(() => {
     const getSlots = async () => {
-      if ((type === 'facility' || type === 'self') && range[0].startDate && range[0].endDate) {
+      if ((type === 'facility' || type === 'self' || type === 'home') && range[0].startDate && range[0].endDate) {
         const startDate = format(range[0].startDate, 'yyyy-MM-dd');
         const endDate = format(range[0].endDate, 'yyyy-MM-dd');
         const result = await fetchAvailableSlots({
@@ -63,6 +86,35 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     }
   }, [serviceType, isOpen]);
 
+  // Validate address for home collection
+  useEffect(() => {
+    if (type === 'home' && (collection_address || mapAddress)) {
+      const addressToCheck = mapAddress || collection_address;
+      if (addressToCheck.trim()) {
+        const isValid = validateHCMCAddress(addressToCheck);
+        setAddressValidation({
+          isValid,
+          message: isValid ? '' : 'Thu mẫu tại nhà chỉ được phép trong khu vực TP. Hồ Chí Minh'
+        });
+      }
+    } else {
+      setAddressValidation({ isValid: true, message: '' });
+    }
+  }, [type, collection_address, mapAddress]);
+
+  // Check business hours for selected slot
+  useEffect(() => {
+    if (selectedSlot) {
+      const slot = availableSlots.find(s => s._id === selectedSlot);
+      // If slot is found, check business hours and day
+      if (slot) {
+        setIsOutsideBusinessHours(checkBusinessHoursAndDay(slot));
+      }
+    } else {
+      setIsOutsideBusinessHours(false);
+    }
+  }, [selectedSlot, availableSlots]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('accessToken');
@@ -70,13 +122,28 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
       toast.warning('Bạn phải đăng nhập mới đặt lịch được. Vui lòng đăng nhập để tiếp tục sử dụng chức năng này.');
       return;
     }
+
+    // Validate home collection address
+    if (type === 'home' && !addressValidation.isValid) {
+      toast.error(addressValidation.message);
+      return;
+    }
+
+    // Validate required fields
+    if ((type === 'facility' || type === 'self' || type === 'home') && !selectedSlot) {
+      toast.error('Vui lòng chọn khung giờ khám');
+      return;
+    }
+
+    if (type === 'home' && !(collection_address || mapAddress)) {
+      toast.error('Vui lòng nhập địa chỉ chi tiết cho việc thu mẫu tại nhà');
+      return;
+    }
     
     try {
-      const currentDate = new Date().toISOString().split('T')[0];
       const response = await createAppointment({
         service_id: serviceId,
-        ...((type === 'facility' || type === 'self') && selectedSlot && { slot_id: selectedSlot }),
-        appointment_date: currentDate,
+        ...((type === 'facility' || type === 'self' || type === 'home') && selectedSlot && { slot_id: selectedSlot }),
         type: type,
         collection_address: type === 'home' ? (mapAddress || collection_address) : null
       });
@@ -84,6 +151,20 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
       // Check for success response structure: {"success": true, "data": []}
       if (response && response.success === true) {
         toast.success('Đặt lịch khám thành công!');
+        
+        // Get appointment ID from response
+        const appointmentId = response.data?._id || response.data?.data?._id;
+        
+        if (appointmentId) {
+          // Navigate to payment page with appointment ID
+          navigate('/payment', { 
+            state: { 
+              appointmentId: appointmentId,
+              isFirstPayment: true // Flag to indicate this is the first payment (deposit)
+            } 
+          });
+        }
+        
         onClose();
       } else {
         // Handle error response structure: {"success": false, "message"} or {"message"}
@@ -173,7 +254,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
   };
 
   return (
-    <div className=" appointment-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className=" appointment-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-[#1caf9a] px-6 py-4 text-white relative rounded-t-lg">
@@ -300,6 +381,15 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                     Maps
                   </button>
                 </div>
+                {!addressValidation.isValid && (
+                  <Alert
+                    message={addressValidation.message}
+                    type="error"
+                    showIcon
+                    className="mt-2"
+                    icon={<FaExclamationTriangle />}
+                  />
+                )}
                 {mapAddress && (
                   <div className="mt-2 p-2 bg-gray-50 rounded border">
                     <p className="text-xs text-gray-600">Địa chỉ từ Google Maps:</p>
@@ -311,7 +401,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
           )}
 
           {/* Date Selection for Facility and Self */}
-          {(type === 'facility' || type === 'self') && (
+          {(type === 'facility' || type === 'self' || type === 'home') && (
             <>
               <div className="flex gap-5 mb-4 flex-wrap">
                 <div className="flex-1 min-w-[300px] flex flex-col">
@@ -400,6 +490,18 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                       </div>
                     )}
                   </div>
+                  
+                  {/* Business Hours Warning */}
+                  {isOutsideBusinessHours && selectedSlot && (
+                    <Alert
+                      message="Cảnh báo phụ phí ngoài giờ"
+                      description="Khung giờ bạn chọn nằm ngoài giờ hành chính (7:00 - 17:00). Phí dịch vụ sẽ được tăng thêm 20%."
+                      type="warning"
+                      showIcon
+                      className="mt-3"
+                      icon={<FaExclamationTriangle />}
+                    />
+                  )}
                 </div>
               )}
             </>
