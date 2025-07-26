@@ -20,6 +20,7 @@ function SidebarStaff() {
 
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
   const [scheduleDropdownOpen, setScheduleDropdownOpen] = useState(false);
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
 
   useEffect(() => {
     setServiceDropdownOpen(
@@ -29,6 +30,9 @@ function SidebarStaff() {
     setScheduleDropdownOpen(
       pathname.startsWith("/staff/slot") ||
         pathname.startsWith("/staff/confirm-slots")
+    );
+    setAdminDropdownOpen(
+      pathname.startsWith("/staff/appointment-admin/case")
     );
   }, [pathname]);
 
@@ -150,6 +154,17 @@ function SidebarStaff() {
                   </Link>
                 </div>
               )}
+
+              {/* Quản lý phòng ban */}
+              <Link
+                to="/staff/appointment-admin/case"
+                className={`nav-item ${
+                  pathname === "/staff/appointment-admin/case" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Đặt lịch hành chính" : ""}
+              >
+                <HiOutlineOfficeBuilding /> {!sidebarCollapsed && "Đặt lịch hành chính"}
+              </Link>
 
               {/* Quản lý phòng ban */}
               <Link

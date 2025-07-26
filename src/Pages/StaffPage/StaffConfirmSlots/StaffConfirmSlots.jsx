@@ -84,7 +84,7 @@ const StaffConfirmSlots = () => {
             />
           </Tooltip>
 
-          {record.type === 'facility' && record.status !== 'sample_collected' && record.status !== 'sample_received' && (
+          {(record.type === 'administrative' || record.type === 'facility') && record.status !== 'sample_collected' && record.status !== 'sample_received' && (
             <Tooltip title="Nhận bộ dụng cụ">
               <Button
                 type="text"
@@ -95,7 +95,7 @@ const StaffConfirmSlots = () => {
             </Tooltip>
           )}
 
-          {record.type === 'facility' && (record.status === 'sample_collected' || record.status === 'sample_received') && (
+          {(record.type === 'administrative' || record.type === 'facility') && (record.status === 'sample_collected' || record.status === 'sample_received') && (
             <Tooltip title="Xem mẫu">
               <Button
                 type="text"

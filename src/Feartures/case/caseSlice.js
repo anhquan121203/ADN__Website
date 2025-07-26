@@ -114,10 +114,34 @@ export const deleteCase = createAsyncThunk(
   }
 );
 
+// tash hành chính được Admin giao cho Staff
+export const searchCaseAssign = createAsyncThunk(
+  "case/searchCaseAssign",
+  async (listCaseAssign, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/administrative-cases/assigned/search`,
+        {
+          params: listCaseAssign,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const caseSlice = createSlice({
   name: "CASE",
   initialState: {
     cases: [],
+    assignCase: [],
     loading: false,
     error: null,
     total: 0,
@@ -154,8 +178,21 @@ const caseSlice = createSlice({
       // Change status
       .addCase(deleteCase.fulfilled, (state, action) => {
         state.cases = state.cases.map((c) => {
-            c._id = action.payload._id ? action.payload : c
-        })
+          c._id = action.payload._id ? action.payload : c;
+        });
+      })
+
+      .addCase(searchCaseAssign.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchCaseAssign.fulfilled, (state, action) => {
+        state.loading = false;
+        state.assignCase = action.payload;
+      })
+      .addCase(searchCaseAssign.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch accounts";
       });
   },
 });

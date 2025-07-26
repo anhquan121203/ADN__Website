@@ -19,15 +19,19 @@ function SidebarAdmin() {
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [blogDropdownOpen, setBlogDropdownOpen] = useState(false);
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
 
   useEffect(() => {
     setServiceDropdownOpen(
       pathname.startsWith("/admin/service") ||
-        pathname.startsWith("/admin/appointment") ||
-        pathname.startsWith("/admin/administrative-case")
+        pathname.startsWith("/admin/appointment")
     );
     setAccountDropdownOpen(pathname.startsWith("/admin/manager"));
     setBlogDropdownOpen(pathname.startsWith("/admin/blog"));
+
+    setAdminDropdownOpen(
+        pathname.startsWith("/admin/administrative-case")
+    )
   }, [pathname]);
 
   return (
@@ -127,14 +131,45 @@ function SidebarAdmin() {
                   >
                     Quản lý đặt lịch
                   </Link>
+                </div>
+              )}
+
+              {/* Dịch vụ hành chính================================================================= */}
+              <div
+                className={`nav-item dropdown-service ${
+                  adminDropdownOpen ? "open" : ""
+                }`}
+                onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
+              >
+                <div className="dropdown-left">
+                  <RiAdminLine  />
+                  <span>Dịch vụ hành chính</span>
+                </div>
+                <IoIosArrowDown
+                  className={`dropdown-icon ${
+                    adminDropdownOpen ? "rotate" : ""
+                  }`}
+                />
+              </div>
+              {adminDropdownOpen && (
+                <div className="submenu">
                   <Link
                     to="/admin/administrative-case"
                     className={`submenu-item ${
                       pathname === "/admin/administrative-case" ? "active" : ""
                     }`}
                   >
-                    Dịch vụ hành chính
+                    Dịch vụ pháp lý
                   </Link>
+                  <Link
+                    to="/admin/appointment-admin"
+                    className={`submenu-item ${
+                      pathname === "/admin/appointment-admin" ? "active" : ""
+                    }`}
+                  >
+                    Lịch hẹn xét nghiệm
+                  </Link>
+                  
                 </div>
               )}
 

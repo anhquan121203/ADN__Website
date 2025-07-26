@@ -63,7 +63,7 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
 
   return (
     <Modal
-      title="Service Details"
+      title="Chi tiết dịch vụ"
       open={isModalOpen}
       onCancel={handleCancel}
       footer={null}
@@ -87,15 +87,17 @@ const ModalDetailService = ({ isModalOpen, handleCancel, selectedService }) => {
         <Descriptions.Item label="Phương thức">
           {renderSampleMethod(sample_method)}
         </Descriptions.Item>
+
         <Descriptions.Item label="Giá tiền">
           {price ? `${Number(price).toLocaleString()} VNĐ` : "N/A"}
         </Descriptions.Item>
 
         <Descriptions.Item label="Dịch vụ cha">
           {typeof parent_service_id === "object"
-            ? parent_service_id.name
+            ? parent_service_id?.name
             : parent_service_id || "N/A"}
         </Descriptions.Item>
+
         <Descriptions.Item label="Thời gian ước tính">
           {estimated_time ? (
             <Tag color="blue">

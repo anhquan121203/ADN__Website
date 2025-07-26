@@ -1,11 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { use, useCallback, useEffect } from "react";
-import { createCase, deleteCase, getCaseById, searchCase, updateCase } from "../Feartures/case/caseSlice";
-
+import {
+  createCase,
+  deleteCase,
+  getCaseById,
+  searchCase,
+  searchCaseAssign,
+  updateCase,
+} from "../Feartures/case/caseSlice";
 
 const useCase = () => {
   const dispatch = useDispatch();
-  const { cases, loading, error } = useSelector(
+  const { cases, assignCase, loading, error } = useSelector(
     (state) => state.case
   );
 
@@ -56,9 +62,17 @@ const useCase = () => {
     }
   };
 
+  // assign casse
+  const searchListAssignCase = useCallback(
+    (searchPayload) => {
+      dispatch(searchCaseAssign(searchPayload));
+    },
+    [dispatch]
+  );
 
   return {
     cases,
+    assignCase,
     loading,
     error,
     searchListCase,
@@ -66,6 +80,7 @@ const useCase = () => {
     caseById,
     updateCaseById,
     deleteCaseById,
+    searchListAssignCase,
   };
 };
 

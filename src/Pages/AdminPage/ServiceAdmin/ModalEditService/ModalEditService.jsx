@@ -33,7 +33,7 @@ const ModalEditService = ({
 
         parent_service_id:
           typeof editService.parent_service_id === "object"
-            ? editService.parent_service_id._id
+            ? editService.parent_service_id?._id
             : editService.parent_service_id ?? null,
       });
 
@@ -142,13 +142,6 @@ const ModalEditService = ({
           </Select>
         </Form.Item>
 
-        {/* <Form.Item
-          label="Giá tiền"
-          name="price"
-          rules={[{ required: true, message: "Vui lòng nhập giá tiền!" }]}
-        >
-          <InputNumber style={{ width: "100%" }} />
-        </Form.Item> */}
 
         <Form.Item
           label="Giá tiền"

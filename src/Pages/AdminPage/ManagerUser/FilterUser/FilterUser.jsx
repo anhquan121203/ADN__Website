@@ -27,7 +27,7 @@ function UserFilter({ filters, setFilters, onSearch }) {
         mode="multiple"
         value={filters.role}
         onChange={(value) => setFilters({ ...filters, role: value })}
-        style={{ width: 160 }}
+        style={{ width: 200 }}
         allowClear
       >
         <Select.Option value="staff">Nhân viên</Select.Option>
