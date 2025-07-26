@@ -4,11 +4,13 @@ import {
   dashboardPayment,
   dashboardRevenue,
   dashboardSumary,
+  dashboardStaffSummary,
+  dashboardLabTechSummary,
 } from "../Feartures/dashboard/dashboardSlice";
 
 const useDashboard = () => {
   const dispatch = useDispatch();
-  const { dashboards, revenues, summary, loading, error, total } = useSelector(
+  const { dashboards, revenues, summary, staffSummary, labTechSummary, loading, error, total } = useSelector(
     (state) => state.dashboard
   );
 
@@ -35,16 +37,36 @@ const useDashboard = () => {
     [dispatch]
   );
 
+  //   Staff Summary
+  const listDashboardStaffSummary = useCallback(
+    (searchPayload) => {
+      dispatch(dashboardStaffSummary(searchPayload));
+    },
+    [dispatch]
+  );
+
+  //   Lab Tech Summary
+  const listDashboardLabTechSummary = useCallback(
+    (searchPayload) => {
+      dispatch(dashboardLabTechSummary(searchPayload));
+    },
+    [dispatch]
+  );
+
   return {
     dashboards,
     revenues,
     summary,
+    staffSummary,
+    labTechSummary,
     loading,
     error,
     total,
     listDashboardPayment,
     listDashboardRevenues,
     listDashboardSumary,
+    listDashboardStaffSummary,
+    listDashboardLabTechSummary,
   };
 };
 

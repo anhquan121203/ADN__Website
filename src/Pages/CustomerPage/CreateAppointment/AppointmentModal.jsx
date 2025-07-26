@@ -52,11 +52,39 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     const timeSlot = slot.time_slots[0];
     const startHour = timeSlot.start_time?.hour;
     const endHour = timeSlot.end_time?.hour;
-    const day = timeSlot.start_time?.day;
+    // Create date object and get day of week (0=Sunday, 6=Saturday)
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+    const dayOfWeek = slotDate.getDay();
     // Check if the slot is on a weekend (Saturday or Sunday)
-    if (day === 6 || day === 0) return true; // Saturday or Sunday
+    if (dayOfWeek === 6 || dayOfWeek === 0) return true; // Saturday or Sunday
     // Check business hours: 8:00 - 17:00 (8 AM - 5 PM)
-    return startHour < 7 || startHour >= 17 || endHour < 7 || endHour > 17;
+    return startHour < 8 || startHour >= 17 || endHour < 8 || endHour > 17;
+  };
+
+  const isSlotSelectableForHome = (slot) => {
+    if (!slot?.time_slots?.[0]) return false;
+    const timeSlot = slot.time_slots[0];
+    // Create date object and get day of week (0=Sunday, 6=Saturday)
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+    const dayOfWeek = slotDate.getDay();
+    const startHour = timeSlot.start_time?.hour;
+    // For home type, allow all time slots on weekends (Saturday=6, Sunday=0)
+    const isWeekend = dayOfWeek === 6 || dayOfWeek === 0;
+    if (isWeekend) {
+      return true; // Allow any time slot on weekends
+    }
+    // For weekdays, only allow outside business hours
+    const isOutsideBusinessHours = startHour < 8 || startHour >= 17;
+    return isOutsideBusinessHours;
+  };
+
+  const isSlotPastDate = (slot) => {
+    if (!slot?.time_slots?.[0]) return true;
+    const timeSlot = slot.time_slots[0];
+    const now = new Date();
+    // Use actual date components, not day of week
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day, timeSlot.start_time.hour, timeSlot.start_time.minute);
+    return slotDate < now;
   };
 
   
@@ -133,6 +161,21 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     if ((type === 'facility' || type === 'self' || type === 'home') && !selectedSlot) {
       toast.error('Vui lòng chọn khung giờ khám');
       return;
+    }
+
+    // Additional validation for home service
+    if (type === 'home' && selectedSlot) {
+      const selectedSlotData = availableSlots.find(s => s._id === selectedSlot);
+      if (selectedSlotData) {
+        if (isSlotPastDate(selectedSlotData)) {
+          toast.error('Không thể đặt lịch cho khung giờ đã qua');
+          return;
+        }
+        if (!isSlotSelectableForHome(selectedSlotData)) {
+          toast.error('Dịch vụ tại nhà: Cuối tuần có thể chọn bất kỳ giờ nào, ngày thường chỉ ngoài giờ hành chính');
+          return;
+        }
+      }
     }
 
     if (type === 'home' && !(collection_address || mapAddress)) {
@@ -435,53 +478,95 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
               {range[0].startDate && range[0].endDate && (
                 <div className="flex flex-col mb-4">
                   <label className="font-semibold mb-1.5 text-[#1caf9a]">Chọn thời gian khám</label>
+                  
+                  {/* Home service notice */}
+                  {type === 'home' && (
+                    <Alert
+                      message="Lưu ý về lịch hẹn tại nhà"
+                      description="Dịch vụ thu mẫu tại nhà: Cuối tuần (Thứ 7, Chủ nhật) có thể chọn bất kỳ khung giờ nào. Các ngày trong tuần chỉ áp dụng ngoài giờ hành chính (trước 8:00 hoặc sau 17:00). Và Chú ý: Phí dịch vụ sẽ tăng thêm 20% cho các khung giờ ngoài giờ hành chính."
+                      type="info"
+                      showIcon
+                      className="mb-3"
+                    />
+                  )}
+                  
                   <div className="flex gap-2 flex-wrap">
                     {availableSlots?.length > 0 ? (
                       availableSlots.map((slot) => {
                         const timeSlot = slot.time_slots?.[0];
-                        
                         let displayTime = 'Invalid time';
                         let displayDate = '';
                         let staffNames = [];
-                        
+                        let isDisabled = false;
+                        let disabledReason = '';
+
                         if (timeSlot?.start_time && timeSlot?.end_time) {
                           const { hour: startHour, minute: startMinute } = timeSlot.start_time;
                           const { hour: endHour, minute: endMinute } = timeSlot.end_time;
-                          
+
                           const paddedStartMinute = startMinute.toString().padStart(2, '0');
                           const paddedEndMinute = endMinute.toString().padStart(2, '0');
-                          
+
                           displayTime = `${startHour}:${paddedStartMinute} - ${endHour}:${paddedEndMinute}`;
-                          
+
                           const date = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
                           displayDate = format(date, 'dd/MM');
 
                           staffNames = slot.staff_profile_ids.map(staff => 
                             `${staff.user_id.first_name} ${staff.user_id.last_name}`
                           );
+
+                          const isPastDate = isSlotPastDate(slot);
+                          // Calculate day of week correctly from date components
+                          const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+                          const dayOfWeek = slotDate.getDay(); // 0=Sunday, 6=Saturday
+                          const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+                          
+                          if (isPastDate) {
+                            isDisabled = true;
+                            disabledReason = 'Đã quá thời gian';
+                          } else if (type === 'home') {
+                            if (isWeekend) {
+                              isDisabled = false;
+                              disabledReason = '';
+                            } else if (!isSlotSelectableForHome(slot)) {
+                              isDisabled = true;
+                              disabledReason = 'Ngày thường chỉ ngoài giờ hành chính';
+                            }
+                          }
                         }
 
                         return (
-                          <button
-                            key={slot._id}
-                            type="button"
-                            className={`p-3 border border-gray-300 rounded text-sm cursor-pointer text-gray-800 select-none transition-all ${
-                              selectedSlot === slot._id
-                                ? 'bg-[#1caf9a] text-white border-[#1caf9a] font-bold'
-                                : 'bg-gray-100 hover:bg-gray-200'
-                            }`}
-                            onClick={() => setSelectedSlot(slot._id)}
-                          >
-                            <div className="text-center">
-                              <div>{displayDate}</div>
-                              <div className="text-xs">{displayTime}</div>
-                              {staffNames.length > 0 && (
-                                <div className="text-xs mt-1">
-                                  {staffNames.join(', ')}
-                                </div>
-                              )}
-                            </div>
-                          </button>
+                          <div key={slot._id} className="relative">
+                            <button
+                              type="button"
+                              disabled={isDisabled}
+                              className={`p-3 border border-gray-300 rounded text-sm cursor-pointer text-gray-800 select-none transition-all ${
+                                isDisabled
+                                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                                  : selectedSlot === slot._id
+                                  ? 'bg-[#1caf9a] text-white border-[#1caf9a] font-bold'
+                                  : 'bg-gray-100 hover:bg-gray-200'
+                              }`}
+                              onClick={() => !isDisabled && setSelectedSlot(slot._id)}
+                              title={isDisabled ? disabledReason : ''}
+                            >
+                              <div className="text-center">
+                                <div>{displayDate}</div>
+                                <div className="text-xs">{displayTime}</div>
+                                {staffNames.length > 0 && (
+                                  <div className="text-xs mt-1">
+                                    {staffNames.join(', ')}
+                                  </div>
+                                )}
+                                {isDisabled && (
+                                  <div className="text-xs mt-1 text-red-500">
+                                    {disabledReason}
+                                  </div>
+                                )}
+                              </div>
+                            </button>
+                          </div>
                         );
                       })
                     ) : (
@@ -495,7 +580,7 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                   {isOutsideBusinessHours && selectedSlot && (
                     <Alert
                       message="Cảnh báo phụ phí ngoài giờ"
-                      description="Khung giờ bạn chọn nằm ngoài giờ hành chính (7:00 - 17:00). Phí dịch vụ sẽ được tăng thêm 20%."
+                      description="Khung giờ bạn chọn nằm ngoài giờ hành chính (8:00 - 17:00). Phí dịch vụ sẽ được tăng thêm 20%."
                       type="warning"
                       showIcon
                       className="mt-3"

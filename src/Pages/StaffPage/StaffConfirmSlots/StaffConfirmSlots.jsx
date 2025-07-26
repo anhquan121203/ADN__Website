@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Tooltip, Input, Select, DatePicker, Form, Row, Col } from 'antd';
-import { EyeOutlined, InboxOutlined, SettingOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Tooltip, Input, Select, DatePicker, Form, Row, Col, Tag } from 'antd';
+import { EyeOutlined, InboxOutlined, SettingOutlined, SearchOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useAppointment } from '../../../Hooks/useAppoinment';
 import { useNavigate } from 'react-router-dom';
 import ModalRequestKit from './ModalRequestKit/ModalRequestKit';
+import ModalCheckIn from './ModalCheckIn';
+import ModalAddNote from './ModalAddNote';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 const { Option } = Select;
@@ -40,6 +43,8 @@ const StaffConfirmSlots = () => {
   const [pageSize, setPageSize] = useState(10);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [checkInModalOpen, setCheckInModalOpen] = useState(false);
+  const [addNoteModalOpen, setAddNoteModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Filter states
@@ -92,6 +97,36 @@ const StaffConfirmSlots = () => {
 
   const handleModalSuccess = () => {
     getStaffAssignedAppointments({ pageNum, pageSize, ...filterParams });
+  };
+
+  const handleCheckIn = (appointment) => {
+    setSelectedAppointment(appointment);
+    setCheckInModalOpen(true);
+  };
+
+  const handleAddNote = (appointment) => {
+    setSelectedAppointment(appointment);
+    setAddNoteModalOpen(true);
+  };
+
+  const handleCheckInSuccess = () => {
+    setCheckInModalOpen(false);
+    // Refresh data
+    getStaffAssignedAppointments({
+      pageNum,
+      pageSize,
+      ...filterParams
+    });
+  };
+
+  const handleAddNoteSuccess = () => {
+    setAddNoteModalOpen(false);
+    // Refresh data
+    getStaffAssignedAppointments({
+      pageNum,
+      pageSize,
+      ...filterParams
+    });
   };
 
   const columns = [
@@ -226,6 +261,28 @@ const StaffConfirmSlots = () => {
               />
             </Tooltip>
           )}
+          
+          {record.type === 'home' && (
+          <Tooltip title="Check-in tại địa điểm">
+            <Button
+              type="text"
+              icon={<CheckCircleOutlined />}
+              onClick={() => handleCheckIn(record)}
+              className="text-green-600 hover:text-green-800"
+            />
+          </Tooltip>
+          )}
+          
+          {record.type === 'home' && (
+          <Tooltip title="Thêm ghi chú">
+            <Button
+              type="text"
+              icon={<FileTextOutlined />}
+              onClick={() => handleAddNote(record)}
+              className="text-purple-600 hover:text-purple-800"
+            />
+          </Tooltip>
+          )}
         </Space>
       ),
     },
@@ -339,6 +396,20 @@ const StaffConfirmSlots = () => {
         onClose={handleModalClose}
         appointmentId={selectedAppointment?._id}
         onSuccess={handleModalSuccess}
+      />
+
+      <ModalCheckIn
+        open={checkInModalOpen}
+        onClose={() => setCheckInModalOpen(false)}
+        appointmentId={selectedAppointment?._id}
+        onSuccess={handleCheckInSuccess}
+      />
+
+      <ModalAddNote
+        open={addNoteModalOpen}
+        onClose={() => setAddNoteModalOpen(false)}
+        appointmentId={selectedAppointment?._id}
+        onSuccess={handleAddNoteSuccess}
       />
     </div>
   );

@@ -69,12 +69,13 @@ export const getAppointmentById = createAsyncThunk(
 
 export const getAvailableStaff = createAsyncThunk(
   "appointment/getAvailableStaff",
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
         `${API_BASE_URL}/api/appointment/staff/available`,
         {
+          params,
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -230,6 +231,50 @@ export const fetchLabTechAssignedAppointments = createAsyncThunk(
           params: {
             ...params,
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const checkInAppointment = createAsyncThunk(
+  "appointment/checkIn",
+  async ({ appointmentId, note }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.put(
+        `${API_BASE_URL}/api/appointment/${appointmentId}/checkin`,
+        { note },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const addNoteToAppointment = createAsyncThunk(
+  "appointment/addNote",
+  async ({ appointmentId, note }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.put(
+        `${API_BASE_URL}/api/appointment/${appointmentId}/add-note`,
+        { note },
+        {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -401,6 +446,30 @@ const appointmentSlice = createSlice({
         state.labTechAssignedPageInfo = action.payload.data.pageInfo;
       })
       .addCase(fetchLabTechAssignedAppointments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(checkInAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(checkInAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally update selectedAppointment if needed
+      })
+      .addCase(checkInAppointment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addNoteToAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addNoteToAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally update selectedAppointment if needed
+      })
+      .addCase(addNoteToAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

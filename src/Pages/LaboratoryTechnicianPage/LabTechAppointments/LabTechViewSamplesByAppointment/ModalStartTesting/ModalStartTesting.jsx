@@ -62,12 +62,47 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
 
     try {
       const result = await startTesting(testingData);
-      if (result.success) {
-        // Kiểm tra kết quả chi tiết
-        const { data } = result;
-        const successCount = data.results.filter(r => r.success).length;
-        const failedCount = data.results.filter(r => !r.success).length;
+      console.log('Testing result:', result); // Debug log
+      
+      // Kiểm tra xem request có thành công không (status 200)
+      if (result.success || result.data?.success) {
+        // Lấy data từ response (có thể nested)
+        let responseData = result.data;
         
+        // Nếu result.data.data tồn tại, sử dụng nó (nested structure)
+        if (result.data?.data) {
+          responseData = result.data.data;
+        }
+        
+        console.log('Response data:', responseData); // Debug log
+
+        // Kiểm tra xem có results array không
+        if (!responseData.results || !Array.isArray(responseData.results)) {
+          const msg = responseData.message || responseData.error || result.data?.message || 'Phản hồi từ server không hợp lệ';
+          toast.error(msg);
+          return;
+        }
+
+        const results = responseData.results;
+        const successCount = results.filter(r => r.success === true).length;
+        const failedCount = results.filter(r => r.success === false).length;
+
+        console.log(`Success: ${successCount}, Failed: ${failedCount}`); // Debug log
+
+        if (successCount === 0 && failedCount > 0) {
+          // Tất cả thất bại (dù backend trả về success: true)
+          toast.error(`Không thể bắt đầu xét nghiệm cho bất kỳ mẫu nào. ${failedCount} mẫu thất bại`);
+          // Hiển thị chi tiết lỗi
+          results.forEach(resultItem => {
+            if (resultItem.success === false) {
+              toast.error(`Mẫu ${resultItem.id.slice(-6)}: ${resultItem.error || 'Lỗi không xác định'}`, {
+                autoClose: 8000,
+              });
+            }
+          });
+          return;
+        }
+
         if (successCount > 0 && failedCount === 0) {
           // Tất cả thành công
           toast.success(`Đã bắt đầu xét nghiệm thành công cho ${successCount} mẫu!`);
@@ -76,38 +111,27 @@ const ModalStartTesting = ({ open, onClose, samples, onSuccess }) => {
         } else if (successCount > 0 && failedCount > 0) {
           // Một phần thành công
           toast.warning(`Đã bắt đầu xét nghiệm cho ${successCount} mẫu, ${failedCount} mẫu thất bại`);
-          
           // Hiển thị chi tiết lỗi
-          data.results.forEach(result => {
-            if (!result.success) {
-              toast.error(`Mẫu ${result.id.slice(-6)}: ${result.error}`, {
+          results.forEach(resultItem => {
+            if (resultItem.success === false) {
+              toast.error(`Mẫu ${resultItem.id.slice(-6)}: ${resultItem.error || 'Lỗi không xác định'}`, {
                 autoClose: 8000,
               });
             }
           });
-          
           // Đóng modal sau khi hiển thị lỗi
           setTimeout(() => {
             onSuccess();
             onClose();
           }, 2000);
-        } else {
-          // Tất cả thất bại
-          toast.error(`Không thể bắt đầu xét nghiệm cho bất kỳ mẫu nào. ${failedCount} mẫu thất bại`);
-          
-          // Hiển thị chi tiết lỗi
-          data.results.forEach(result => {
-            if (!result.success) {
-              toast.error(`Mẫu ${result.id.slice(-6)}: ${result.error}`, {
-                autoClose: 8000,
-              });
-            }
-          });
         }
       } else {
-        toast.error(result.error || 'Không thể bắt đầu quy trình xét nghiệm');
+        // Request thất bại (status không phải 200)
+        const errorMsg = result.error || result.message || result.data?.message || 'Không thể bắt đầu quy trình xét nghiệm';
+        toast.error(errorMsg);
       }
     } catch (error) {
+      console.error('Error starting testing:', error);
       toast.error('Đã xảy ra lỗi khi bắt đầu quy trình xét nghiệm');
     }
   };

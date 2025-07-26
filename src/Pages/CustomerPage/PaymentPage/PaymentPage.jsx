@@ -43,7 +43,14 @@ const PaymentPage = () => {
     const startHour = timeSlot.start_time?.hour;
     const endHour = timeSlot.end_time?.hour;
     
-    // Business hours: 8:00 - 17:00 (8 AM - 5 PM)
+    // Create date object and get day of week (0=Sunday, 6=Saturday)
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+    const dayOfWeek = slotDate.getDay();
+    
+    // Check if the slot is on a weekend (Saturday or Sunday)
+    if (dayOfWeek === 6 || dayOfWeek === 0) return true; // Saturday or Sunday
+    
+    // For weekdays, check business hours: 8:00 - 17:00 (8 AM - 5 PM)
     return startHour < 8 || startHour >= 17 || endHour < 8 || endHour > 17;
   };
 
@@ -77,7 +84,11 @@ const PaymentPage = () => {
         
         // Check if appointment is outside business hours
         if (appointmentData?.slot_id) {
-          setIsOutsideBusinessHours(checkBusinessHours(appointmentData.slot_id));
+          const isOutside = checkBusinessHours(appointmentData.slot_id);
+          console.log('PaymentPage - Checking business hours:');
+          console.log('Slot data:', appointmentData.slot_id);
+          console.log('Is outside business hours:', isOutside);
+          setIsOutsideBusinessHours(isOutside);
         }
       }
       if (sampleRes.success) setSamples(Array.isArray(sampleRes.data.data) ? sampleRes.data.data : []);
@@ -106,7 +117,7 @@ const PaymentPage = () => {
     const paymentNo = paymentData.payment_no;
     
     if (res.success) {
-      if (method === "pay_os" && url) {
+      if (method === "payos" && url) {
         if (paymentNo) {
           localStorage.setItem("payment_no", paymentNo);
         }
@@ -291,8 +302,8 @@ const PaymentPage = () => {
               <span>💵 Tiền mặt</span>
             </label>
             <label className="flex items-center cursor-pointer text-xl">
-              <input type="radio" checked={method === "pay_os"} onChange={() => setMethod("pay_os")} className="mr-2 w-5 h-5" />
-              <span>🌐 PAY_OS</span>
+              <input type="radio" checked={method === "payos"} onChange={() => setMethod("payos")} className="mr-2 w-5 h-5" />
+              <span>🌐 PAYOS</span>
             </label>
           </div>
         </div>

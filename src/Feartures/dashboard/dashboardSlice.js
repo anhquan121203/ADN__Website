@@ -71,12 +71,60 @@ export const dashboardSumary = createAsyncThunk(
   }
 );
 
+// ==========================================================================================
+// Staff dashboard summary
+export const dashboardStaffSummary = createAsyncThunk(
+  "dashboards/dashboardStaffSummary",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/dashboard/staff/summary`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+// ==========================================================================================
+// Lab Tech dashboard summary
+export const dashboardLabTechSummary = createAsyncThunk(
+  "dashboards/dashboardLabTechSummary",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/api/dashboard/lab-tech/summary`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const dashboardSlice = createSlice({
   name: "DASHBOARD",
   initialState: {
     dashboards: {},
     revenues: [],
     summary: {},
+    staffSummary: {},
+    labTechSummary: {},
     loading: false,
     error: null,
     total: 0,
@@ -124,6 +172,34 @@ const dashboardSlice = createSlice({
       .addCase(dashboardSumary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch accounts";
+      })
+
+      // Staff dashboard summary
+      .addCase(dashboardStaffSummary.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(dashboardStaffSummary.fulfilled, (state, action) => {
+        state.loading = false;
+        state.staffSummary = action.payload?.data || {};
+      })
+      .addCase(dashboardStaffSummary.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch staff summary";
+      })
+
+      // Lab Tech dashboard summary
+      .addCase(dashboardLabTechSummary.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(dashboardLabTechSummary.fulfilled, (state, action) => {
+        state.loading = false;
+        state.labTechSummary = action.payload?.data || {};
+      })
+      .addCase(dashboardLabTechSummary.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch lab tech summary";
       });
   },
 });

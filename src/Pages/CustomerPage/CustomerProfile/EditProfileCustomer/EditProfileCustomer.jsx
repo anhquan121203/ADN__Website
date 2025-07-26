@@ -13,6 +13,7 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
   const [errors, setErrors] = useState({});
   
 
+  const emptyAddress = { street: '', ward: '', district: '', city: '', country: 'Việt Nam' };
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -20,7 +21,7 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
     avatar_image: null, // file object
     avatar_url: '',     // real URL from backend only
     dob: '',
-    address: '',
+    address: { ...emptyAddress },
     gender: ''
   });
 
@@ -32,15 +33,28 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
     if (user) {
       const genderValue = typeof user.gender === 'string' ? user.gender.toLowerCase() : '';
       console.log('Loaded gender value:', genderValue, 'from user:', user.gender);
+      let addressObj = { ...emptyAddress };
+      if (user.address) {
+        try {
+          if (typeof user.address === 'string') {
+            const parsed = JSON.parse(user.address);
+            addressObj = { ...emptyAddress, ...parsed };
+          } else if (typeof user.address === 'object') {
+            addressObj = { ...emptyAddress, ...user.address };
+          }
+        } catch (e) {
+          // fallback: leave as default
+        }
+      }
       setFormData({
         id: user._id || '',
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         phone_number: user.phone_number || '',
         avatar_image: null,
-        avatar_url: user.avatar_url || '', // only real URL from backend
+        avatar_url: user.avatar_url || '',
         dob: user.dob || '',
-        address: user.address || '',
+        address: { ...emptyAddress, ...addressObj },
         gender: genderValue || ''
       });
       setPreviewUrl(user.avatar_url || '');
@@ -99,30 +113,32 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
 
 
     try {
-      // Create FormData for multipart/form-data
-      const formDataToSend = new FormData();
-      formDataToSend.append('first_name', formData.first_name);
-      formDataToSend.append('last_name', formData.last_name);
-      formDataToSend.append('phone_number', formData.phone_number);
-      formDataToSend.append('dob', formData.dob);
-      formDataToSend.append('address', formData.address);
-      formDataToSend.append('gender', formData.gender);
-
-      if (formData.avatar_image) {
+      let result;
+      if (!formData.avatar_image) {
+        // Gửi object thuần nếu không upload ảnh
+        const body = {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          phone_number: formData.phone_number,
+          dob: formData.dob,
+          address: formData.address, // object
+          gender: formData.gender,
+          avatar_url: formData.avatar_url
+        };
+        result = await updateUsers(user._id, body); // Bạn cần đảm bảo updateUsers gửi application/json
+      } else {
+        // Nếu có upload ảnh, vẫn phải dùng FormData và stringify address
+        const formDataToSend = new FormData();
+        formDataToSend.append('first_name', formData.first_name);
+        formDataToSend.append('last_name', formData.last_name);
+        formDataToSend.append('phone_number', formData.phone_number);
+        formDataToSend.append('dob', formData.dob);
+        formDataToSend.append('address', JSON.stringify(formData.address));
+        formDataToSend.append('gender', formData.gender);
         formDataToSend.append('avatar_image', formData.avatar_image);
-        // Set avatar_url to the file name (string) for backend
         formDataToSend.append('avatar_url', formData.avatar_image.name);
-      } else if (
-        typeof formData.avatar_url === 'string' &&
-        formData.avatar_url &&
-        !formData.avatar_url.startsWith('blob:') &&
-        (formData.avatar_url.startsWith('http://') || formData.avatar_url.startsWith('https://'))
-      ) {
-        formDataToSend.append('avatar_url', formData.avatar_url);
+        result = await updateUsers(user._id, formDataToSend);
       }
-
-      // Send id as param, FormData as body
-      const result = await updateUsers(user._id, formDataToSend);
       if (result?.success) {
         toast.success('Profile updated successfully');
         // Refresh user data to reflect changes
@@ -157,16 +173,34 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
+    // Address fields
+    if (name.startsWith('address.')) {
+      const addrField = name.split('.')[1];
+      setFormData(prev => ({
         ...prev,
-        [name]: ''
+        address: {
+          ...emptyAddress,
+          ...(prev.address || {}),
+          [addrField]: value
+        }
       }));
+      if (errors.address && errors.address[addrField]) {
+        setErrors(prev => ({
+          ...prev,
+          address: { ...prev.address, [addrField]: '' }
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
   };
 
@@ -367,14 +401,48 @@ const EditProfileCustomer = ({ user, onCancel, onSaveSuccess }) => {
 
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-gray-700 text-sm">Address</label>
-          <textarea 
-            name="address" 
-            value={formData.address} 
-            onChange={handleChange} 
-            placeholder="123 Main Street, City, Country"
-            rows="3"
-            className="p-3 border-2 border-gray-200 rounded-lg text-sm transition-all duration-300 bg-white focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 resize-y min-h-20 font-inherit"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <input
+              type="text"
+              name="address.street"
+              value={(formData.address && formData.address.street) || ''}
+              onChange={handleChange}
+              placeholder="Đường"
+              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+            />
+            <input
+              type="text"
+              name="address.ward"
+              value={(formData.address && formData.address.ward) || ''}
+              onChange={handleChange}
+              placeholder="Phường"
+              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+            />
+            <input
+              type="text"
+              name="address.district"
+              value={(formData.address && formData.address.district) || ''}
+              onChange={handleChange}
+              placeholder="Quận"
+              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+            />
+            <input
+              type="text"
+              name="address.city"
+              value={(formData.address && formData.address.city) || ''}
+              onChange={handleChange}
+              placeholder="Thành phố"
+              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+            />
+            <input
+              type="text"
+              name="address.country"
+              value={(formData.address && formData.address.country) || ''}
+              onChange={handleChange}
+              placeholder="Quốc gia"
+              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+            />
+          </div>
         </div>
 
         <div className="flex gap-4 justify-end mt-8 pt-6 border-t-2 border-gray-100">

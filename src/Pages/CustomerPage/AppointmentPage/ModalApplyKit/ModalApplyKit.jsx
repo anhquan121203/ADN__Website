@@ -82,42 +82,35 @@ const ModalApplyKit = ({ open, onClose, appointmentId }) => {
                 rules={[{ required: true, message: "Name required" }]}
                 style={{ marginBottom: 8 }}
               >
-                <Input placeholder="Name" />
+                <Input placeholder="Họ và Tên" />
               </Form.Item>
               <Form.Item
                 name={["person_info_list", idx, "dob"]}
                 rules={[{ required: true, message: "DOB required" }]}
                 style={{ marginBottom: 8 }}
               >
-                <Input type="date" placeholder="DOB" />
+                <Input type="date" placeholder="Ngày/Tháng/Năm sinh" />
               </Form.Item>
               <Form.Item
                 name={["person_info_list", idx, "relationship"]}
                 rules={[{ required: true, message: "Relationship required" }]}
                 style={{ marginBottom: 8 }}
               >
-                <Input placeholder="Relationship" />
+                <Input placeholder="Mối quan hệ" />
               </Form.Item>
               <Form.Item
                 name={["person_info_list", idx, "birth_place"]}
                 rules={[{ required: true, message: "Birth place required" }]}
                 style={{ marginBottom: 8 }}
               >
-                <Input placeholder="Birth Place" />
+                <Input placeholder="Nơi sinh" />
               </Form.Item>
               <Form.Item
                 name={["person_info_list", idx, "nationality"]}
                 rules={[{ required: true, message: "Nationality required" }]}
                 style={{ marginBottom: 8 }}
               >
-                <Input placeholder="Nationality" />
-              </Form.Item>
-              <Form.Item
-                name={["person_info_list", idx, "identity_document"]}
-                rules={[{ required: true, message: "Identity document required" }]}
-                style={{ marginBottom: 8 }}
-              >
-                <Input placeholder="Identity Document" />
+                <Input placeholder="Quốc Tịch" />
               </Form.Item>
               <Button danger onClick={() => handleRemovePerson(idx)} disabled={personInfoList.length === 1}>
                 Remove

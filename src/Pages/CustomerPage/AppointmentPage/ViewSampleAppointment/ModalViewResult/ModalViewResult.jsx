@@ -129,7 +129,17 @@ const ModalViewResult = ({
                   new Date(resultData.customer_id.dob).toLocaleDateString('vi-VN') : 'N/A'}
               </Descriptions.Item>
               <Descriptions.Item label="Địa chỉ" span={2}>
-                {resultData.customer_id?.address || 'N/A'}
+                {resultData.customer_id?.address
+                  ? [
+                      resultData.customer_id.address.street,
+                      resultData.customer_id.address.ward,
+                      resultData.customer_id.address.district,
+                      resultData.customer_id.address.city,
+                      resultData.customer_id.address.country
+                    ]
+                      .filter(Boolean)
+                      .join(', ')
+                  : 'N/A'}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -226,7 +236,6 @@ const ModalViewResult = ({
                         <div>
                           <p className="text-sm text-gray-600">Nơi sinh: {sample.person_info?.birth_place || 'N/A'}</p>
                           <p className="text-sm text-gray-600">Quốc tịch: {sample.person_info?.nationality || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">CMND/CCCD: {sample.person_info?.identity_document || 'N/A'}</p>
                         </div>
                       </div>
                       <div className="mt-2">

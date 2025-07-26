@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag } from "antd";
+import { Table, Tag, Dropdown, Menu, Button } from "antd";
 import AppointmentFilter from "./AppointmentFilter";
 import { useAppointment } from "../../../Hooks/useAppoinment";
 import useAuth from "../../../Hooks/useAuth";
@@ -93,28 +93,32 @@ export default function ViewAppointment() {
     ...columns,
     {
       title: "Hành động",
-      key: "requestKit",
-      render: (_, record) => (
-        <div style={{ display: "flex", gap: 8 }}>
-          {/* Chỉ hiển thị button "Nhận bộ dụng cụ" khi type là "self" hoặc "home" */}
-          {(record.type === "self" || record.type === "home") && (
-            <button
-              onClick={() => {
+      key: "actions",
+      render: (_, record) => {
+        const menu = (
+          <Menu>
+            <Menu.Item key="detail" onClick={() => navigate(`/customer/appointment/detail/${record._id}`)}>
+              Xem chi tiết
+            </Menu.Item>
+            {(record.type === "self" || record.type === "home") && (
+              <Menu.Item key="kit" onClick={() => {
                 setSelectedAppointmentId(record._id);
                 setShowModal(true);
-              }}
-            >
-              Nhận bộ dụng cụ
-            </button>
-          )}
-          <button
-            onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}
-            style={{ marginLeft: 8 }}
-          >
-            Xem Mẫu
-          </button>
-        </div>
-      ),
+              }}>
+                Nhận bộ dụng cụ
+              </Menu.Item>
+            )}
+            <Menu.Item key="sample" onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}>
+              Xem Mẫu
+            </Menu.Item>
+          </Menu>
+        );
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button type="primary">Hành động</Button>
+          </Dropdown>
+        );
+      },
     },
   ];
 
