@@ -11,7 +11,7 @@
   transition: all 0.3s ease;
 }
 
-.sidebar-lab.collapsed {
+.sidebar-lab .collapsed {
   width: 80px;
   padding: 32px 12px;
   align-items: center;
@@ -26,14 +26,14 @@
   justify-content: flex-start;
 }
 
-.sidebar-lab.collapsed .top-lab {
+.sidebar-lab .collapsed .top-lab {
   justify-content: center;
 }
 
 .sidebar-lab .top-lab__icon {
   width: 32px;
   height: 32px;
-  background-color: #7c3aed;
+  background-color: #3b82f6;
   color: white;
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
   transition: opacity 0.3s ease;
 }
 
-.sidebar-lab.collapsed .title-name {
+.sidebar-lab .collapsed .title-name {
   opacity: 0;
   width: 0;
   margin: 0;
@@ -86,7 +86,7 @@
   position: relative;
 }
 
-.sidebar-lab.collapsed .nav-item {
+.sidebar-lab .collapsed .nav-item {
   justify-content: center;
   padding: 10px;
   gap: 0;
@@ -99,8 +99,8 @@
 
 /* Active Item */
 .sidebar-lab .nav-item.active {
-  background-color: #ede9fe;
-  color: #7c3aed;
+  background-color: #dbeafe;
+  color: #3b82f6;
   font-weight: 600;
 }
 
@@ -133,7 +133,7 @@
   cursor: pointer;
 }
 
-.sidebar-lab.collapsed .dropdown-service {
+.sidebar-lab .collapsed .dropdown-service {
   justify-content: center;
   padding: 10px;
 }
@@ -144,8 +144,8 @@
 }
 
 .sidebar-lab .dropdown-service.open {
-  background-color: #ede9fe;
-  color: #7c3aed;
+  background-color: #dbeafe;
+  color: #3b82f6;
   font-weight: 600;
 }
 
@@ -165,7 +165,7 @@
   margin-top: 4px;
 }
 
-.sidebar-lab.submenu-item {
+.sidebar-lab .submenu-item {
   font-size: 14px;
   color: #334155;
   padding: 6px 0;
@@ -174,16 +174,16 @@
 }
 
 .sidebar-lab .submenu-item:hover {
-  color: #7c3aed;
+  color: #3b82f6;
 }
 
 .sidebar-lab .submenu-item.active {
-  color: #7c3aed;
+  color: #3b82f6;
   font-weight: 600;
 }
 
 /* Tooltip for collapsed state */
-.sidebar-lab.collapsed .nav-item[title]:hover::after {
+.sidebar-lab .collapsed .nav-item[title]:hover::after {
   content: attr(title);
   position: absolute;
   left: 60px;
@@ -199,7 +199,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-lab.collapsed .nav-item[title]:hover::before {
+.sidebar-lab .collapsed .nav-item[title]:hover::before {
   content: '';
   position: absolute;
   left: 55px;

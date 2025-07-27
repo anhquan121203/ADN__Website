@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Space, Tag, Card, message, Spin, Typography, Input, DatePicker, Select } from 'antd';
 import { EyeOutlined, SearchOutlined, ReloadOutlined, ExperimentOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import useAppointment from '../../../Hooks/useAppoinment';
 import moment from 'moment';
 
@@ -29,13 +30,13 @@ const ManageResult = () => {
   const getStatusDisplayName = (status) => {
     switch (status) {
       case 'testing':
-        return 'Testing';
+        return 'Đang xét nghiệm';
       case 'completed':
-        return 'Completed';
+        return 'Đã hoàn thành';
       case 'complete':
-        return 'Complete';
+        return 'Hoàn thành';
       default:
-        return 'Testing';
+        return 'Đang xét nghiệm';
     }
   };
 
@@ -74,10 +75,10 @@ const ManageResult = () => {
           total: pageInfo.totalItems || appointmentsData.length,
         });
       } else {
-        message.error(result.error || 'Failed to fetch appointments');
+        toast.error(result.error || 'Không thể tải danh sách cuộc hẹn');
       }
     } catch (error) {
-      message.error('Error fetching appointments');
+      toast.error('Lỗi khi tải danh sách cuộc hẹn');
       console.error('Error:', error);
     } finally {
       setLoading(false);
@@ -145,7 +146,7 @@ const ManageResult = () => {
 
   const columns = [
     {
-      title: 'ID',
+      title: 'Mã',
       dataIndex: '_id',
       key: '_id',
       width: 100,
@@ -157,7 +158,7 @@ const ManageResult = () => {
       ),
     },
     {
-      title: 'Customer',
+      title: 'Khách hàng',
       key: 'customer',
       width: 200,
       render: (_, record) => (
@@ -177,7 +178,7 @@ const ManageResult = () => {
       ),
     },
     {
-      title: 'Service',
+      title: 'Dịch vụ',
       dataIndex: ['service_id', 'name'],
       key: 'service',
       width: 160,
@@ -185,13 +186,13 @@ const ManageResult = () => {
         <div className="space-y-1">
           <div className="font-medium text-gray-800 text-sm">{serviceName}</div>
           <div className="text-green-600 text-xs font-semibold">
-            ${record.service_id?.price}
+            {record.service_id?.price} VND
           </div>
         </div>
       ),
     },
     {
-      title: 'Date & Time',
+      title: 'Ngày & Giờ',
       dataIndex: 'appointment_date',
       key: 'appointment_date',
       width: 130,
@@ -207,61 +208,48 @@ const ManageResult = () => {
       ),
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       width: 100,
       render: (status) => (
         <Tag color={getStatusColor(status)} className="text-xs font-medium px-2 py-1">
-          {status?.toUpperCase()}
+          {(() => {
+            switch (status?.toLowerCase()) {
+              case 'pending': return 'CHỜ XỬ LÝ';
+              case 'confirmed': return 'ĐÃ XÁC NHẬN';
+              case 'in_progress': return 'ĐANG TIẾN HÀNH';
+              case 'testing': return 'ĐANG XÉT NGHIỆM';
+              case 'completed': return 'ĐÃ HOÀN THÀNH';
+              case 'complete': return 'HOÀN THÀNH';
+              case 'cancelled': return 'ĐÃ HỦY';
+              default: return status?.toUpperCase();
+            }
+          })()}
         </Tag>
       ),
     },
     {
-      title: 'Payment',
+      title: 'Thanh toán',
       dataIndex: 'payment_status',
       key: 'payment_status',
       width: 100,
       render: (status) => (
         <Tag color={getPaymentStatusColor(status)} className="text-xs font-medium px-2 py-1">
-          {status?.toUpperCase()}
+          {(() => {
+            switch (status?.toLowerCase()) {
+              case 'pending': return 'CHỜ XỬ LÝ';
+              case 'paid': return 'ĐÃ THANH TOÁN';
+              case 'failed': return 'THẤT BẠI';
+              case 'refunded': return 'ĐÃ HOÀN TIỀN';
+              default: return status?.toUpperCase();
+            }
+          })()}
         </Tag>
       ),
     },
     {
-      title: 'Lab Tech',
-      key: 'labTech',
-      width: 180,
-      render: (_, record) => (
-        <div>
-          {record.laboratory_technician_id ? (
-            <div className="space-y-1">
-              <div className="font-medium text-sm text-gray-800">
-                {record.laboratory_technician_id.first_name} {record.laboratory_technician_id.last_name}
-              </div>
-              <div className="text-gray-500 text-xs truncate max-w-[160px]">
-                {record.laboratory_technician_id.email}
-              </div>
-            </div>
-          ) : (
-            <Tag color="orange" className="text-xs">Not Assigned</Tag>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: 'Created',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      width: 100,
-      render: (date) => (
-        <div className="text-sm text-gray-600">
-          {moment(date).format('DD/MM/YYYY')}
-        </div>
-      ),
-    },
-    {
-      title: 'Actions',
+      title: 'Hành động',
       key: 'actions',
       width: 120,
       fixed: 'right',
@@ -273,23 +261,23 @@ const ManageResult = () => {
           onClick={() => handleViewSamples(record._id)}
           className="bg-blue-500 hover:bg-blue-600 border-blue-500 text-xs"
         >
-          View Samples
+          Xem mẫu
         </Button>
       ),
     },
   ];
 
   return (
-    <div className="p-4 md:p-6 bg-gray-50 max-w-[1250px] mx-auto min-h-screen">
+    <div className="p-4 md:p-6 bg-gray-50 max-w-full mx-auto min-h-screen">
       <Card className="shadow-sm border-0">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
           <div>
             <Title level={3} className="mb-2 text-gray-800">
               <ExperimentOutlined className="mr-2 text-purple-600" />
-              Manage Test Results - {getStatusDisplayName(filters.status)}
+              Quản lý kết quả xét nghiệm - {getStatusDisplayName(filters.status)}
             </Title>
             <p className="text-gray-600 text-sm md:text-base">
-              Manage appointments with {filters.status} status and paid payment for result creation
+              Quản lý các cuộc hẹn có trạng thái {getStatusDisplayName(filters.status).toLowerCase()} và đã thanh toán để tạo kết quả
             </p>
           </div>
         </div>
@@ -298,9 +286,9 @@ const ManageResult = () => {
         <Card className="mb-6 bg-gradient-to-r from-gray-50 to-blue-50 border-0 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">Search</label>
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Tìm kiếm</label>
               <Input
-                placeholder="Search by customer name, email, or appointment ID"
+                placeholder="Tìm kiếm theo tên khách hàng, email hoặc mã cuộc hẹn"
                 prefix={<SearchOutlined />}
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -309,19 +297,19 @@ const ManageResult = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">Status</label>
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Trạng thái</label>
               <Select
                 className="w-full"
                 value={filters.status}
                 onChange={(value) => setFilters({ ...filters, status: value })}
-                placeholder="Select status"
+                placeholder="Chọn trạng thái"
               >
-                <Select.Option value="testing">Testing</Select.Option>
-                <Select.Option value="completed">Completed</Select.Option>
+                <Select.Option value="testing">Đang xét nghiệm</Select.Option>
+                <Select.Option value="completed">Đã hoàn thành</Select.Option>
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">Date Range</label>
+              <label className="block text-sm font-semibold mb-2 text-gray-700">Khoảng thời gian</label>
               <RangePicker
                 className="w-full rounded-lg"
                 value={filters.dateRange}
@@ -336,14 +324,14 @@ const ManageResult = () => {
                 onClick={handleSearch}
                 className="bg-blue-500 hover:bg-blue-600 border-blue-500 rounded-lg px-6"
               >
-                Search
+                Tìm kiếm
               </Button>
               <Button 
                 icon={<ReloadOutlined />} 
                 onClick={handleReset}
                 className="rounded-lg px-6"
               >
-                Reset
+                Đặt lại
               </Button>
             </div>
           </div>
@@ -353,25 +341,25 @@ const ManageResult = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <div className="text-2xl md:text-3xl font-bold text-blue-600">{pagination.total || 0}</div>
-            <div className="text-gray-600 text-sm font-medium">Total {getStatusDisplayName(filters.status)} Appointments</div>
+            <div className="text-gray-600 text-sm font-medium">Tổng số cuộc hẹn {getStatusDisplayName(filters.status)}</div>
           </Card>
           <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <div className="text-2xl md:text-3xl font-bold text-cyan-600">
               {appointments.filter(apt => apt.status === filters.status).length}
             </div>
-            <div className="text-gray-600 text-sm font-medium">Current Status</div>
+            <div className="text-gray-600 text-sm font-medium">Trạng thái hiện tại</div>
           </Card>
           <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <div className="text-2xl md:text-3xl font-bold text-green-600">
               {appointments.filter(apt => apt.payment_status === 'paid').length}
             </div>
-            <div className="text-gray-600 text-sm font-medium">Paid</div>
+            <div className="text-gray-600 text-sm font-medium">Đã thanh toán</div>
           </Card>
           <Card className="text-center shadow-sm hover:shadow-md transition-shadow">
             <div className="text-2xl md:text-3xl font-bold text-purple-600">
               {appointments.filter(apt => apt.laboratory_technician_id).length}
             </div>
-            <div className="text-gray-600 text-sm font-medium">Assigned to Lab Tech</div>
+            <div className="text-gray-600 text-sm font-medium">Đã phân công KTV</div>
           </Card>
         </div>
 
@@ -382,8 +370,8 @@ const ManageResult = () => {
               <div className="text-gray-400 mb-2">
                 <ExperimentOutlined style={{ fontSize: '48px' }} />
               </div>
-              <p className="text-gray-500 text-lg">No appointments found</p>
-              <p className="text-gray-400 text-sm">Try adjusting your search criteria</p>
+              <p className="text-gray-500 text-lg">Không tìm thấy cuộc hẹn nào</p>
+              <p className="text-gray-400 text-sm">Thử điều chỉnh tiêu chí tìm kiếm của bạn</p>
             </Card>
           ) : (
             <Card className="shadow-sm border-0">
@@ -397,7 +385,7 @@ const ManageResult = () => {
                     showSizeChanger: true,
                     showQuickJumper: true,
                     showTotal: (total, range) =>
-                      `${range[0]}-${range[1]} of ${total} appointments`,
+                      `${range[0]}-${range[1]} của ${total} cuộc hẹn`,
                     responsive: true,
                     className: "custom-pagination",
                   }}
