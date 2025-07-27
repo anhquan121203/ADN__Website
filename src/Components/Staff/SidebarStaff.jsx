@@ -62,9 +62,9 @@ function SidebarStaff() {
                 className={`nav-item ${
                   pathname === "/staff/dashboard" ? "active" : ""
                 }`}
-                title={sidebarCollapsed ? "Dashboard" : ""}
+                title={sidebarCollapsed ? "Trang tổng quan" : ""}
               >
-                <MdOutlineDashboard /> {!sidebarCollapsed && "Dashboard"}
+                <MdOutlineDashboard /> {!sidebarCollapsed && "Trang tổng quan"}
               </Link>
               {/* Hồ sơ cá nhân */}
               <Link

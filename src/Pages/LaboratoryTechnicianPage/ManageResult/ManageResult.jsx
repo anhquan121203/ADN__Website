@@ -242,6 +242,7 @@ const ManageResult = () => {
               case 'paid': return 'ĐÃ THANH TOÁN';
               case 'failed': return 'THẤT BẠI';
               case 'refunded': return 'ĐÃ HOÀN TIỀN';
+              case 'government_funded': return 'ĐƯỢC TÀI TRỢ BỞI CHÍNH PHỦ';
               default: return status?.toUpperCase();
             }
           })()}

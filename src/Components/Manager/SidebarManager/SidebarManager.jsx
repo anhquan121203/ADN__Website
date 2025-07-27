@@ -47,7 +47,7 @@ function SidebarManager() {
               <FaUserTie />
             </div>
             {!sidebarCollapsed && (
-              <span className="title-name">Manager Dashboard</span>
+              <span className="title-name">Quản lý trang thống kê</span>
             )}
           </div>
           <nav className="nav-manager">

@@ -212,14 +212,27 @@ const ViewSampleAppointment = () => {
 
   const getTypeLabel = (type) => {
     switch (type) {
-      case "blood":
-        return "Máu";
-      case "saliva":
-        return "Nước bọt";
-      case "hair":
-        return "Tóc";
-      default:
-        return type;
+      case 'blood': return 'Máu';
+      case 'saliva': return 'Nước bọt';
+      case 'hair': return 'Tóc';
+      default: return type;
+    }
+  };
+
+  const getCollectionMethodLabel = (method) => {
+    switch (method) {
+      case 'self': return 'Tự lấy mẫu';
+      case 'home': return 'Nhân viên đến nhà lấy mẫu';
+      case 'facility': return 'Nhân viên lấy mẫu';
+      default: return method;
+    }
+  };
+  const getCollectionMethodColor = (method) => {
+    switch (method) {
+      case 'self': return 'blue'; // Tự lấy mẫu
+      case 'home': return 'green'; // Nhân viên đến nhà lấy mẫu
+      case 'facility': return 'purple'; // Nhân viên lấy mẫu
+      default: return 'default';
     }
   };
 
@@ -313,10 +326,14 @@ const ViewSampleAppointment = () => {
       },
     },
     {
-      title: "Phương pháp lấy mẫu",
-      dataIndex: "collection_method",
-      key: "collectionMethod",
-      render: (method) => <Tag>{method}</Tag>,
+      title: 'Phương pháp lấy mẫu',
+      dataIndex: 'collection_method',
+      key: 'collectionMethod',
+      render: (method) => (
+        <Tag color={getCollectionMethodColor(method)}>
+          {getCollectionMethodLabel(method)}
+        </Tag>
+      )
     },
     {
       title: "Ngày lấy mẫu",
