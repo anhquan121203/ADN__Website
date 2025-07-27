@@ -1,25 +1,27 @@
-import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { 
-  fetchResultsByAppointmentId, 
-  startTestingProcess, 
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchResultsByAppointmentId,
+  startTestingProcess,
   createTestResult,
   getResultByAppointmentId,
   updateResult,
-  resetResults, 
+  resetResults,
   resetStartTesting,
   resetCreateResult,
   resetCurrentResult,
-  resetUpdateResult 
-} from '../Feartures/result/resultSlice';
+  resetUpdateResult,
+  createRequestResultAdmin,
+} from "../Feartures/result/resultSlice";
 
 const useResult = () => {
   const dispatch = useDispatch();
-  const { 
-    loading, 
-    error, 
-    pageInfo, 
-    startTestingLoading, 
+  const {
+    resultAdmin,
+    loading,
+    error,
+    pageInfo,
+    startTestingLoading,
     startTestingError,
     createResultLoading,
     createResultError,
@@ -27,51 +29,62 @@ const useResult = () => {
     resultLoading,
     resultError,
     updateResultLoading,
-    updateResultError 
+    updateResultError,
   } = useSelector((state) => state.result);
 
-  const getResultsByAppointmentId = useCallback(async (appointmentId) => {
-    try {
-      const result = await dispatch(fetchResultsByAppointmentId(appointmentId));
-      if (fetchResultsByAppointmentId.fulfilled.match(result)) {
-        return { success: true, data: result.payload };
-      } else {
-        return { success: false, error: result.payload };
+  const getResultsByAppointmentId = useCallback(
+    async (appointmentId) => {
+      try {
+        const result = await dispatch(
+          fetchResultsByAppointmentId(appointmentId)
+        );
+        if (fetchResultsByAppointmentId.fulfilled.match(result)) {
+          return { success: true, data: result.payload };
+        } else {
+          return { success: false, error: result.payload };
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
       }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
-  const startTesting = useCallback(async (testingData) => {
-    try {
-      const result = await dispatch(startTestingProcess(testingData));
-      if (startTestingProcess.fulfilled.match(result)) {
-        return { success: true, data: result.payload };
-      } else {
-        return { success: false, error: result.payload };
+  const startTesting = useCallback(
+    async (testingData) => {
+      try {
+        const result = await dispatch(startTestingProcess(testingData));
+        if (startTestingProcess.fulfilled.match(result)) {
+          return { success: true, data: result.payload };
+        } else {
+          return { success: false, error: result.payload };
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
       }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const resetResultsState = useCallback(() => {
     dispatch(resetResults());
   }, [dispatch]);
 
-  const createResult = useCallback(async (resultData) => {
-    try {
-      const result = await dispatch(createTestResult(resultData));
-      if (createTestResult.fulfilled.match(result)) {
-        return { success: true, data: result.payload };
-      } else {
-        return { success: false, error: result.payload };
+  const createResult = useCallback(
+    async (resultData) => {
+      try {
+        const result = await dispatch(createTestResult(resultData));
+        if (createTestResult.fulfilled.match(result)) {
+          return { success: true, data: result.payload };
+        } else {
+          return { success: false, error: result.payload };
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
       }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const resetCreateResultState = useCallback(() => {
     dispatch(resetCreateResult());
@@ -81,41 +94,60 @@ const useResult = () => {
     dispatch(resetStartTesting());
   }, [dispatch]);
 
-  const getResultByAppointment = useCallback(async (appointmentId) => {
-    try {
-      const result = await dispatch(getResultByAppointmentId(appointmentId));
-      if (getResultByAppointmentId.fulfilled.match(result)) {
-        return { success: true, data: result.payload };
-      } else {
-        return { success: false, error: result.payload };
+  const getResultByAppointment = useCallback(
+    async (appointmentId) => {
+      try {
+        const result = await dispatch(getResultByAppointmentId(appointmentId));
+        if (getResultByAppointmentId.fulfilled.match(result)) {
+          return { success: true, data: result.payload };
+        } else {
+          return { success: false, error: result.payload };
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
       }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const resetCurrentResultState = useCallback(() => {
     dispatch(resetCurrentResult());
   }, [dispatch]);
 
-  const updateResultData = useCallback(async (resultId, resultData) => {
-    try {
-      const result = await dispatch(updateResult({ resultId, resultData }));
-      if (updateResult.fulfilled.match(result)) {
-        return { success: true, data: result.payload };
-      } else {
-        return { success: false, error: result.payload };
+  const updateResultData = useCallback(
+    async (resultId, resultData) => {
+      try {
+        const result = await dispatch(updateResult({ resultId, resultData }));
+        if (updateResult.fulfilled.match(result)) {
+          return { success: true, data: result.payload };
+        } else {
+          return { success: false, error: result.payload };
+        }
+      } catch (error) {
+        return { success: false, error: error.message };
       }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const resetUpdateResultState = useCallback(() => {
     dispatch(resetUpdateResult());
   }, [dispatch]);
 
+  const addRequestResultAdmin = async ({ resultId, resultData }) => {
+    try {
+      const response = await dispatch(
+        createRequestResultAdmin({ resultId, resultData })
+      ).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error create request:", error);
+      return { success: false };
+    }
+  };
+
   return {
+    resultAdmin,
     loading,
     error,
     pageInfo,
@@ -129,7 +161,7 @@ const useResult = () => {
     resultError,
     updateResultLoading,
     updateResultError,
-    
+
     // Actions
     getResultsByAppointmentId,
     startTesting,
@@ -141,6 +173,7 @@ const useResult = () => {
     resetCreateResultState,
     resetCurrentResultState,
     resetUpdateResultState,
+    addRequestResultAdmin,
   };
 };
 

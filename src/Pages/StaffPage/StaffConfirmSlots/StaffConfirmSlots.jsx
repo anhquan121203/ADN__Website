@@ -9,6 +9,10 @@ import ModalAddNote from './ModalAddNote';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import ModalRequestKitAdmin from './ModalRequestKitAdmin/ModalRequestKitAdmin';
+import useAppointmentAdmin from '../../../Hooks/useAppointmentAdmin';
+import ModalEditStatusAdmin from './ModalEditStatusAdmin/ModalEditStatusAdmin';
+import { MdEditNote } from 'react-icons/md';
+
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -316,7 +320,7 @@ const StaffConfirmSlots = () => {
               </Tooltip>
             )}
 
-          {record.type === "administrative" && (
+          {/* {record.type === "administrative" && (
             <Tooltip title="Cập nhật trạng thái">
               <Button
                 type="text"
@@ -325,7 +329,7 @@ const StaffConfirmSlots = () => {
                 className="text-green-600 hover:text-green-800"
               />
             </Tooltip>
-          )}
+          )} */}
           
           {record.type === 'home' && (
           <Tooltip title="Check-in tại địa điểm">

@@ -21,7 +21,6 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
   const { departments, searchListDepartment } = useDepartment();
   const { staffLabTech, getListStaffLabTech } = useStaffProfile();
 
-  
   const filterStaff = staffLabTech.filter(
     (staff) =>
       staff.staff_profile === null &&
@@ -55,7 +54,7 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
       // Ép chắc chắn về string, phòng trường hợp không phải string (nhưng thường không cần)
       values.user_id = String(values.user_id);
       values.department_id = String(values.department_id);
-      values.salary = Number(values.salary)
+      values.salary = Number(values.salary);
 
       const response = await handleAdd(values);
 
@@ -207,12 +206,6 @@ const ModalCreateStaffProfile = ({ isModalOpen, handleCancel, handleAdd }) => {
                     {...restField}
                     label="Ngày hết hạn"
                     name={[name, "expiry_date"]}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn ngày hết hạn!",
-                      },
-                    ]}
                   >
                     <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
                   </Form.Item>

@@ -1,10 +1,17 @@
-import { Button, Divider, Form, Input, Modal, Select } from "antd";
+import { Button, Divider, Form, Input, Modal, Select, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { customUploadHandler } from "../../../../utils/config/upload";
 
-const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
+const ModalCreateCaseAdmin = ({
+  isModalOpen,
+  handleCancel,
+  handleAdd,
+  existingCases,
+}) => {
   const [form] = Form.useForm();
   const [participantCount, setParticipantCount] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -16,12 +23,39 @@ const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
     try {
       const values = await form.validateFields();
 
+      // Kiểm tra trùng mã
+      const isDuplicateAuthorizationCode = existingCases.some(
+        (c) => c.authorization_code === values.authorization_code
+      );
+      const isDuplicateCourtOrderNumber = existingCases.some(
+        (c) => c.court_order_number === values.court_order_number
+      );
+
+      if (isDuplicateAuthorizationCode) {
+        toast.error("Mã phép đã tồn tại. Vui lòng nhập mã khác.");
+        return;
+      }
+
+      if (isDuplicateCourtOrderNumber) {
+        toast.error("Số quyết định đã tồn tại. Vui lòng nhập số khác.");
+        return;
+      }
+
+      const normalizedDocuments = (values.documents || []).map((doc) => ({
+        ...doc,
+        file_url: doc.file_url.file.response || "",
+      }));
+      
+
       const payload = {
         ...values,
         expected_participants: Number(values.expected_participants),
+        documents: normalizedDocuments,
       };
 
-      const response = await handleAdd(payload); // Gửi JSON đơn giản
+      const response = await handleAdd(payload);
+
+      console.log(payload);
 
       if (response.success === true) {
         form.resetFields();
@@ -63,9 +97,6 @@ const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
             <Select.Option value="kinship">Quan hệ họ hàng</Select.Option>
             <Select.Option value="immigration">Nhập cư</Select.Option>
             <Select.Option value="inheritance">Thừa kế</Select.Option>
-            <Select.Option value="criminal_case">Vụ án hình sự</Select.Option>
-            <Select.Option value="civil_case">Vụ án dân sự</Select.Option>
-            <Select.Option value="missing_person">Người mất tích</Select.Option>
           </Select>
         </Form.Item>
 
@@ -278,7 +309,7 @@ const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
                 { required: true, message: "Vui lòng nhập số CMND/CCCD!" },
               ]}
             >
-              <Input maxLength={12}/>
+              <Input maxLength={12} />
             </Form.Item>
 
             <Form.Item
@@ -361,6 +392,8 @@ const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
                   >
                     <Input />
                   </Form.Item>
+
+                  {/* Loại tài liệu */}
                   <Form.Item
                     {...restField}
                     label="Loại tài liệu"
@@ -368,20 +401,65 @@ const ModalCreateCaseAdmin = ({ isModalOpen, handleCancel, handleAdd }) => {
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng nhập loại tài  liệu!",
+                        message: "Vui lòng chọn loại tài liệu",
                       },
                     ]}
                   >
-                    <Input />
+                    <Select placeholder="Chọn loại tài liệu">
+                      <Select.Option value="Giấy khai sinh">
+                        Giấy khai sinh
+                      </Select.Option>
+                      <Select.Option value="CMND/CCCD">CMND/CCCD</Select.Option>
+                      {/* Thêm loại khác nếu cần */}
+                    </Select>
                   </Form.Item>
 
+                  {/* Upload PDF */}
                   <Form.Item
                     {...restField}
                     label="Link tài liệu"
                     name={[name, "file_url"]}
+                    rules={[
+                      { required: true, message: "Vui lòng tải tài liệu lên!" },
+                    ]}
                   >
-                    <Input />
+                    <Upload
+                      accept=".pdf"
+                      showUploadList={false}
+                      customRequest={(options) =>
+                        customUploadHandler(
+                          options,
+                          "raw",
+                          setUploading,
+                          (type, url) => {
+                            form.setFieldValue(
+                              ["documents", name, "file_url"],
+                              url
+                            );
+                          }
+                        )
+                      }
+                    >
+                      <Button loading={uploading}>Tải PDF lên</Button>
+                    </Upload>
                   </Form.Item>
+
+                  {/* Xem lại link */}
+                  <Form.Item shouldUpdate noStyle>
+                    {() => {
+                      const url = form.getFieldValue([
+                        "documents",
+                        name,
+                        "file_url",
+                      ]);
+                      return url ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer">
+                          Xem tài liệu đã tải lên
+                        </a>
+                      ) : null;
+                    }}
+                  </Form.Item>
+
                   <Button onClick={() => remove(name)} danger>
                     Xóa
                   </Button>

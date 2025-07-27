@@ -273,6 +273,7 @@ function AdministrativeCaseAdmin() {
           isModalOpen={isAddModalOpen}
           handleCancel={() => setIsAddModalOpen(false)}
           handleAdd={handleAddCase}
+          existingCases={cases}
         />
 
         {/* Update service */}

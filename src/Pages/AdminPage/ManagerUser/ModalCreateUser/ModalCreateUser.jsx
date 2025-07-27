@@ -15,10 +15,21 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import useAddress from "../../../../Hooks/useAdress";
 
 const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+
+  const { cities, wards, getCities, getWards, resetWards } = useAddress();
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState(null);
+  const [selectedWard, setSelectedWard] = useState(null);
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+    getCities();
+  }, []);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -31,7 +42,6 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
     try {
       const values = await form.validateFields();
       const formData = new FormData();
-      console.log("Form values:", values);
 
       // Append đúng tên field theo yêu cầu backend
       formData.append("first_name", values.first_name);
@@ -43,9 +53,19 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
       formData.append("gender", values.gender);
       formData.append("dob", dayjs(values.dob).format("YYYY-MM-DD"));
 
-      if (values.address) {
-        formData.append("address", values.address);
+      if (values.street && values.city && values.district && values.ward) {
+        const selectedCityName = cities.find(c => c.code === values.city)?.name || "";
+        const selectedDistrictName = districts.find(d => d.code === values.district)?.name || "";
+        const fullAddress = {
+          street: values.street,
+          ward: values.ward,
+          district: selectedDistrictName,
+          city: selectedCityName,
+          country: "Việt Nam"
+        };
+        formData.append("address", JSON.stringify(fullAddress));
       }
+      
 
       if (fileList.length > 0) {
         formData.append("avatar_image", fileList[0].originFileObj);
@@ -130,7 +150,7 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
             { required: true, message: "Vui lòng nhập mật khẩu!" },
             {
               validator: (_, value) => {
-                if (!value) return Promise.resolve(); 
+                if (!value) return Promise.resolve();
                 const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
                 if (!regex.test(value)) {
                   return Promise.reject(
@@ -201,9 +221,81 @@ const ModalCreateUser = ({ isModalOpen, handleCancel, handleAdd }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Địa chỉ" name="address">
-          <Input />
+        {/* address form========================================================= */}
+
+            <Form.Item
+              label="Tỉnh / Thành phố"
+              name="city"
+              rules={[{ required: true, message: "Chọn tỉnh/thành!" }]}
+            >
+              <Select
+                placeholder="Chọn tỉnh"
+                onChange={(value) => {
+                  const city = cities.find((c) => c.code === value);
+                  setSelectedCity(city);
+                  setDistricts(city.districts || []);
+                  form.setFieldsValue({ district: null, ward: null });
+                  resetWards();
+                }}
+              >
+                {cities.map((city) => (
+                  <Select.Option key={city.code} value={city.code}>
+                    {city.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          
+
+         
+            <Form.Item
+              label="Quận / Huyện"
+              name="district"
+              rules={[{ required: true, message: "Chọn quận/huyện!" }]}
+            >
+              <Select
+                placeholder="Chọn quận"
+                onChange={(value) => {
+                  setSelectedDistrictCode(value);
+                  form.setFieldsValue({ ward: null });
+                  getWards(value);
+                }}
+                disabled={!districts.length}
+              >
+                {districts.map((district) => (
+                  <Select.Option key={district.code} value={district.code}>
+                    {district.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          
+
+          
+            <Form.Item
+              label="Phường / Xã"
+              name="ward"
+              rules={[{ required: true, message: "Chọn phường/xã!" }]}
+            >
+              <Select placeholder="Chọn phường" disabled={!wards.length}>
+                {wards.map((ward) => (
+                  <Select.Option key={ward.code} value={ward.name}>
+                    {ward.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          
+
+        <Form.Item
+          label="Số nhà, đường..."
+          name="street"
+          rules={[{ required: true, message: "Nhập địa chỉ chi tiết!" }]}
+        >
+          <Input placeholder="Số nhà, tên đường..." />
         </Form.Item>
+
+        {/* =============================================================================== */}
 
         <Form.Item label="Ảnh đại diện">
           <Upload

@@ -8,6 +8,7 @@ import { MdBlock, MdDeleteOutline, MdEditNote } from "react-icons/md";
 import useCase from "../../../Hooks/useCase";
 import ModalCreateAppointAdmin from "./ModalCreateAppointAdmin/ModalCreateAppointAdmin";
 import useAppointmentAdmin from "../../../Hooks/useAppointmentAdmin";
+import { BiEdit } from "react-icons/bi";
 
 function StaffAppointmentAdmin() {
   const {
@@ -162,15 +163,9 @@ function StaffAppointmentAdmin() {
 
                     <td>
                       <div className="action-staffAppointAdmin">
-                        <Tag
-                          onClick={() => openAddModal(item)}
-                          color="green"
-                          className="btn-appointAdmin"
-                        >
-                          Tạo xét nghiệm
-                        </Tag>
-
+                        <div className="btn-edit__appointAdmin" onClick={() => openAddModal(item)}><BiEdit /></div>
                         
+
                       </div>
                     </td>
                   </tr>

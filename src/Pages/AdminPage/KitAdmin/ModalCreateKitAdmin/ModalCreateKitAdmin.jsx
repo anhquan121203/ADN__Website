@@ -17,6 +17,8 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const { cases, searchListCase } = useCase();
 
+  const type = Form.useWatch("type", form);
+
   useEffect(() => {
     if (isModalOpen) {
       form.resetFields();
@@ -36,7 +38,6 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
       if (response.success === true) {
         form.resetFields();
         handleCancel();
-        toast.success("Tạo dụng cụ y tế mới thành công");
       }
     } catch (error) {
       toast.error("Tạo dụng cụ y tế mới không thành công!");
@@ -58,19 +59,6 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
       ]}
     >
       <Form form={form} layout="vertical">
-        {/* <Form.Item
-          label="Cơ quan thẩm quyền"
-          name="agency_authority"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên cơ quan thẩm quyền!",
-            },
-          ]}
-        >
-          <Input.TextArea />
-        </Form.Item> */}
-
         <Form.Item
           label="Cơ quan thẩm quyền"
           name="agency_authority"
@@ -101,17 +89,23 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Chọn hồ sơ" name="administrative_case_id">
-          <Select placeholder="Chọn hồ sơ">
-            {cases
-              ?.filter((caseAdmin) => caseAdmin.status === "approved")
-              .map((caseAdmin) => (
-                <Select.Option key={caseAdmin._id} value={caseAdmin._id}>
-                  {caseAdmin.case_number}
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
+        {type === "administrative" && (
+          <Form.Item
+            label="Chọn hồ sơ"
+            name="administrative_case_id"
+            rules={[{ required: true, message: "Vui lòng chọn hồ sơ!" }]}
+          >
+            <Select placeholder="Chọn hồ sơ">
+              {cases
+                ?.filter((caseAdmin) => caseAdmin.status === "approved")
+                .map((caseAdmin) => (
+                  <Select.Option key={caseAdmin._id} value={caseAdmin._id}>
+                    {caseAdmin.case_number}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+        )}
 
         <Form.Item label="Ghi chú" name="notes">
           <Input.TextArea />

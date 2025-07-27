@@ -29,9 +29,7 @@ function SidebarAdmin() {
     setAccountDropdownOpen(pathname.startsWith("/admin/manager"));
     setBlogDropdownOpen(pathname.startsWith("/admin/blog"));
 
-    setAdminDropdownOpen(
-        pathname.startsWith("/admin/administrative-case")
-    )
+    setAdminDropdownOpen(pathname.startsWith("/admin/administrative-case"));
   }, [pathname]);
 
   return (
@@ -86,9 +84,7 @@ function SidebarAdmin() {
                   <Link
                     to="/admin/admin-staff-profile"
                     className={`submenu-item ${
-                      pathname === "/admin/admin-staff-profile"
-                        ? "active"
-                        : ""
+                      pathname === "/admin/admin-staff-profile" ? "active" : ""
                     }`}
                   >
                     Danh sách nhân viên
@@ -124,17 +120,17 @@ function SidebarAdmin() {
                     Danh sách dịch vụ
                   </Link>
                   <Link
-                    to="/admin/appointment-admin"
+                    to="/admin/administrative-case"
                     className={`submenu-item ${
-                      pathname === "/admin/appointment-admin" ? "active" : ""
+                      pathname === "/admin/administrative-case" ? "active" : ""
                     }`}
                   >
-                    Quản lý đặt lịch
+                    Dịch vụ pháp lý
                   </Link>
                 </div>
               )}
 
-              {/* Dịch vụ hành chính================================================================= */}
+              {/* Dịch vụ hành chính=================================================================
               <div
                 className={`nav-item dropdown-service ${
                   adminDropdownOpen ? "open" : ""
@@ -142,7 +138,7 @@ function SidebarAdmin() {
                 onClick={() => setAdminDropdownOpen(!adminDropdownOpen)}
               >
                 <div className="dropdown-left">
-                  <RiAdminLine  />
+                  <RiAdminLine />
                   <span>Dịch vụ hành chính</span>
                 </div>
                 <IoIosArrowDown
@@ -169,9 +165,8 @@ function SidebarAdmin() {
                   >
                     Lịch hẹn xét nghiệm
                   </Link>
-                  
                 </div>
-              )}
+              )} */}
 
               {/* Lịch làm việc */}
               <Link
