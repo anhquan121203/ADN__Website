@@ -4,6 +4,7 @@ import {
   checkAppointmentAdmin,
   createAppointmnetAdmin,
   listCustomer,
+  updateProgressAppointAdmin,
 } from "../Feartures/appointmentAdmin/appointmentAdminSlice";
 
 const useAppointmentAdmin = () => {
@@ -40,12 +41,21 @@ const useAppointmentAdmin = () => {
   const searchListCustomer = async ({ searchTerm }) => {
     try {
       const response = await dispatch(listCustomer({ searchTerm })).unwrap();
-      return { success: true, message: response.message };
+      return { success: true, message: response.message, data: response.data };
     } catch (error) {
       return { success: false, error };
     }
   };
 
+  // update appointment admin progress
+  const updateAppointAdmin = async (appointmentId, updateData) => {
+    try {
+      const response = await dispatch(updateProgressAppointAdmin({ appointmentId, updateData })).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: "Cập nhật  không thành công!" };
+    }
+  };
   return {
     appointmentAdmins,
     customers,
@@ -55,6 +65,7 @@ const useAppointmentAdmin = () => {
     validateAppointment,
     addNewAppointmentAdmin,
     searchListCustomer,
+    updateAppointAdmin,
   };
 };
 

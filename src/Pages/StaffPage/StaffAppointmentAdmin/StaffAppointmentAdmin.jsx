@@ -1,10 +1,10 @@
 import React, { use, useEffect, useState } from "react";
-// import "./AdministrativeCaseAdmin.css";
+import "./StaffAppointmentAdmin.css";
 import { Modal, Pagination, Popconfirm, Select, Switch, Tag } from "antd";
 import { toast } from "react-toastify";
 import { FaPlus, FaRegEye } from "react-icons/fa";
-import { CiEdit } from "react-icons/ci";
-import { MdBlock, MdDeleteOutline } from "react-icons/md";
+import { CiCirclePlus, CiEdit } from "react-icons/ci";
+import { MdBlock, MdDeleteOutline, MdEditNote } from "react-icons/md";
 import useCase from "../../../Hooks/useCase";
 import ModalCreateAppointAdmin from "./ModalCreateAppointAdmin/ModalCreateAppointAdmin";
 import useAppointmentAdmin from "../../../Hooks/useAppointmentAdmin";
@@ -14,6 +14,7 @@ function StaffAppointmentAdmin() {
     addNewAppointmentAdmin,
     validateAppointment,
     appointmentAdmins,
+    updateAppointAdmin,
     error,
   } = useAppointmentAdmin();
 
@@ -104,7 +105,7 @@ function StaffAppointmentAdmin() {
         caseId: selectedAdmin,
         createNewAdmin,
       });
-  
+
       if (result.success) {
         setIsAddModalOpen(false);
         return result;
@@ -113,8 +114,6 @@ function StaffAppointmentAdmin() {
       toast.error("Tạo hồ sơ đặt lịch không thành công!");
     }
   };
-  
-  // update case***********************************************
 
   return (
     <div className="manager-staffProfile">
@@ -162,11 +161,16 @@ function StaffAppointmentAdmin() {
                     <td>{renderStatus(item?.status)}</td>
 
                     <td>
-                      <div className="action-staffProfile">
-                        <CiEdit
-                          className="icon-service"
+                      <div className="action-staffAppointAdmin">
+                        <Tag
                           onClick={() => openAddModal(item)}
-                        />
+                          color="green"
+                          className="btn-appointAdmin"
+                        >
+                          Tạo xét nghiệm
+                        </Tag>
+
+                        
                       </div>
                     </td>
                   </tr>

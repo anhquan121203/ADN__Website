@@ -26,14 +26,14 @@ const useKit = () => {
     [dispatch]
   );
 
-    const addNewKit = async (createNewKit) => {
-      try {
-        const response = await dispatch(createKit(createNewKit)).unwrap();
-        return { success: true, data: response };
-      } catch (error) {
-        console.error("Error create Staff");
-      }
-    };
+  const addNewKit = async (createNewKit) => {
+    try {
+      const response = await dispatch(createKit(createNewKit)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      console.error("Error create Staff");
+    }
+  };
 
   const kitById = async (id) => {
     try {
@@ -53,15 +53,14 @@ const useKit = () => {
     }
   };
 
-    const deletekitById = async (id) => {
-      try {
-        const response = await dispatch(deleteKit(id)).unwrap();
-        return { success: true, data: response };
-      } catch (error) {
-        return { success: false, message: "Xóa tài khoản không thành công" };
-      }
-    };
-
+  const deletekitById = async (id) => {
+    try {
+      const response = await dispatch(deleteKit(id)).unwrap();
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: "Xóa tài khoản không thành công" };
+    }
+  };
 
   // Change Status
   const changeStatusKit = async ({ id, status }) => {
@@ -78,12 +77,14 @@ const useKit = () => {
 
   const returnKitById = async (id, returnData) => {
     try {
-      const response = await dispatch(updateKit({ id, updateData: returnData })).unwrap();
+      const response = await dispatch(
+        updateKit({ id, updateData: returnData })
+      ).unwrap();
       return { success: true, data: response };
     } catch (error) {
       return { success: false, message: "Trả hàng không thành công!" };
     }
-  }
+  };
 
   return {
     kits,

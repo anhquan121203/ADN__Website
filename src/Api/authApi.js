@@ -2,7 +2,6 @@
 
 import { API_BASE_URL } from "../Constants/apiConstants";
 import axiosInstance from "./axiosInstance";
-import { jwtDecode } from "jwt-decode";
 
 export const loginUser = async (userData) => {
   try {
@@ -23,14 +22,25 @@ export const loginUser = async (userData) => {
   }
 };
 
+
 export const registerUser = async (userData) => {
+  const formData = new FormData();
+
+  // 👉 Convert address object to JSON string
+  formData.append("address", JSON.stringify(userData.address));
+
+  // Append the rest of fields
+  Object.entries(userData).forEach(([key, value]) => {
+    if (key !== "address" && value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
   try {
     const response = await axiosInstance.post(
       `${API_BASE_URL}/api/users`,
-      userData,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
+      formData
+      // ❌ KHÔNG set Content-Type, để Axios tự động thêm boundary
     );
     return response;
   } catch (error) {

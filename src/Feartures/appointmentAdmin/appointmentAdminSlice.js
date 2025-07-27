@@ -70,6 +70,29 @@ export const listCustomer = createAsyncThunk(
   }
 );
 
+// update status appointment staff
+export const updateProgressAppointAdmin = createAsyncThunk(
+  "appointmentAdmin/updateProgressAppointAdmin",
+  async ({ appointmentId , updateData }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.put(
+        `${API_BASE_URL}/api/appointment/administrative/progress/${appointmentId }`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 const appointmentAdminSlice = createSlice({
   name: "APPOINTMENT_ADMIN",
   initialState: {
@@ -113,6 +136,13 @@ const appointmentAdminSlice = createSlice({
       .addCase(listCustomer.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to fetch accounts";
+      })
+
+      // Update appointment admin progress
+      .addCase(updateProgressAppointAdmin.fulfilled, (state, action) => {
+        state.appointmentAdmins = state.appointmentAdmins.map((appointAdmin) =>
+          appointAdmin._id === action.payload._id ? action.payload : appointAdmin
+        );
       })
   },
 });

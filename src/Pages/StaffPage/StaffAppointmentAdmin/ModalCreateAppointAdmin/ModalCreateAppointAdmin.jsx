@@ -16,22 +16,24 @@ import useStaffProfile from "../../../../Hooks/useStaffProfile";
 import useAppointment from "../../../../Hooks/useAppoinment";
 import useAuth from "../../../../Hooks/useAuth";
 
+import useAppointmentAdmin from "../../../../Hooks/useAppointmentAdmin";
 import { AutoComplete } from "antd";
 import debounce from "lodash.debounce";
-import useAppointmentAdmin from "../../../../Hooks/useAppointmentAdmin";
 
-const ModalCreateAppointAdmin = ({ isModalOpen, handleCancel, handleAdd, caseId }) => {
+const ModalCreateAppointAdmin = ({
+  isModalOpen,
+  handleCancel,
+  handleAdd,
+  caseId,
+}) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
   const { services, searchListService } = useService();
   const { availableLabTechs, getAvailableLabTechs } = useAppointment();
 
-  const [searchOptions, setSearchOptions] = useState([]);
-  const [customerId, setCustomerId] = useState(null);
-
   const { searchListCustomer } = useAppointmentAdmin();
-
-  const { firstName, lastName, userId } = useAuth();
+  const [userOptions, setUserOptions] = useState([]);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -48,39 +50,46 @@ const ModalCreateAppointAdmin = ({ isModalOpen, handleCancel, handleAdd, caseId 
     }
 
     if (caseId) {
-        form.setFieldsValue({ caseId }); 
-      }
+      form.setFieldsValue({ caseId });
+    }
   }, [isModalOpen]);
 
-  // Debounce tìm kiếm người dùng
-  const handleSearchCustomer = debounce(async (value) => {
+  const handleSearchUser = debounce(async (value) => {
     if (!value) return;
+
+    setFetching(true);
     const result = await searchListCustomer({ searchTerm: value });
-    if (result.success) {
-      const customer = result.message?.data;
-      if (customer?._id) {
-        setCustomerId(customer._id);
-        setSearchOptions([
-            {
-              value: customer.email || customer.phone_number.toString(),
-              label: `${customer.first_name} ${customer.last_name} (${customer.email})`,
-              customerId: customer._id,
-            },
-          ]);
-          
-      } else {
-        setCustomerId(null);
-        setSearchOptions([]);
-      }
+
+    console.log("✅ User Result", result);
+
+    if (result.success && result.message === "Customer found successfully") {
+      const user = result.data;
+
+      setUserOptions([
+        {
+          value: user._id,
+          label: `${user.first_name} ${user.last_name} - ${
+            user.email || user.phone_number
+          }`,
+        },
+      ]);
+    } else {
+      setUserOptions([]);
     }
+    setFetching(false);
   }, 500);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log("🚀 Form Values:", values);
+      const payload = {
+        ...values,
+        user_id: values.user_id.value,
+      };
 
-      const response = await handleAdd(values);
+      const response = await handleAdd(payload);
+
+      console.log(response)
 
       if (response.success === true) {
         form.resetFields();
@@ -106,13 +115,25 @@ const ModalCreateAppointAdmin = ({ isModalOpen, handleCancel, handleAdd, caseId 
         </Button>,
       ]}
     >
+
+      {/* Thông tin khách hàng=========================================================== */}
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Mã hồ sơ hành chính"
-          name="caseId"
-          rules={[{ required: true, message: "Vui lòng nhập Service ID" }]}
+          label="Thông tin khách hàng (email/sđt)"
+          name="user_id"
+          rules={[{ required: true, message: "Vui lòng chọn khách hàng" }]}
         >
-          <Input />
+          <AutoComplete
+            options={userOptions}
+            onSearch={handleSearchUser}
+            placeholder="Nhập email hoặc số điện thoại"
+            filterOption={false}
+            notFoundContent={fetching ? "Đang tìm..." : "Không tìm thấy"}
+            onSelect={(value, option) => {
+              form.setFieldsValue({ user_id: option });
+            }}
+            labelInValue
+          />
         </Form.Item>
 
         <Form.Item
@@ -136,38 +157,11 @@ const ModalCreateAppointAdmin = ({ isModalOpen, handleCancel, handleAdd, caseId 
           </Select>
         </Form.Item>
 
-        <Form.Item label="Tìm người dùng (email hoặc số điện thoại)">
-          <AutoComplete
-            onSearch={handleSearchCustomer}
-            options={searchOptions}
-            onSelect={(value, option) => {
-                form.setFieldsValue({ user_id: option.customerId });
-              }}
-            placeholder="Nhập email hoặc số điện thoại..."
-            filterOption={false}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="user_id"
-        />
-
         <Form.Item
           label="Địa chỉ thu mẫu"
           name="collection_address"
           rules={[{ required: true, message: "Vui lòng nhập địa chỉ thu mẫu" }]}
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Nhân viên"
-          rules={[{ required: true, message: "Vui lòng nhập Staff ID" }]}
-        >
-          <Input value={`${firstName} ${lastName}`} disabled />
-        </Form.Item>
-
-        <Form.Item name="staff_id" initialValue={userId} hidden>
           <Input />
         </Form.Item>
 

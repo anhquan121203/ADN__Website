@@ -15,6 +15,7 @@ import resultSlice from "../Feartures/result/resultSlice";
 import dashboardSlice from "../Feartures/dashboard/dashboardSlice";
 import blogsSlice from "../Feartures/blog/blogSlice";
 import appointmentAdminSlice from "../Feartures/appointmentAdmin/appointmentAdminSlice";
+import addressSlice from "../Feartures/address/addressSlice";
 
 export const store = configureStore({
   reducer: {
@@ -35,5 +36,6 @@ export const store = configureStore({
     blog: blogsSlice.reducer,
     dashboard: dashboardSlice.reducer,
     appointmentAdmin: appointmentAdminSlice.reducer,
+    address: addressSlice.reducer,
   },
 });

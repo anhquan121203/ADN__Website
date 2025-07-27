@@ -222,7 +222,7 @@ function AdministrativeCaseAdmin() {
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item?.case_number}</td>
                     <td>{item?.authorization_code}</td>
-                    <td>{renderCaseType(item.case_type)}</td>
+                    <td>{renderCaseType(item?.case_type)}</td>
                     <td>{renderUrgency(item?.urgency)}</td>
                     <td>{renderStatus(item?.status)}</td>
 
