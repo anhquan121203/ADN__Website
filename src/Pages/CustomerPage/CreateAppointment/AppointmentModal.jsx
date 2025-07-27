@@ -82,9 +82,33 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
     if (!slot?.time_slots?.[0]) return true;
     const timeSlot = slot.time_slots[0];
     const now = new Date();
+    
     // Use actual date components, not day of week
     const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day, timeSlot.start_time.hour, timeSlot.start_time.minute);
-    return slotDate < now;
+    
+    // For debugging - log the comparison
+    console.log('Current time:', now);
+    console.log('Slot date:', slotDate);
+    console.log('Is past?', slotDate < now);
+    
+    // Only consider it past if the slot time has already ended (not just started)
+    // Add a 30-minute buffer to allow booking slots that are about to start
+    const bufferTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+    return slotDate.getTime() + bufferTime < now.getTime();
+  };
+
+  // Helper function to check if slot is today
+  const isSlotToday = (slot) => {
+    if (!slot?.time_slots?.[0]) return false;
+    const timeSlot = slot.time_slots[0];
+    const now = new Date();
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+    
+    return (
+      now.getFullYear() === slotDate.getFullYear() &&
+      now.getMonth() === slotDate.getMonth() &&
+      now.getDate() === slotDate.getDate()
+    );
   };
 
   
@@ -163,15 +187,17 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
       return;
     }
 
-    // Additional validation for home service
-    if (type === 'home' && selectedSlot) {
+    // Check if selected slot is in the past for all appointment types
+    if (selectedSlot) {
       const selectedSlotData = availableSlots.find(s => s._id === selectedSlot);
       if (selectedSlotData) {
         if (isSlotPastDate(selectedSlotData)) {
           toast.error('Không thể đặt lịch cho khung giờ đã qua');
           return;
         }
-        if (!isSlotSelectableForHome(selectedSlotData)) {
+        
+        // Additional validation for home service
+        if (type === 'home' && !isSlotSelectableForHome(selectedSlotData)) {
           toast.error('Dịch vụ tại nhà: Cuối tuần có thể chọn bất kỳ giờ nào, ngày thường chỉ ngoài giờ hành chính');
           return;
         }
@@ -499,6 +525,10 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                         let staffNames = [];
                         let isDisabled = false;
                         let disabledReason = '';
+                        
+                        // Declare these variables outside the conditional block so they're accessible in JSX
+                        const isPastDate = isSlotPastDate(slot);
+                        const isToday = isSlotToday(slot);
 
                         if (timeSlot?.start_time && timeSlot?.end_time) {
                           const { hour: startHour, minute: startMinute } = timeSlot.start_time;
@@ -515,8 +545,6 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                           staffNames = slot.staff_profile_ids.map(staff => 
                             `${staff.user_id.first_name} ${staff.user_id.last_name}`
                           );
-
-                          const isPastDate = isSlotPastDate(slot);
                           // Calculate day of week correctly from date components
                           const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
                           const dayOfWeek = slotDate.getDay(); // 0=Sunday, 6=Saturday
@@ -552,7 +580,14 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                               title={isDisabled ? disabledReason : ''}
                             >
                               <div className="text-center">
-                                <div>{displayDate}</div>
+                                <div className="flex items-center justify-center gap-1">
+                                  <span>{displayDate}</span>
+                                  {isToday && (
+                                    <span className="text-xs bg-green-100 text-green-600 px-1 py-0.5 rounded">
+                                      Hôm nay
+                                    </span>
+                                  )}
+                                </div>
                                 <div className="text-xs">{displayTime}</div>
                                 {staffNames.length > 0 && (
                                   <div className="text-xs mt-1">

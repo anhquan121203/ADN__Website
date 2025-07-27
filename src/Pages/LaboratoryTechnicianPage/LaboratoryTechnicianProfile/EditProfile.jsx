@@ -5,6 +5,13 @@ import useAuth from '../../../Hooks/useAuth';
 import { FaEnvelope, FaCheck, FaUpload, FaUser } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+import { 
+  getProvinces, 
+  getDistrictsByProvince, 
+  getWardsByDistrict,
+  validateAddress,
+  formatFullAddress 
+} from '../../../utils/addressApi';
 
 const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
   const { updateUsers, loading } = useLaboratoryTechnician();
@@ -23,8 +30,36 @@ const EditProfile = ({ user, onCancel, onSaveSuccess }) => {
   });
   const [errors, setErrors] = useState({});
 
+  // Address states
+    const [provinces, setProvinces] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [wards, setWards] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [selectedWard, setSelectedWard] = useState(null);
+    const [loadingAddress, setLoadingAddress] = useState(false);
+    const [initialAddressLoaded, setInitialAddressLoaded] = useState(false);
+    
    // Separate preview URL for UI only, never sent to backend
     const [previewUrl, setPreviewUrl] = useState('');
+
+      // Load provinces on component mount
+      useEffect(() => {
+        const loadProvinces = async () => {
+          setLoadingAddress(true);
+          try {
+            const provincesData = await getProvinces();
+            setProvinces(provincesData);
+          } catch (error) {
+            console.error('Error loading provinces:', error);
+            toast.error('Không thể tải danh sách tỉnh thành');
+          } finally {
+            setLoadingAddress(false);
+          }
+        };
+        loadProvinces();
+      }, []);
+
 useEffect(() => {
   if (user) {
       const genderValue = typeof user.gender === 'string' ? user.gender.toLowerCase() : '';
@@ -39,7 +74,7 @@ useEffect(() => {
             addressObj = { ...emptyAddress, ...user.address };
           }
         } catch (e) {
-          // fallback: leave as default
+          console.error('Error parsing address:', e);
         }
       }
       setFormData({
@@ -50,12 +85,113 @@ useEffect(() => {
         avatar_image: null,
         avatar_url: user.avatar_url || '',
         dob: user.dob || '',
-        address: { ...emptyAddress, ...addressObj },
+        address: addressObj,
         gender: genderValue || ''
       });
       setPreviewUrl(user.avatar_url || '');
+      setInitialAddressLoaded(false);
     }
   }, [user]);
+
+  // Load districts when province changes
+  const loadDistrictsForProvince = async (provinceCode, selectedDistrictName = null) => {
+    try {
+      setLoadingAddress(true);
+      const districtsData = await getDistrictsByProvince(provinceCode);
+      setDistricts(districtsData);
+      setWards([]); // Reset wards
+      setSelectedWard(null);
+      
+      if (selectedDistrictName) {
+        const district = districtsData.find(d => d.name === selectedDistrictName);
+        if (district) {
+          setSelectedDistrict(district.code);
+          // Use current form data's ward value
+          const currentWard = formData.address?.ward;
+          if (currentWard) {
+            loadWardsForDistrict(district.code, currentWard);
+          }
+        }
+      } else {
+        setSelectedDistrict(null);
+      }
+    } catch (error) {
+      console.error('Error loading districts:', error);
+      toast.error('Không thể tải danh sách quận/huyện');
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  // Load wards when district changes
+  const loadWardsForDistrict = async (districtCode, selectedWardName = null) => {
+    try {
+      setLoadingAddress(true);
+      const wardsData = await getWardsByDistrict(districtCode);
+      setWards(wardsData);
+      
+      if (selectedWardName) {
+        console.log('Looking for ward:', selectedWardName);
+        const ward = wardsData.find(w => w.name === selectedWardName);
+        console.log('Found ward:', ward);
+        if (ward) {
+          setSelectedWard(ward.code);
+        }
+      } else {
+        setSelectedWard(null);
+      }
+    } catch (error) {
+      console.error('Error loading wards:', error);
+      toast.error('Không thể tải danh sách phường/xã');
+    } finally {
+      setLoadingAddress(false);
+    }
+  };
+
+  // Load initial address data when user and provinces are available
+  useEffect(() => {
+    const loadInitialAddress = async () => {
+      if (user && provinces.length > 0 && formData.address?.city && !initialAddressLoaded) {
+        setInitialAddressLoaded(true); // Mark as loaded to prevent re-runs
+        
+        const province = provinces.find(p => p.name === formData.address.city);
+        
+        if (province) {
+          setSelectedProvince(province.code);
+          
+          if (formData.address.district) {
+            try {
+              setLoadingAddress(true);
+              const districtsData = await getDistrictsByProvince(province.code);
+              setDistricts(districtsData);
+              const district = districtsData.find(d => d.name === formData.address.district);
+              
+              if (district) {
+                setSelectedDistrict(district.code);
+                
+                if (formData.address.ward) {
+                  const wardsData = await getWardsByDistrict(district.code);
+                  setWards(wardsData);
+                  const ward = wardsData.find(w => w.name === formData.address.ward);
+                  
+                  if (ward) {
+                    console.log('Setting initial ward:', ward);
+                    setSelectedWard(ward.code);
+                  }
+                }
+              }
+              setLoadingAddress(false);
+            } catch (error) {
+              console.error('Error loading initial address:', error);
+              setLoadingAddress(false);
+            }
+          }
+        }
+      }
+    };
+
+    loadInitialAddress();
+  }, [user, provinces, formData.address?.city, initialAddressLoaded]);
 
  // Validation function
   const validateForm = () => {
@@ -82,6 +218,12 @@ useEffect(() => {
       }
     }
     
+    // Validate address
+    const addressValidation = validateAddress(formData.address);
+    if (!addressValidation.isValid) {
+      newErrors.address = addressValidation.errors;
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -200,6 +342,65 @@ useEffect(() => {
         }));
       }
     }
+  };
+
+  // Handle province selection
+  const handleProvinceChange = (provinceCode) => {
+    const province = provinces.find(p => p.code === provinceCode);
+    setSelectedProvince(provinceCode);
+    setSelectedDistrict(null);
+    setSelectedWard(null);
+    setDistricts([]);
+    setWards([]);
+    
+    setFormData(prev => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        city: province ? province.name : '',
+        district: '',
+        ward: ''
+      }
+    }));
+
+    if (provinceCode) {
+      loadDistrictsForProvince(provinceCode);
+    }
+  };
+
+  // Handle district selection
+  const handleDistrictChange = (districtCode) => {
+    const district = districts.find(d => d.code === districtCode);
+    setSelectedDistrict(districtCode);
+    setSelectedWard(null);
+    setWards([]);
+    
+    setFormData(prev => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        district: district ? district.name : '',
+        ward: ''
+      }
+    }));
+
+    if (districtCode) {
+      loadWardsForDistrict(districtCode);
+    }
+  };
+
+  // Handle ward selection
+  const handleWardChange = (wardCode) => {
+    const ward = wards.find(w => w.code === wardCode);
+    setSelectedWard(wardCode);
+    
+    setFormData(prev => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        ward: ward ? ward.name : ''
+      }
+    }));
   };
 
   // Handle image upload
@@ -401,47 +602,124 @@ useEffect(() => {
         <div className="flex flex-col gap-2">
           <label className="font-semibold text-gray-700 text-sm">Address</label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <input
-              type="text"
-              name="address.street"
-              value={(formData.address && formData.address.street) || ''}
-              onChange={handleChange}
-              placeholder="Đường"
-              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-            />
-            <input
-              type="text"
-              name="address.ward"
-              value={(formData.address && formData.address.ward) || ''}
-              onChange={handleChange}
-              placeholder="Phường"
-              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-            />
-            <input
-              type="text"
-              name="address.district"
-              value={(formData.address && formData.address.district) || ''}
-              onChange={handleChange}
-              placeholder="Quận"
-              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-            />
-            <input
-              type="text"
-              name="address.city"
-              value={(formData.address && formData.address.city) || ''}
-              onChange={handleChange}
-              placeholder="Thành phố"
-              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-            />
-            <input
-              type="text"
-              name="address.country"
-              value={(formData.address && formData.address.country) || ''}
-              onChange={handleChange}
-              placeholder="Quốc gia"
-              className="p-3 border-2 border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-            />
+            {/* Street Address */}
+            <div className="md:col-span-2">
+              <input
+                type="text"
+                name="address.street"
+                value={(formData.address && formData.address.street) || ''}
+                onChange={handleChange}
+                placeholder="Số nhà, tên đường"
+                className={`w-full p-3 border-2 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 ${
+                  errors.address?.street ? 'border-red-500' : 'border-gray-200'
+                }`}
+              />
+              {errors.address?.street && (
+                <span className="text-red-500 text-xs mt-1">{errors.address.street}</span>
+              )}
+            </div>
+
+            {/* Province/City */}
+            <div>
+              <Select
+                value={selectedProvince}
+                onChange={handleProvinceChange}
+                placeholder="Chọn Tỉnh/Thành phố"
+                className="w-full"
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+                loading={loadingAddress}
+                options={provinces.map(province => ({
+                  value: province.code,
+                  label: province.name
+                }))}
+                allowClear
+              />
+              {errors.address?.city && (
+                <span className="text-red-500 text-xs mt-1">{errors.address.city}</span>
+              )}
+            </div>
+
+            {/* District */}
+            <div>
+              <Select
+                value={selectedDistrict}
+                onChange={handleDistrictChange}
+                placeholder="Chọn Quận/Huyện"
+                className="w-full"
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+                loading={loadingAddress}
+                disabled={!selectedProvince}
+                options={districts.map(district => ({
+                  value: district.code,
+                  label: district.name
+                }))}
+                allowClear
+              />
+              {errors.address?.district && (
+                <span className="text-red-500 text-xs mt-1">{errors.address.district}</span>
+              )}
+            </div>
+
+            {/* Ward */}
+            <div>
+              <Select
+                value={selectedWard}
+                onChange={handleWardChange}
+                placeholder="Chọn Phường/Xã"
+                className="w-full"
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+                loading={loadingAddress}
+                disabled={!selectedDistrict}
+                options={wards.map(ward => ({
+                  value: ward.code,
+                  label: ward.name
+                }))}
+                allowClear
+              />
+              {errors.address?.ward && (
+                <span className="text-red-500 text-xs mt-1">{errors.address.ward}</span>
+              )}
+            </div>
+
+            {/* Country */}
+            <div>
+              <input
+                type="text"
+                name="address.country"
+                value={(formData.address && formData.address.country) || 'Việt Nam'}
+                onChange={handleChange}
+                placeholder="Quốc gia"
+                className="p-3 border-2 w-full border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
           </div>
+
+          {/* Address Preview */}
+          {formData.address && (formData.address.street || formData.address.ward || formData.address.district || formData.address.city) && (
+            <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-800 font-medium">Địa chỉ đầy đủ:</p>
+              <p className="text-sm text-blue-600">
+                {formatFullAddress({
+                  street: formData.address.street,
+                  ward: formData.address.ward,
+                  district: formData.address.district,
+                  province: formData.address.city
+                })}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-4 justify-end mt-8 pt-6 border-t-2 border-gray-100">
