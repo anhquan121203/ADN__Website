@@ -1,0 +1,29 @@
+.action-staffAppointAdmin {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-appointAdmin:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.btn-edit__appointAdmin {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  /* background-color: aqua; */
+  border: 1px solid;
+  border-radius: 50px;
+  padding: 5px;
+
+}
+
+.btn-edit__appointAdmin:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}

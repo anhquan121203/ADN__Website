@@ -9,10 +9,11 @@ import { login } from "../../../Feartures/user/authSlice";
 import * as Yup from "yup";
 import { GoogleLogin } from "@react-oauth/google";
 import { registerWithGoogle } from "../../../Api/authApi";
-import { Modal } from "antd";
+import { Form, Modal, Select } from "antd";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import useAddress from "../../../Hooks/useAdress";
 
 function Register() {
   const navigate = useNavigate();
@@ -23,6 +24,11 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { cities, wards, getCities, getWards, resetWards } = useAddress();
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState(null);
+  const [selectedWard, setSelectedWard] = useState(null);
+
   const showLoading = () => {
     setOpen(true);
     setLoading(true);
@@ -30,6 +36,10 @@ function Register() {
       setLoading(false);
     }, 1000);
   };
+
+  useEffect(() => {
+    getCities();
+  }, []);
 
   // Validate schema
   const validationSchema = Yup.object({
@@ -43,12 +53,16 @@ function Register() {
         "Tuổi tối đa là 70"
       ),
     phone_number: Yup.string()
-      .matches(
-        /^\d+$/,
-        "Số điện thoại phải là số hợp lệ và không có chữ cái hoặc ký tự đặc biệt"
-      )
+      .matches(/^\d{10}$/, "Số điện thoại phải có đúng 10 chữ số")
       .required("Số điện thoại bắt buộc nhập"),
-    // address: Yup.string().required("Địa chỉ bắt buộc nhập"),
+    address: Yup.object({
+      street: Yup.string().required("Địa chỉ cụ thể bắt buộc nhập"),
+      ward: Yup.string().required("Phường / xã bắt buộc nhập"),
+      district: Yup.string().required("Quận / huyện bắt buộc nhập"),
+      city: Yup.string().required("Tỉnh / thành phố bắt buộc nhập"),
+      country: Yup.string().required("Quốc gia bắt buộc nhập"),
+    }),
+
     email: Yup.string()
       .email("Email không hợp lệ")
       .required("Email bắt buộc nhập"),
@@ -88,16 +102,28 @@ function Register() {
       last_name: "",
       dob: "",
       phone_number: "",
-      // address: "",
+      address: {
+        street: "",
+        ward: "",
+        district: "",
+        city: "",
+        country: "Việt Nam",
+      },
       email: "",
       password: "",
       confirmPassword: "",
     },
     validationSchema,
     onSubmit: async (values) => {
-      // console.log("Submitting values:", values);
       try {
-        const response = await registerUser(values);
+        const fullAddress = `${values.address.street}, ${values.address.ward}, ${values.address.district}, ${values.address.city}, ${values.address.country}`;
+
+        const payload = {
+          ...values,
+          address: fullAddress, 
+        };
+
+        const response = await registerUser(payload);
         console.log(response);
 
         if (
@@ -106,9 +132,6 @@ function Register() {
           response.data?.success
         ) {
           console.log("đăng ký thành công!!!!");
-
-          // const { token } = response.data;
-          // localStorage.setItem("accessToken", token);
 
           // dispatch(login({ token }));
           const { token } = response.data;
@@ -218,7 +241,9 @@ function Register() {
               name="phone_number"
               value={formik.values.phone_number}
               onChange={(e) => {
-                const onlyNumbers = e.target.value.replace(/\D/g, "");
+                const onlyNumbers = e.target.value
+                  .replace(/\D/g, "")
+                  .slice(0, 10);
                 formik.setFieldValue("phone_number", onlyNumbers);
               }}
               onPaste={(e) => {
@@ -241,24 +266,104 @@ function Register() {
           </div>
           {/* </div> */}
 
-          {/* <div className="form-group-register">
-            <label>Địa chỉ</label>
+          {/* Address ====================================================================*/}
+          <Form.Item label="Thành phố">
+            <Select
+              showSearch
+              placeholder="Chọn thành phố"
+              onChange={(cityCode) => {
+                const city = cities.find((c) => c.code === cityCode);
+                setSelectedCity(city);
+                resetWards();
+                setSelectedDistrictCode(null);
+                setSelectedWard(null);
+
+                formik.setFieldValue("address.city", city?.name || "");
+                formik.setFieldValue("address.district", "");
+                formik.setFieldValue("address.ward", "");
+              }}
+              value={selectedCity?.code || undefined}
+            >
+              {cities.map((city) => (
+                <Select.Option key={city.code} value={city.code}>
+                  {city.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Quận / Huyện">
+            <Select
+              showSearch
+              placeholder="Chọn quận"
+              value={selectedDistrictCode || undefined}
+              onChange={(districtCode) => {
+                setSelectedDistrictCode(districtCode);
+                const district = selectedCity?.districts.find(
+                  (d) => d.code === districtCode
+                );
+                getWards(districtCode);
+                setSelectedWard(null);
+
+                formik.setFieldValue("address.district", district?.name || "");
+                formik.setFieldValue("address.ward", "");
+              }}
+              disabled={!selectedCity}
+            >
+              {selectedCity?.districts.map((district) => (
+                <Select.Option key={district.code} value={district.code}>
+                  {district.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Phường / Xã">
+            <Select
+              showSearch
+              placeholder="Chọn phường"
+              value={selectedWard?.code || undefined}
+              onChange={(wardCode) => {
+                const ward = wards.find((w) => w.code === wardCode);
+                setSelectedWard(ward);
+
+                formik.setFieldValue("address.ward", ward?.name || "");
+              }}
+              disabled={!selectedDistrictCode}
+            >
+              {wards.map((ward) => (
+                <Select.Option key={ward.code} value={ward.code}>
+                  {ward.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Địa chỉ cụ thể">
             <input
               type="text"
-              name="address"
-              placeholder="Nhập địa chỉ của bạn..."
-              value={formik.values.address}
+              name="address.street"
+              placeholder="Số nhà, tên đường..."
+              value={formik.values.address.street}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={
-                formik.touched.address && formik.errors.address ? "error" : ""
+                formik.touched.address?.street && formik.errors.address?.street
+                  ? "error"
+                  : ""
               }
-              {...formik.getFieldProps("address")}
             />
-            {formik.touched.address && formik.errors.address && (
-              <span className="error-text">{formik.errors.address}</span>
-            )}
-          </div> */}
+            {formik.touched.address?.street &&
+              formik.errors.address?.street && (
+                <span className="error-text">
+                  {formik.errors.address.street}
+                </span>
+              )}
+          </Form.Item>
+
+          {formik.touched.address && formik.errors.address && (
+            <span className="error-text">{formik.errors.address}</span>
+          )}
 
           <div className="form-group-register">
             <label>Email</label>

@@ -7,7 +7,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdBlock, MdDeleteOutline } from "react-icons/md";
 import useCase from "../../../Hooks/useCase";
 import ModalDetailCaseAdmin from "./ModalDetailCaseAdmin/ModalDetailCaseAdmin";
-import ModalCreateCaseAdmin from "./ModalAddCaseAdmin/ModalCreateCaseAdmin";
+import ModalCreateCaseAdmin from "./ModalCreateCaseAdmin/ModalCreateCaseAdmin";
 import ModalEditCaseAdmin from "./ModalEditCaseAdmin/ModalEditCaseAdmin";
 
 function AdministrativeCaseAdmin() {
@@ -36,12 +36,59 @@ function AdministrativeCaseAdmin() {
   // delete modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // Render type====================================================================
   const renderStatus = (status) => {
     switch (status) {
-      case "pending":
-        return <Tag color="green">Đang chờ</Tag>;
-      case "inactive":
-        return <Tag color="red">Không hoạt động</Tag>;
+      case "submitted":
+        return <Tag color="blue">Đã gửi</Tag>;
+      case "under_review":
+        return <Tag color="orange">Đang xem xét</Tag>;
+      case "approved":
+        return <Tag color="green">Đã duyệt</Tag>;
+      case "scheduled":
+        return <Tag color="purple">Đã lên lịch</Tag>;
+      case "completed":
+        return <Tag color="cyan">Đã hoàn thành</Tag>;
+      default:
+        return <Tag color="gray">Không xác định</Tag>;
+    }
+  };
+
+  const renderUrgency = (urgency) => {
+    switch (urgency) {
+      case "low":
+        return <Tag color="green">Thấp</Tag>;
+      case "normal":
+        return <Tag color="blue">Bình thường</Tag>;
+      case "high":
+        return <Tag color="orange">Cao</Tag>;
+      case "urgent":
+        return <Tag color="red">Khẩn cấp</Tag>;
+      default:
+        return <Tag color="gray">Không xác định</Tag>;
+    }
+  };
+
+  const renderCaseType = (case_type) => {
+    switch (case_type) {
+      case "paternity":
+        return <Tag color="gold">Quan hệ cha con</Tag>;
+      case "maternity":
+        return <Tag color="cyan">Quan hệ mẹ con</Tag>;
+      case "sibling":
+        return <Tag color="green">Quan hệ anh chị em ruột</Tag>;
+      case "kinship":
+        return <Tag color="blue">Quan hệ họ hàng</Tag>;
+      case "immigration":
+        return <Tag color="purple">Nhập cư</Tag>;
+      case "inheritance":
+        return <Tag color="volcano">Thừa kế</Tag>;
+      case "criminal_case":
+        return <Tag color="red">Vụ án hình sự</Tag>;
+      case "civil_case":
+        return <Tag color="orange">Vụ án dân sự</Tag>;
+      case "missing_person":
+        return <Tag color="magenta">Người mất tích</Tag>;
       default:
         return <Tag color="gray">Không xác định</Tag>;
     }
@@ -162,8 +209,8 @@ function AdministrativeCaseAdmin() {
                 <th>STT</th>
                 <th>Mã số hồ sơ</th>
                 <th>Mã xác thực</th>
-                <th>Email cơ quan</th>
-                <th>Người nộp đơn</th>
+                <th>Loại hồ sơ</th>
+                <th>Mức độ khẩn cấp</th>
                 <th>Trạng thái</th>
                 <th>Hành động</th>
               </tr>
@@ -175,26 +222,8 @@ function AdministrativeCaseAdmin() {
                     <td>{(currentPage - 1) * pageSize + index + 1}</td>
                     <td>{item?.case_number}</td>
                     <td>{item?.authorization_code}</td>
-                    <td>
-                      <div className="staffProfile-title">
-                        <span className="title-name">
-                          {item?.agency_contact_name}
-                        </span>
-                        <span className="title-email">
-                          {item?.agency_contact_email}
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="staffProfile-title">
-                        <span className="title-name">
-                          {item?.applicant_name}
-                        </span>
-                        <span className="title-email">
-                          {item?.applicant_email}
-                        </span>
-                      </div>
-                    </td>
+                    <td>{renderCaseType(item?.case_type)}</td>
+                    <td>{renderUrgency(item?.urgency)}</td>
                     <td>{renderStatus(item?.status)}</td>
 
                     <td>

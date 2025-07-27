@@ -1,6 +1,8 @@
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import useStaffProfile from "../../../../Hooks/useStaffProfile";
+import useAppointment from "../../../../Hooks/useAppoinment";
 
 const ModalEditCaseAdmin = ({
   isModalOpen,
@@ -9,17 +11,34 @@ const ModalEditCaseAdmin = ({
   editCase,
 }) => {
   const [form] = Form.useForm();
+  const { staffProfile, getListStaff } = useStaffProfile();
+  const { getAvailableStaffList, availableStaff } = useAppointment();
 
   useEffect(() => {
+    getListStaff({
+      pageInfo: {
+        pageNum: 1,
+        pageSize: 100,
+      },
+    });
+    getAvailableStaffList({
+      pageInfo: {
+        pageNum: 1,
+        pageSize: 100,
+      },
+    });
     if (editCase) {
-      form.setFieldsValue({ ...editCase });
+      form.setFieldsValue({
+        ...editCase,
+        assigned_staff_id: editCase.assigned_staff_id?._id || "",
+      });
     }
   }, [isModalOpen, editCase]);
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const response = await handleEdit(values); 
+      const response = await handleEdit(values);
 
       if (response.success === true) {
         form.resetFields();
@@ -28,6 +47,8 @@ const ModalEditCaseAdmin = ({
       } else {
         toast.error(response.message || "Cập nhật hồ sơ không thành công!");
       }
+
+      console.log(response);
     } catch (error) {
       toast.error("Cập nhật hồ sơ không thành công!");
     }
@@ -49,39 +70,27 @@ const ModalEditCaseAdmin = ({
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Mã hồ sơ"
-          name="case_number"
-          rules={[{ required: true, message: "Vui lòng nhập mã hồ sơ!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Mã ủy quyền"
-          name="authorization_code"
-          rules={[{ required: true, message: "Vui lòng nhập mã ủy quyền!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Tên người liên hệ cơ quan"
-          name="agency_contact_name"
+          label="Mức độ khẩn cấp"
+          name="urgency"
           rules={[
-            { required: true, message: "Vui lòng nhập tên người liên hệ!" },
+            { required: true, message: "Vui lòng chọn mức độ khẩn cấp!" },
           ]}
         >
-          <Input />
+          <Select placeholder="Chọn loại">
+            <Select.Option value="low">Thấp</Select.Option>
+            <Select.Option value="normal">Bình thường</Select.Option>
+            <Select.Option value="high">Cao</Select.Option>
+            <Select.Option value="urgent">Khẩn cấp</Select.Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
-          label="Email cơ quan"
-          name="agency_contact_email"
+          label="Ghi chú"
+          name="internal_notes"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập email cơ quan!",
-              type: "email",
+              message: "Vui lòng nhập ghi chú!",
             },
           ]}
         >
@@ -89,13 +98,38 @@ const ModalEditCaseAdmin = ({
         </Form.Item>
 
         <Form.Item
-          label="Số điện thoại cơ quan"
-          name="agency_contact_phone"
+          label="Nhân viên phụ trách"
+          name="assigned_staff_id"
+          rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+        >
+          <Select
+            placeholder="Chọn nhân viên phụ trách"
+            optionFilterProp="children"
+          >
+            {availableStaff?.pageData
+              ?.filter((staff) => staff.role === "staff")
+              .map((staff) => (
+                <Select.Option key={staff._id} value={staff._id}>
+                  {`${staff.first_name || ""} ${staff.last_name || ""}`}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Trạng thái"
+          name="status"
           rules={[
-            { required: true, message: "Vui lòng nhập số điện thoại!" },
+            { required: true, message: "Vui lòng chọn mức độ khẩn cấp!" },
           ]}
         >
-          <Input />
+          <Select placeholder="Trạng thái hồ sơ">
+            <Select.Option value="submitted">Đã gửi hồ sơ</Select.Option>
+            <Select.Option value="under_review">Đang xem xét</Select.Option>
+            <Select.Option value="approved">Đã duyệt</Select.Option>
+            <Select.Option value="scheduled">Đã lên lịch</Select.Option>
+            <Select.Option value="completed">Hoàn thành</Select.Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

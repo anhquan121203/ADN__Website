@@ -74,6 +74,7 @@ import GuidePage from "./Pages/CustomerPage/GuidePage/GuidePage";
 import KitManager from "./Pages/ManagerPage/KitManager/KitManager";
 import LabTechDashboard from "./Pages/LaboratoryTechnicianPage/LabTechDashboard/LabTechDashboard";
 
+import StaffAppointmentAdmin from "./Pages/StaffPage/StaffAppointmentAdmin/StaffAppointmentAdmin";
 
 // Protected route component
 // const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -157,10 +158,7 @@ function App() {
           <Route path="profile" element={<ProfileAdmin />} />
           <Route path="department-admin" element={<DepartmentAdmin />} />
           <Route path="slot-admin" element={<SlotAdmin />} />
-          <Route
-            path="admin-staff-profile"
-            element={<AdminStaffProfile />}
-          />
+          <Route path="admin-staff-profile" element={<AdminStaffProfile />} />
           <Route path="kit-admin" element={<KitAdmin />} />
           <Route
             path="administrative-case"
@@ -193,6 +191,9 @@ function App() {
             element={<ViewSamplesByAppointment />}
           />
           <Route path="dashboard" element={<StaffDashboard />} />
+
+          {/* Appointment Amdin */}
+          <Route path="appointment-admin/case" element={<StaffAppointmentAdmin />} />
         </Route>
 
         {/* MANAGER ROUTES*********************************** */}
@@ -202,7 +203,10 @@ function App() {
           <Route path="appointments" element={<AppointmentManager />} />
           <Route path="appointments/:id" element={<AppointmentDetail />} />
           <Route path="service-manager" element={<ServiceManager />} />
-          <Route path="staff-profile-manager" element={<StaffProfileManager />} />
+          <Route
+            path="staff-profile-manager"
+            element={<StaffProfileManager />}
+          />
           <Route path="slot-manager" element={<SlotManager />} />
           <Route path="kit-manager" element={<KitManager />} />
         </Route>

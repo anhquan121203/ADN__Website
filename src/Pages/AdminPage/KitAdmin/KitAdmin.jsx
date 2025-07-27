@@ -13,6 +13,7 @@ import ModalEditKit from "./ModalEditKit/ModalEditKit";
 import ModalDetailKit from "./ModalDetailKit/ModalDetailKit";
 import FilterKit from "./FilterKit/FilterKit";
 import ModalReturnKit from "./ModalReturnKit/ModalReturnKit";
+import ModalCreateKitAdmin from "./ModalCreateKitAdmin/ModalCreateKitAdmin";
 
 function KitAdmin() {
   const {
@@ -37,7 +38,7 @@ function KitAdmin() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
-
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // trang thái xác nhận thay đổi dụng cụ
   const [confirmChangeKit, setConfirmChangeKit] = useState(null);
@@ -56,8 +57,7 @@ function KitAdmin() {
     setPendingStatus(null);
   };
 
-
-  // danh sách dụng cụ 
+  // danh sách dụng cụ
   useEffect(() => {
     searchListKit({
       pageNum: currentPage,
@@ -78,8 +78,8 @@ function KitAdmin() {
       ...filters,
       pageNum: currentPage,
       pageSize: pageSize,
-    })
-  }
+    });
+  };
 
   const renderStatus = (status) => {
     switch (status) {
@@ -98,8 +98,13 @@ function KitAdmin() {
     }
   };
 
-  // create new kit
-  const handleCreateKit = async (createNewKit) => {
+  // create new kit==========================================================
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+    setSelectedKit(null);
+  };
+
+  const handleAddKit = async (createNewKit) => {
     try {
       const result = await addNewKit(createNewKit);
       if (result.success) {
@@ -214,7 +219,7 @@ function KitAdmin() {
   const openReturnModal = (kitData) => {
     setSelectedKit(kitData);
     setIsReturnModalOpen(true);
-  }
+  };
 
   const handleReturnKit = async (returnData) => {
     try {
@@ -224,7 +229,7 @@ function KitAdmin() {
         toast.success("Trả dụng cụ thành công!");
         searchListKit({
           pageNum: currentPage,
-          
+
           pageSize: pageSize,
           status: "available",
         });
@@ -233,7 +238,7 @@ function KitAdmin() {
     } catch (error) {
       return { success: false, message: "Trả dụng cụ không thành công!" };
     }
-  }
+  };
 
   return (
     <div className="manager-account">
@@ -244,7 +249,7 @@ function KitAdmin() {
         <div className="btn--managerAccount">
           <button
             className="button-add__account"
-            onClick={() => handleCreateKit()}
+            onClick={openAddModal}
             style={{ width: 180, height: 45 }}
           >
             <FaPlus style={{ marginRight: "8px" }} />
@@ -255,11 +260,12 @@ function KitAdmin() {
 
       {/* Table account */}
       <div className="form-account">
-
         <div className="filter-kitAdmin">
-          <FilterKit filters={filters}
+          <FilterKit
+            filters={filters}
             onSearch={handleSearch}
-            setFilters={setFilters} />
+            setFilters={setFilters}
+          />
         </div>
 
         <div className="account-container">
@@ -286,7 +292,9 @@ function KitAdmin() {
                       {confirmChangeKit?._id === item._id ? (
                         <Popconfirm
                           title="Xác nhận thay đổi trạng thái"
-                          description={`Bạn có chắc chắn muốn đổi trạng thái sang "${renderStatus(pendingStatus)?.props?.children}"?`}
+                          description={`Bạn có chắc chắn muốn đổi trạng thái sang "${
+                            renderStatus(pendingStatus)?.props?.children
+                          }"?`}
                           onConfirm={confirmChangeStatus}
                           onCancel={cancelChangeStatus}
                           okText="Đồng ý"
@@ -308,15 +316,17 @@ function KitAdmin() {
                             setConfirmChangeKit(item);
                           }}
                         >
-                          <Select.Option value="available">Còn hàng</Select.Option>
+                          <Select.Option value="available">
+                            Còn hàng
+                          </Select.Option>
                           <Select.Option value="assigned">Đã gắn</Select.Option>
                           <Select.Option value="used">Đã sử dụng</Select.Option>
-                          <Select.Option value="returned">Đã trả hàng</Select.Option>
+                          <Select.Option value="returned">
+                            Đã trả hàng
+                          </Select.Option>
                           <Select.Option value="damaged">Đã hỏng</Select.Option>
                         </Select>
                       )}
-
-
                     </td>
 
                     <td>
@@ -355,8 +365,12 @@ function KitAdmin() {
                           onClick={() => handleDetailKit(item._id)}
                         />
 
-                        <span className="action-returnKit" onClick={() => openReturnModal(item)}>Trả hàng</span>
-
+                        <span
+                          className="action-returnKit"
+                          onClick={() => openReturnModal(item)}
+                        >
+                          Trả hàng
+                        </span>
                       </div>
                     </td>
                   </tr>
@@ -380,6 +394,13 @@ function KitAdmin() {
             display: "flex",
             justifyContent: "flex-end",
           }}
+        />
+
+        {/* Modal create service */}
+        <ModalCreateKitAdmin
+          isModalOpen={isAddModalOpen}
+          handleCancel={() => setIsAddModalOpen(false)}
+          handleAdd={handleAddKit}
         />
 
         {/* modal Eidt kit */}

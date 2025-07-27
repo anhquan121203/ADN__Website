@@ -12,13 +12,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useService from "../../../../Hooks/useService";
 import { FaPlus } from "react-icons/fa";
+import useAppointmentAdmin from "../../../../Hooks/useAppointmentAdmin";
 
 const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
   const { services, searchListService } = useService();
-
-  console.log(services)
+  const {searchListCustomer} = useAppointmentAdmin();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -50,6 +50,8 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
       Object.keys(values).forEach((key) => {
         // xử lý ảnh ở dưới
         if (key !== "service_image") {
+
+          if (key === "parent_service_id" && !values[key]) return;
           formData.append(key, values[key]);
         }
       });
