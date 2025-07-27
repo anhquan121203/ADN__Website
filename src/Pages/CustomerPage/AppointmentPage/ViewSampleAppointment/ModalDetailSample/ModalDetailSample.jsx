@@ -176,6 +176,24 @@ const ModalDetailSample = ({ open, onClose, sampleId, onImageUploadSuccess }) =>
       default: return status;
     }
   };
+
+  const getCollectionMethodLabel = (method) => {
+    switch (method) {
+      case 'self': return 'Tự lấy mẫu';
+      case 'home': return 'Nhân viên đến nhà lấy mẫu';
+      case 'facility': return 'Nhân viên lấy mẫu';
+      default: return method;
+    }
+  };
+  const getCollectionMethodColor = (method) => {
+    switch (method) {
+      case 'self': return 'blue'; // Tự lấy mẫu
+      case 'home': return 'green'; // Nhân viên đến nhà lấy mẫu
+      case 'facility': return 'purple'; // Nhân viên lấy mẫu
+      default: return 'default';
+    }
+  };
+
   const handleClose = () => {
     setImagePreview(null);
     onClose();
@@ -239,7 +257,7 @@ const ModalDetailSample = ({ open, onClose, sampleId, onImageUploadSuccess }) =>
             </Col>
             <Col span={8}>
               <Text type="secondary">Phương pháp thu thập:</Text>
-              <div><Tag>{sample.collection_method}</Tag></div>
+              <div><Tag color={getCollectionMethodColor(sample.collection_method)}>{getCollectionMethodLabel(sample.collection_method)}</Tag></div>
             </Col>
             <Col span={8}>
               <Text type="secondary">Trạng thái mẫu:</Text>

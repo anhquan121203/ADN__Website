@@ -192,7 +192,7 @@ const LabTechAppointments = () => {
       width: 80,
       render: (status) => (
         <Tag color={getPaymentStatusColor(status)} size="small">
-          {status === 'paid' ? 'Đã thanh toán' : status === 'unpaid' ? 'Chưa thanh toán' : status === 'refunded' ? 'Đã hoàn tiền' : 'Không rõ'}
+          {status === 'paid' ? 'Đã thanh toán' : status === 'unpaid' ? 'Chưa thanh toán' : status === 'refunded' ? 'Đã hoàn tiền' : status === 'government_funded' ? 'Được tài trợ bởi chính phủ' : status}
         </Tag>
       ),
     },
