@@ -78,6 +78,25 @@ export const getResultByAppointmentId = createAsyncThunk(
     }
 );
 
+// Async thunk to update result
+export const updateResult = createAsyncThunk(
+    "result/updateResult",
+    async ({ resultId, resultData }, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await axios.put(`${API_BASE_URL}/api/result/${resultId}`, resultData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to update result");
+        }
+    }
+);
+
 export const resultSlice = createSlice({
     name: "result",
     initialState: {
@@ -93,6 +112,9 @@ export const resultSlice = createSlice({
         currentResult: null,
         resultLoading: false,
         resultError: null,
+        // Add new state for update result
+        updateResultLoading: false,
+        updateResultError: null,
     },
     reducers: {
         resetResults: (state) => {
@@ -114,6 +136,11 @@ export const resultSlice = createSlice({
             state.currentResult = null;
             state.resultLoading = false;
             state.resultError = null;
+        },
+        // Add new reset action for update result
+        resetUpdateResult: (state) => {
+            state.updateResultLoading = false;
+            state.updateResultError = null;
         },
     },
     extraReducers: (builder) => {
@@ -172,9 +199,23 @@ export const resultSlice = createSlice({
             .addCase(getResultByAppointmentId.rejected, (state, action) => {
                 state.resultLoading = false;
                 state.resultError = action.payload || "Failed to fetch result";
+            })
+            .addCase(updateResult.pending, (state) => {
+                state.updateResultLoading = true;
+                state.updateResultError = null;
+            })
+            .addCase(updateResult.fulfilled, (state, action) => {
+                state.updateResultLoading = false;
+                if (action.payload.success && action.payload.data) {
+                    state.currentResult = action.payload;
+                }
+            })
+            .addCase(updateResult.rejected, (state, action) => {
+                state.updateResultLoading = false;
+                state.updateResultError = action.payload || "Failed to update result";
             });
     },
 });
 
-export const { resetResults, resetStartTesting, resetCreateResult, resetCurrentResult } = resultSlice.actions;
+export const { resetResults, resetStartTesting, resetCreateResult, resetCurrentResult, resetUpdateResult } = resultSlice.actions;
 export default resultSlice;

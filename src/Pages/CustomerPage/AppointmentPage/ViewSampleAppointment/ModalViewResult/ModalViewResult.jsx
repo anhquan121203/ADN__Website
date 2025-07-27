@@ -23,14 +23,14 @@ const ModalViewResult = ({
       console.log('API Response:', res); // Debug log
       
       if (res && res.success) {
-        toast.success('Kết quả đã được tải thành công!');
+        toast.success('Đã tải kết quả thành công!');
       } else {
         console.log('API returned but failed:', res);
-        toast.error("Không thể tải kết quả test");
+        toast.error("Không thể tải kết quả xét nghiệm");
       }
     } catch (error) {
       console.error('Error loading result:', error);
-      toast.error("Có lỗi xảy ra khi tải kết quả");
+      toast.error("Đã xảy ra lỗi khi tải kết quả");
     }
   };
 
@@ -53,14 +53,14 @@ const ModalViewResult = ({
           link.click();
           link.remove();
           window.URL.revokeObjectURL(url);
-          toast.success('Tải PDF thành công!');
+          toast.success('Tải file PDF thành công!');
         } else {
-          toast.error("Không tìm thấy link tải PDF");
+          toast.error("Không tìm thấy liên kết tải PDF");
         }
       }
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      toast.error("Có lỗi xảy ra khi tải PDF");
+      toast.error("Đã xảy ra lỗi khi tải PDF");
     }
   };
 
@@ -81,7 +81,7 @@ const ModalViewResult = ({
       title={
         <div className="flex items-center gap-2">
           <FileTextOutlined className="text-blue-600" />
-          <span>Kết quả xét nghiệm DNA</span>
+      <span>Kết quả xét nghiệm ADN</span>
         </div>
       }
       open={open}
@@ -98,7 +98,7 @@ const ModalViewResult = ({
           className="bg-green-600 hover:bg-green-700"
           disabled={!resultData}
         >
-          Tải PDF
+          Tải file PDF
         </Button>
       ]}
       width={900}
@@ -115,21 +115,31 @@ const ModalViewResult = ({
           <div>
             <h4 className="text-lg font-semibold mb-3 text-gray-700">Thông tin khách hàng</h4>
             <Descriptions bordered column={2} size="small">
-              <Descriptions.Item label="Tên khách hàng">
-                {resultData.customer_id ? `${resultData.customer_id.first_name} ${resultData.customer_id.last_name}` : 'N/A'}
+              <Descriptions.Item label="Họ tên khách hàng">
+                {resultData.customer_id ? `${resultData.customer_id.first_name} ${resultData.customer_id.last_name}` : 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Email">
-                {resultData.customer_id?.email || 'N/A'}
+                {resultData.customer_id?.email || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Số điện thoại">
-                {resultData.customer_id?.phone_number || 'N/A'}
+                {resultData.customer_id?.phone_number || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày sinh">
                 {resultData.customer_id?.dob ? 
-                  new Date(resultData.customer_id.dob).toLocaleDateString('vi-VN') : 'N/A'}
+                  new Date(resultData.customer_id.dob).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Địa chỉ" span={2}>
-                {resultData.customer_id?.address || 'N/A'}
+                {resultData.customer_id?.address
+                  ? [
+                      resultData.customer_id.address.street,
+                      resultData.customer_id.address.ward,
+                      resultData.customer_id.address.district,
+                      resultData.customer_id.address.city,
+                      resultData.customer_id.address.country
+                    ]
+                      .filter(Boolean)
+                      .join(', ')
+                  : 'Không có dữ liệu'}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -140,18 +150,18 @@ const ModalViewResult = ({
           <div>
             <h4 className="text-lg font-semibold mb-3 text-gray-700">Chi tiết mẫu xét nghiệm</h4>
             <Descriptions bordered column={2} size="small">
-              <Descriptions.Item label="Mã appointment">
+              <Descriptions.Item label="Mã cuộc hẹn">
                 {resultData.appointment_id?._id || appointmentId}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày lấy mẫu">
                 {resultData.sample_ids?.[0]?.collection_date ? 
-                  new Date(resultData.sample_ids[0].collection_date).toLocaleDateString('vi-VN') : 'N/A'}
+                  new Date(resultData.sample_ids[0].collection_date).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Loại mẫu">
-                {resultData.sample_ids?.map(sample => sample.type).join(', ') || 'N/A'}
+                {resultData.sample_ids?.map(sample => sample.type).join(', ') || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Tình trạng mẫu">
-                {resultData.sample_ids?.[0]?.status || 'N/A'}
+                {resultData.sample_ids?.[0]?.status || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Ghi chú" span={2}>
                 {resultData.notes || 'Không có ghi chú'}
@@ -163,7 +173,7 @@ const ModalViewResult = ({
 
           {/* DNA Match Results */}
           <div>
-            <h4 className="text-lg font-semibold mb-3 text-gray-700">Kết quả so khớp DNA</h4>
+            <h4 className="text-lg font-semibold mb-3 text-gray-700">Kết quả so khớp ADN</h4>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="Tỷ lệ trùng khớp">
                 <span className={`text-lg font-bold ${
@@ -186,24 +196,24 @@ const ModalViewResult = ({
                 </span>
               </Descriptions.Item>
               <Descriptions.Item label="Độ tin cậy">
-                {resultData.result_data?.confidence_interval || 'N/A'}
+                {resultData.result_data?.confidence_interval || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Xác suất">
-                {resultData.result_data?.probability ? `${resultData.result_data.probability}%` : 'N/A'}
+                {resultData.result_data?.probability ? `${resultData.result_data.probability}%` : 'Không có dữ liệu'}
               </Descriptions.Item>
-              <Descriptions.Item label="Markers được test">
-                {resultData.result_data?.markers_tested || 'N/A'}
+              <Descriptions.Item label="Số markers được kiểm tra">
+                {resultData.result_data?.markers_tested || 'Không có dữ liệu'}
               </Descriptions.Item>
-              <Descriptions.Item label="Markers trùng khớp">
-                {resultData.result_data?.markers_matched || 'N/A'}
+              <Descriptions.Item label="Số markers trùng khớp">
+                {resultData.result_data?.markers_matched || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày hoàn thành">
                 {resultData.completed_at ? 
-                  new Date(resultData.completed_at).toLocaleDateString('vi-VN') : 'N/A'}
+                  new Date(resultData.completed_at).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Kỹ thuật viên phụ trách">
                 {resultData.laboratory_technician_id ? 
-                  `${resultData.laboratory_technician_id.first_name} ${resultData.laboratory_technician_id.last_name}` : 'N/A'}
+                  `${resultData.laboratory_technician_id.first_name} ${resultData.laboratory_technician_id.last_name}` : 'Không có dữ liệu'}
               </Descriptions.Item>
             </Descriptions>
           </div>
@@ -213,20 +223,19 @@ const ModalViewResult = ({
             <>
               <Divider />
               <div>
-                <h4 className="text-lg font-semibold mb-3 text-gray-700">Chi tiết người được xét nghiệm</h4>
+                <h4 className="text-lg font-semibold mb-3 text-gray-700">Chi tiết người tham gia xét nghiệm</h4>
                 <div className="space-y-4">
                   {resultData.sample_ids.map((sample, index) => (
                     <div key={index} className="p-4 bg-gray-50 rounded-lg">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm font-medium text-gray-700">Tên: {sample.person_info?.name || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">Quan hệ: {sample.person_info?.relationship || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">Ngày sinh: {sample.person_info?.dob ? new Date(sample.person_info.dob).toLocaleDateString('vi-VN') : 'N/A'}</p>
+                          <p className="text-sm font-medium text-gray-700">Họ tên: {sample.person_info?.name || 'Không có dữ liệu'}</p>
+                          <p className="text-sm text-gray-600">Quan hệ với khách hàng: {sample.person_info?.relationship || 'Không có dữ liệu'}</p>
+                          <p className="text-sm text-gray-600">Ngày sinh: {sample.person_info?.dob ? new Date(sample.person_info.dob).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600">Nơi sinh: {sample.person_info?.birth_place || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">Quốc tịch: {sample.person_info?.nationality || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">CMND/CCCD: {sample.person_info?.identity_document || 'N/A'}</p>
+                          <p className="text-sm text-gray-600">Nơi sinh: {sample.person_info?.birth_place || 'Không có dữ liệu'}</p>
+                          <p className="text-sm text-gray-600">Quốc tịch: {sample.person_info?.nationality || 'Không có dữ liệu'}</p>
                         </div>
                       </div>
                       <div className="mt-2">

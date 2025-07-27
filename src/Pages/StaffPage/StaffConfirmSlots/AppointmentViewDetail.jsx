@@ -1,12 +1,11 @@
-// src/Pages/Appointment/AppointmentViewDetail.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Descriptions, Spin, Button, Tag, message, Modal } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Card, Descriptions, Spin, Button, Tag, Modal, Timeline, Empty } from 'antd';
+import { ArrowLeftOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useAppointment } from '../../../Hooks/useAppoinment';
 import { Table } from 'antd';
 import AssignLabTech from './AssignLabTech';
+import { toast } from 'react-toastify';
 
 const AppointmentViewDetail = () => {
   const { id } = useParams();
@@ -28,7 +27,7 @@ const AppointmentViewDetail = () => {
       if (res.success) {
         setDetail(res.data.data);
       } else {
-        message.error('Không thể tải chi tiết cuộc hẹn');
+        toast.error('Không thể tải chi tiết cuộc hẹn');
       }
       setLoading(false);
     };
@@ -89,6 +88,18 @@ const isSlotAssigned = (slotId) => {
             <Descriptions.Item label="Loại hình">
               {detail.type === 'home' ? 'Tại nhà' : detail.type === 'facility' ? 'Tại phòng khám' : 'Tự lấy mẫu'}
             </Descriptions.Item>
+            <Descriptions.Item label="Giai đoạn thanh toán">
+              {/* {detail.payment_stage === 'unpaid' ? 'Chưa thanh toán' : detail.payment_stage === 'deposit_paid' ? 'Đã đặt cọc' : detail.payment_stage === 'paid' ? 'Đã thanh toán' : 'Chưa xác định'} */}
+              {detail.payment_stage === 'unpaid' ? (
+                <Tag color="red">Chưa thanh toán</Tag>
+              ) : detail.payment_stage === 'deposit_paid' ? (
+                <Tag color="orange">Đã đặt cọc</Tag>
+              ) : detail.payment_stage === 'paid' ? (
+                <Tag color="green">Đã thanh toán</Tag>
+              ) : (
+                <Tag color="gray">Chưa xác định</Tag>
+              )}
+            </Descriptions.Item>
             <Descriptions.Item label="Trạng thái thanh toán">
               {detail.payment_status === 'paid' ? (
                 <Tag color="green">Đã thanh toán</Tag>
@@ -126,6 +137,46 @@ const isSlotAssigned = (slotId) => {
                     {slot.end_time.minute.toString().padStart(2, '0')}
                   </div>
                 ))}
+              </Descriptions.Item>
+            )}
+
+            {/* Hiển thị Notes chỉ 1 lần, không bị chia */}
+            {detail.notes && detail.notes.length > 0 && (
+              <Descriptions.Item label="Ghi chú" span={2}>
+                {detail.notes.map((note, index) => (
+                  <div key={index} className="p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400 mb-2">
+                    <div className="flex items-start gap-2">
+                      <FileTextOutlined className="text-yellow-600 mt-1" />
+                      <div className="flex-1">
+                        <p className="text-gray-800">
+                          {typeof note === 'string' ? note : note.note}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Descriptions.Item>
+            )}
+
+            {detail.checkin_logs && detail.checkin_logs.length > 0 && (
+              <Descriptions.Item label="Lịch sử check-in" span={2}>
+                <Timeline>
+                  {detail.checkin_logs.map((log, index) => (
+                    <Timeline.Item
+                      key={index}
+                      dot={<ClockCircleOutlined className="text-green-600" />}
+                      color="green"
+                    >
+                      <div className="p-3 bg-green-50 rounded-lg">
+                        <p className="text-gray-800 font-medium">Check-in thành công</p>
+                        <p className="text-gray-600 text-sm">{log.note}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {formatDate(log.created_at)}
+                        </p>
+                      </div>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
               </Descriptions.Item>
             )}
           </Descriptions>
@@ -166,12 +217,12 @@ const isSlotAssigned = (slotId) => {
               key: 'action',
               render: (_, record) => (
                 isSlotAssigned(record._id) ? (
-  <Tag color="green">Đã apply</Tag>
-) : (
-  <Button type="primary" onClick={() => handleConfirm(record._id)}>
-    Confirm
-  </Button>
-)
+                  <Tag color="green">Đã apply</Tag>
+                ) : (
+                  <Button type="primary" onClick={() => handleConfirm(record._id)}>
+                    Confirm
+                  </Button>
+                )
               )
             },
           ]}
@@ -179,29 +230,29 @@ const isSlotAssigned = (slotId) => {
       </Card>
 
       <Modal
-  title="Xác nhận khung giờ"
-  open={confirmVisible}
-  onCancel={() => setConfirmVisible(false)}
-  onOk={async () => {
-    const res = await confirmAppointmentSlot(id, selectedSlotId);
-    if (res.success) {
-      message.success('Đã xác nhận khung giờ!');
-      setConfirmVisible(false);
-      // Gợi ý: reload lại chi tiết nếu cần
-      const updated = await getAppointmentDetail(id);
-      if (updated.success) {
-        setDetail(updated.data.data);
-      }
-    } else {
-      message.error('Xác nhận thất bại');
-    }
-  }}
-  okText="Xác nhận"
-  cancelText="Hủy"
-  centered
->
-  Bạn có chắc chắn muốn xác nhận cuộc hẹn với khung giờ này?
-</Modal>
+        title="Xác nhận khung giờ"
+        open={confirmVisible}
+        onCancel={() => setConfirmVisible(false)}
+        onOk={async () => {
+          const res = await confirmAppointmentSlot(id, selectedSlotId);
+          if (res.success) {
+            toast.success('Đã xác nhận khung giờ!');
+            setConfirmVisible(false);
+            // Gợi ý: reload lại chi tiết nếu cần
+            const updated = await getAppointmentDetail(id);
+            if (updated.success) {
+              setDetail(updated.data.data);
+            }
+          } else {
+            toast.error('Xác nhận thất bại');
+          }
+        }}
+        okText="Xác nhận"
+        cancelText="Hủy"
+        centered
+      >
+        Bạn có chắc chắn muốn xác nhận cuộc hẹn với khung giờ này?
+      </Modal>
 
       <Button
         type="dashed"
@@ -220,16 +271,16 @@ const isSlotAssigned = (slotId) => {
             appointmentId={id}
             assignedLabTechId={detail?.laboratory_technician_id?._id}
             onAssigned={ async () => {
-            const updated = await getAppointmentDetail(id);
-            if (updated.success) {
-            setDetail(updated.data.data);
-            }
+              const updated = await getAppointmentDetail(id);
+              if (updated.success) {
+                setDetail(updated.data.data);
+              }
               setShowAssignLabTech(false);
             }}
           />
         </Card>
       )}
-  </div>
+    </div>
   );
 };
 

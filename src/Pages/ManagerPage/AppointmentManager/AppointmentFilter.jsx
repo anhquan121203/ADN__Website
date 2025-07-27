@@ -73,17 +73,24 @@ const AppointmentFilter = ({ onFilter }) => {
               <Select
                 placeholder="Chọn trạng thái"
                 allowClear
-                className="w-full"                   // <- và đây
-              >
-                <Select.Option value="PENDING">Đang chờ</Select.Option>
-                <Select.Option value="CONFIRMED">Đã xác nhận</Select.Option>
-                <Select.Option value="COMPLETED">Hoàn thành</Select.Option>
-                <Select.Option value="CANCELLED">Đã hủy</Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
+                   // <- và đây
+                >
+                <Select.Option value="pending">Chờ xác nhận</Select.Option>
+                <Select.Option value="confirmed">Đã xác nhận</Select.Option>
+                <Select.Option value="sample_assigned">Đã phân mẫu</Select.Option>
+                <Select.Option value="sample_collected">Đã thu mẫu</Select.Option>
+                <Select.Option value="sample_received">Đã nhận mẫu</Select.Option>
+                <Select.Option value="testing">Đang xét nghiệm</Select.Option>
+                <Select.Option value="completed">Hoàn thành</Select.Option>
+                <Select.Option value="cancelled">Đã hủy</Select.Option>
+                <Select.Option value="awaiting_authorization">Chờ phê duyệt</Select.Option>
+                <Select.Option value="authorized">Đã phê duyệt</Select.Option>
+                <Select.Option value="ready_for_collection">Sẵn sàng trả kết quả</Select.Option>
+                </Select>
+              </Form.Item>
+              </Col>
 
-          {/* Loại */}
+              {/* Loại */}
           <Col xs={24} sm={12} md={6}>
             <Form.Item
               name="type"
@@ -99,6 +106,7 @@ const AppointmentFilter = ({ onFilter }) => {
                 <Select.Option value="facility">Tại phòng khám</Select.Option>
                 <Select.Option value="home">Tại nhà</Select.Option>
                 <Select.Option value="self">Tự lấy mẫu</Select.Option>
+                <Select.Option value="administrative">Hành chính</Select.Option>
               </Select>
             </Form.Item>
           </Col>

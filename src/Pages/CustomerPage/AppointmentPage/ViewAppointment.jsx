@@ -1,11 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag } from "antd";
+import { Table, Tag, Dropdown, Menu, Button } from "antd";
 import AppointmentFilter from "./AppointmentFilter";
 import { useAppointment } from "../../../Hooks/useAppoinment";
 import useAuth from "../../../Hooks/useAuth";
 import ModalApplyKit from "./ModalApplyKit/ModalApplyKit";
 import { useNavigate } from "react-router-dom";
 
+const statusOptions = [
+  { value: "", label: "Tất cả trạng thái", color: "default" },
+  { value: "pending", label: "Chờ xác nhận", color: "orange" },
+  { value: "confirmed", label: "Đã xác nhận", color: "blue" },
+  { value: "sample_assigned", label: "Đã phân mẫu", color: "purple" },
+  { value: "sample_collected", label: "Đã lấy mẫu", color: "geekblue" },
+  { value: "sample_received", label: "Đã nhận mẫu", color: "cyan" },
+  { value: "testing", label: "Đang xét nghiệm", color: "gold" },
+  { value: "completed", label: "Hoàn thành", color: "green" },
+  { value: "cancelled", label: "Đã hủy", color: "red" },
+  { value: "awaiting_authorization", label: "Chờ phê duyệt", color: "magenta" },
+  { value: "authorized", label: "Đã phê duyệt", color: "success" },
+  { value: "ready_for_collection", label: "Sẵn sàng trả kết quả", color: "lime" },
+];
+
+const typeOptions = [
+  { value: "self", label: "Tự lấy mẫu" },
+  { value: "home", label: "Tại nhà" },
+  { value: "clinic", label: "Tại cơ sở y tế" },
+  { value: "other", label: "Khác" },
+];
 const columns = [
   {
     title: "Dịch vụ",
@@ -22,12 +43,23 @@ const columns = [
     title: "Trạng thái",
     dataIndex: "status",
     key: "status",
-    render: (status) => <Tag color={status === "pending" ? "orange" : status === "completed" ? "green" : "blue"}>{status}</Tag>,
+    render: (status) => {
+      const statusOption = statusOptions.find(option => option.value === status);
+      return (
+        <Tag color={statusOption ? statusOption.color : "default"}>
+          {statusOption ? statusOption.label : status}
+        </Tag>
+      );
+    },
   },
   {
     title: "Loại lấy mẫu",
     dataIndex: "type",
     key: "type",
+    render: (type) => {
+      const typeOption = typeOptions.find(option => option.value === type);
+      return typeOption ? typeOption.label : type;
+    },
   },
   {
     title: "Địa chỉ lấy mẫu",
@@ -93,28 +125,32 @@ export default function ViewAppointment() {
     ...columns,
     {
       title: "Hành động",
-      key: "requestKit",
-      render: (_, record) => (
-        <div style={{ display: "flex", gap: 8 }}>
-          {/* Chỉ hiển thị button "Nhận bộ dụng cụ" khi type là "self" hoặc "home" */}
-          {(record.type === "self" || record.type === "home") && (
-            <button
-              onClick={() => {
+      key: "actions",
+      render: (_, record) => {
+        const menu = (
+          <Menu>
+            <Menu.Item key="detail" onClick={() => navigate(`/customer/appointment/detail/${record._id}`)}>
+              Xem chi tiết
+            </Menu.Item>
+            {(record.type === "self" || record.type === "home") && (
+              <Menu.Item key="kit" onClick={() => {
                 setSelectedAppointmentId(record._id);
                 setShowModal(true);
-              }}
-            >
-              Nhận bộ dụng cụ
-            </button>
-          )}
-          <button
-            onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}
-            style={{ marginLeft: 8 }}
-          >
-            Xem Mẫu
-          </button>
-        </div>
-      ),
+              }}>
+                Nhận bộ dụng cụ
+              </Menu.Item>
+            )}
+            <Menu.Item key="sample" onClick={() => navigate(`/customer/appointment/sample/${record._id}`)}>
+              Xem Mẫu
+            </Menu.Item>
+          </Menu>
+        );
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button type="primary">Hành động</Button>
+          </Dropdown>
+        );
+      },
     },
   ];
 

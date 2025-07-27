@@ -8,10 +8,8 @@ import {
   FileTextOutlined 
 } from '@ant-design/icons';
 import useSample from '../../../../Hooks/useSample';
-import useResult from '../../../../Hooks/useResult';
 import ModalDetailSample from './ModalDetailSample/ModalDetailSample';
 import ModalViewResult from './ModalViewResult/ModalViewResult';
-import { toast } from 'react-toastify';
 
 const { Title, Text } = Typography;
 
@@ -23,8 +21,7 @@ const getInitial = (name) => {
 const ViewSampleAppointment = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
-  const { getSamplesByAppointment, uploadPersonImage, submitSamples } = useSample();
-  const { getResultByAppointment, currentResult, resultLoading } = useResult();
+  const { getSamplesByAppointment, submitSamples } = useSample();
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
@@ -33,8 +30,8 @@ const ViewSampleAppointment = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSampleId, setSelectedSampleId] = useState(null);
   const [resultModalOpen, setResultModalOpen] = useState(false);
-  
-  // Auto-clear notification sau 3s
+
+  // Tự động ẩn thông báo sau 3s
   useEffect(() => {
     if (notification) {
       const id = setTimeout(() => setNotification(null), 3000);
@@ -42,7 +39,7 @@ const ViewSampleAppointment = () => {
     }
   }, [notification]);
 
-  // Fetch samples
+  // Lấy danh sách mẫu
   const fetchSamples = async () => {
     setLoading(true);
     try {
@@ -68,81 +65,104 @@ const ViewSampleAppointment = () => {
     if (appointmentId) fetchSamples();
   }, [appointmentId]);
 
-  // Handle view result - just open the modal
+  // Xem kết quả - chỉ mở modal
   const handleViewResult = () => {
     setResultModalOpen(true);
   };
 
-  // Handle view sample detail
+  // Xem chi tiết mẫu
   const handleViewSampleDetail = (sampleId) => {
     setSelectedSampleId(sampleId);
     setModalOpen(true);
   };
 
-  // Handle checkbox change
+  // Xử lý chọn checkbox
   const handleCheckboxChange = (sampleId, checked) => {
     setSelectedSampleIds(prev =>
       checked ? [...prev, sampleId] : prev.filter(id => id !== sampleId)
     );
   };
 
-  // Handle submit
+  // Xử lý gửi mẫu
   const handleSubmitSamples = async () => {
     if (!selectedSampleIds.length) {
-      setNotification({ message: 'Please select at least one sample!', type: 'error' });
+      setNotification({ message: 'Vui lòng chọn ít nhất một mẫu!', type: 'error' });
       return;
     }
     
-    // Get the first selected sample to use its collection date
+    // Lấy mẫu đầu tiên để lấy ngày lấy mẫu
     const firstSample = samples.find(sample => sample._id === selectedSampleIds[0]);
     if (!firstSample?.collection_date) {
-      setNotification({ message: 'Selected sample has no collection date!', type: 'error' });
+      setNotification({ message: 'Mẫu được chọn không có ngày lấy mẫu!', type: 'error' });
       return;
     }
     
     setSubmitting(true);
     const res = await submitSamples(selectedSampleIds, firstSample.collection_date);
     if (res.success) {
-      setNotification({ message: 'Submit successful!', type: 'success' });
+      setNotification({ message: 'Gửi mẫu thành công!', type: 'success' });
       setSelectedSampleIds([]);
       fetchSamples();
     } else {
-      setNotification({ message: 'Submit failed!', type: 'error' });
+      setNotification({ message: 'Gửi mẫu thất bại!', type: 'error' });
     }
     setSubmitting(false);
   };
 
+  // Hàm lấy màu và phiên dịch cho trạng thái mẫu
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'orange';
-      case 'collected': return 'blue';
-      case 'received': return 'green';
-      case 'processing': return 'purple';
-      case 'completed': return 'success';
-      case 'failed': return 'red';
+      case 'pending': return 'orange'; // Chờ xử lý
+      case 'collected': return 'blue'; // Đã lấy mẫu
+      case 'received': return 'green'; // Đã nhận mẫu
+      case 'processing': return 'purple'; // Đang xử lý
+      case 'completed': return 'success'; // Hoàn thành
+      case 'failed': return 'red'; // Thất bại
       default: return 'default';
     }
   };
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'pending': return 'Chờ xử lý';
+      case 'collected': return 'Đã lấy mẫu';
+      case 'received': return 'Đã nhận mẫu';
+      case 'processing': return 'Đang xử lý';
+      case 'completed': return 'Hoàn thành';
+      case 'failed': return 'Thất bại';
+      default: return status;
+    }
+  };
+
+  // Hàm lấy màu và phiên dịch cho loại mẫu
   const getTypeColor = (type) => {
     switch (type) {
-      case 'blood': return 'red';
-      case 'saliva': return 'blue';
-      case 'hair': return 'green';
+      case 'blood': return 'red'; // Máu
+      case 'saliva': return 'blue'; // Nước bọt
+      case 'hair': return 'green'; // Tóc
       default: return 'default';
+    }
+  };
+
+  const getTypeLabel = (type) => {
+    switch (type) {
+      case 'blood': return 'Máu';
+      case 'saliva': return 'Nước bọt';
+      case 'hair': return 'Tóc';
+      default: return type;
     }
   };
 
   if (loading) {
-    return <div className="p-6">Loading...</div>;
+    return <div className="p-6">Đang tải...</div>;
   }
   
   const sampleArray = Array.isArray(samples) ? samples : [];
   if (!sampleArray.length) {
-    return <div className="p-6">No samples found.</div>;
+    return <div className="p-6">Không tìm thấy mẫu nào.</div>;
   }
 
-  // If appointment is collected AND kit is used, hide all batch controls
+  // Nếu lịch hẹn đã lấy mẫu và kit đã sử dụng thì ẩn các nút gửi mẫu
   const appointmentStatus = sampleArray[0]?.appointment_id?.status;
   const kitStatus = sampleArray[0]?.kit_id?.status;
   const paymentStatus = sampleArray[0]?.appointment_id?.payment_status;
@@ -150,7 +170,7 @@ const ViewSampleAppointment = () => {
 
   const columns = [
     {
-      title: 'Select',
+      title: 'Chọn',
       key: 'select',
       width: 60,
       render: (_, record) => {
@@ -164,7 +184,7 @@ const ViewSampleAppointment = () => {
       }
     },
     {
-      title: 'Sample ID',
+      title: 'Mã mẫu',
       dataIndex: '_id',
       key: 'sampleId',
       render: (id) => (
@@ -172,7 +192,7 @@ const ViewSampleAppointment = () => {
       )
     },
     {
-      title: 'Kit Code',
+      title: 'Mã bộ kit',
       dataIndex: ['kit_id', 'code'],
       key: 'kitCode',
       render: (_, record) => (
@@ -180,15 +200,17 @@ const ViewSampleAppointment = () => {
       )
     },
     {
-      title: 'Type',
+      title: 'Loại mẫu',
       dataIndex: 'type',
       key: 'type',
       render: (type) => (
-        <Tag color={getTypeColor(type)}>{type.toUpperCase()}</Tag>
+        <Tag color={getTypeColor(type)}>
+          {getTypeLabel(type)}
+        </Tag>
       )
     },
     {
-      title: 'Person Info',
+      title: 'Thông tin người lấy mẫu',
       key: 'personInfo',
       render: (_, record) => {
         const person = record.person_info || {};
@@ -198,7 +220,7 @@ const ViewSampleAppointment = () => {
               {person.image_url ? (
                 <img
                   src={person.image_url}
-                  alt="Person"
+                  alt="Người lấy mẫu"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -221,7 +243,7 @@ const ViewSampleAppointment = () => {
       }
     },
     {
-      title: 'Collection Method',
+      title: 'Phương pháp lấy mẫu',
       dataIndex: 'collection_method',
       key: 'collectionMethod',
       render: (method) => (
@@ -229,7 +251,7 @@ const ViewSampleAppointment = () => {
       )
     },
     {
-      title: 'Collection Date',
+      title: 'Ngày lấy mẫu',
       dataIndex: 'collection_date',
       key: 'collectionDate',
       render: (date) => (
@@ -240,15 +262,17 @@ const ViewSampleAppointment = () => {
       )
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
+        <Tag color={getStatusColor(status)}>
+          {getStatusLabel(status)}
+        </Tag>
       )
     },
     {
-      title: 'Action',
+      title: 'Thao tác',
       key: 'action',
       render: (_, record) => (
         <Space>
@@ -267,7 +291,7 @@ const ViewSampleAppointment = () => {
 
   return (
     <div className="p-6">
-      {/* Toast notification */}
+      {/* Thông báo */}
       {notification && (
         <div
           className={`fixed top-4 right-4 px-4 py-2 rounded shadow-lg text-white z-50 ${
@@ -280,22 +304,22 @@ const ViewSampleAppointment = () => {
         </div>
       )}
 
-      {/* Header */}
+      {/* Tiêu đề */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(-1)}
           >
-            Return
+            Quay lại
           </Button>
           <Title level={3} className="mb-0">
-            Sample List for Appointment
+            Danh sách mẫu của lịch hẹn
           </Title>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* View Result Button - Only show if appointment is completed */}
+          {/* Nút xem kết quả - chỉ hiện khi lịch hẹn đã hoàn thành */}
           {appointmentStatus === "completed" && (
             <Button
               type="default"
@@ -303,7 +327,7 @@ const ViewSampleAppointment = () => {
               onClick={handleViewResult}
               className="bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100"
             >
-              Xem kết quả test
+              Xem kết quả xét nghiệm
             </Button>
           )}
 
@@ -327,12 +351,12 @@ const ViewSampleAppointment = () => {
         </div>
       </div>
 
-      {/* Batch submit controls */}
+      {/* Gửi mẫu hàng loạt */}
       {!isBatchCompleted && (
         <Card className="mb-6" size="small">
           <div className="flex items-center justify-between">
             <Text className="text-blue-800">
-              <strong>Select samples to submit in batch</strong>
+              <strong>Chọn mẫu để gửi hàng loạt</strong>
             </Text>
             <Button
               type="primary"
@@ -341,13 +365,13 @@ const ViewSampleAppointment = () => {
               onClick={handleSubmitSamples}
               className="bg-green-600 hover:bg-green-700 border-green-600"
             >
-              {submitting ? 'Submitting...' : `Submit Selected (${selectedSampleIds.length})`}
+              {submitting ? 'Đang gửi...' : `Gửi mẫu đã chọn (${selectedSampleIds.length})`}
             </Button>
           </div>
         </Card>
       )}
 
-      {/* Samples Table */}
+      {/* Bảng mẫu */}
       <Card>
         <Table
           columns={columns}
@@ -359,41 +383,41 @@ const ViewSampleAppointment = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `${range[0]}-${range[1]} of ${total} samples`
+              `${range[0]}-${range[1]} trong tổng ${total} mẫu`
           }}
           scroll={{ x: 1200 }}
         />
       </Card>
 
-      {/* Summary Card */}
+      {/* Thống kê */}
       <Card className="mt-6" size="small">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{sampleArray.length}</div>
-            <div className="text-gray-500">Total Samples</div>
+            <div className="text-gray-500">Tổng số mẫu</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-600">
               {sampleArray.filter(s => s.status === 'pending').length}
             </div>
-            <div className="text-gray-500">Pending</div>
+            <div className="text-gray-500">Chờ xử lý</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">
               {sampleArray.filter(s => s.status === 'received').length}
             </div>
-            <div className="text-gray-500">Received</div>
+            <div className="text-gray-500">Đã nhận</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">
               {new Set(sampleArray.map(s => s.type)).size}
             </div>
-            <div className="text-gray-500">Sample Types</div>
+            <div className="text-gray-500">Loại mẫu</div>
           </div>
         </div>
       </Card>
 
-      {/* Modal View Result */}
+      {/* Modal xem kết quả */}
       <ModalViewResult
         open={resultModalOpen}
         onClose={() => setResultModalOpen(false)}
@@ -401,7 +425,7 @@ const ViewSampleAppointment = () => {
         appointmentStatus={appointmentStatus}
       />
 
-      {/* Modal Detail Sample */}
+      {/* Modal chi tiết mẫu */}
       <ModalDetailSample
         open={modalOpen}
         onClose={() => setModalOpen(false)}

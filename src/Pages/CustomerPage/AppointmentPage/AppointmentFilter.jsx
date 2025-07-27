@@ -6,8 +6,15 @@ const statusOptions = [
   { value: "", label: "Tất cả trạng thái" },
   { value: "pending", label: "Chờ xác nhận" },
   { value: "confirmed", label: "Đã xác nhận" },
+  { value: "sample_assigned", label: "Đã phân mẫu" },
+  { value: "sample_collected", label: "Đã lấy mẫu" },
+  { value: "sample_received", label: "Đã nhận mẫu" },
+  { value: "testing", label: "Đang xét nghiệm" },
   { value: "completed", label: "Hoàn thành" },
   { value: "cancelled", label: "Đã hủy" },
+  { value: "awaiting_authorization", label: "Chờ phê duyệt" },
+  { value: "authorized", label: "Đã phê duyệt" },
+  { value: "ready_for_collection", label: "Sẵn sàng trả kết quả" },
 ];
 
 export default function AppointmentFilter({ onFilter }) {
