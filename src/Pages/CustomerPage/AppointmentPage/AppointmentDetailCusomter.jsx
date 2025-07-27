@@ -33,18 +33,24 @@ const AppointmentDetailCustomer = () => {
 
   const translateStatus = (status) => {
     const statusMap = {
-      pending: { text: "Đang chờ", color: "orange" },
+      pending: { text: "Chờ xác nhận", color: "orange" },
       confirmed: { text: "Đã xác nhận", color: "blue" },
-      in_progress: { text: "Đang thực hiện", color: "processing" },
+      sample_assigned: { text: "Đã phân mẫu", color: "purple" },
+      sample_collected: { text: "Đã lấy mẫu", color: "geekblue" },
+      sample_received: { text: "Đã nhận mẫu", color: "cyan" },
+      testing: { text: "Đang xét nghiệm", color: "gold" },
       completed: { text: "Hoàn thành", color: "green" },
-      cancelled: { text: "Đã hủy", color: "red" }
+      cancelled: { text: "Đã hủy", color: "red" },
+      awaiting_authorization: { text: "Chờ phê duyệt", color: "magenta" },
+      authorized: { text: "Đã phê duyệt", color: "success" },
+      ready_for_collection: { text: "Sẵn sàng trả kết quả", color: "lime" }
     };
     return statusMap[status] || { text: status, color: "default" };
   };
 
   const translatePaymentStatus = (status) => {
     const statusMap = {
-      pending: { text: "Chưa thanh toán", color: "orange" },
+      unpaid: { text: "Chưa thanh toán", color: "orange" },
       partial: { text: "Thanh toán một phần", color: "blue" },
       paid: { text: "Đã thanh toán", color: "green" }
     };

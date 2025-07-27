@@ -13,6 +13,19 @@ const Profile = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
+     // Format address for display
+  const formatAddress = (addressObj) => {
+    if (!addressObj) return "Không có địa chỉ";
+    return [
+      addressObj.street,
+      addressObj.ward,
+      addressObj.district,
+      addressObj.city,
+      addressObj.country
+    ].filter(Boolean).join(', ');
+  };
+  
+
   // Format dates for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -87,9 +100,9 @@ const Profile = () => {
 
       <div className="profile-details">
         <div className="detail-section">
-          <h3>Personal Information</h3>
+          <h3>Thông tin cá nhân</h3>
           <div className="detail-row">
-            <span className="detail-label">Full Name:</span>
+            <span className="detail-label">Họ tên:</span>
             <span className="detail-value">{user?.first_name} {user?.last_name}</span>
           </div>
           <div className="detail-row">
@@ -103,36 +116,40 @@ const Profile = () => {
           </div>
           <div className="detail-row">
             <span className="detail-label">Phone:</span>
-            <span className="detail-value">{user?.phone_number || 'Not provided'}</span>
+            <span className="detail-value">{user?.phone_number || 'Chưa cung cấp'}</span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Date of Birth:</span>
+            <span className="detail-label">Địa chỉ:</span>
+            <span className="detail-value">{formatAddress(user?.address)}</span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Ngày sinh:</span>
             <span className="detail-value">{formatDate(user?.dob)}</span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Role:</span>
-            <span className="detail-value">{user?.role || 'User'}</span>
+            <span className="detail-label">Vai trò:</span>
+            <span className="detail-value">{user?.role || 'Người dùng'}</span>
           </div>
         </div>
 
         <div className="detail-section">
-          <h3>Account Information</h3>
+          <h3>Thông tin tài khoản</h3>
           <div className="detail-row">
-            <span className="detail-label">User ID:</span>
+            <span className="detail-label">Mã người dùng:</span>
             <span className="detail-value">{user?._id}</span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Status:</span>
+            <span className="detail-label">Trạng thái:</span>
             <span className={`status-badge ${user?.status ? 'active' : 'inactive'}`}>
               {user?.status ? 'Active' : 'Inactive'}
             </span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Created:</span>
+            <span className="detail-label">Ngày tạo:</span>
             <span className="detail-value">{formatDate(user?.created_at)}</span>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Last Updated:</span>
+            <span className="detail-label">Cập nhật lần cuối:</span>
             <span className="detail-value">{formatDate(user?.updated_at)}</span>
           </div>
         </div>
@@ -144,7 +161,7 @@ const Profile = () => {
             disabled={loading}
           >
             <FaEdit size={16} />
-            {loading ? 'Loading...' : 'Edit Profile'}
+            {loading ? 'Đang tải...' : 'Chỉnh sửa hồ sơ'}
           </button>
           
           {!user?.google_id && (
@@ -154,7 +171,7 @@ const Profile = () => {
               disabled={loading}
             >
               <FaKey size={16} />
-              Change Password
+              Đổi mật khẩu
             </button>
           )}
         </div>

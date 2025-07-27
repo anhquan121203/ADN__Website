@@ -209,9 +209,6 @@ const StaffSample = () => {
                   onClick={() => handleViewSample(record.appointment_id?._id || record.appointment_id)} 
                 />
               </Tooltip>
-          <Tooltip title="Chỉnh sửa">
-            <Button type="link" icon={<FaEdit />} onClick={() => handleEditSample(record)} />
-          </Tooltip>
         </Space>
       ),
     },
@@ -221,11 +218,6 @@ const StaffSample = () => {
 
   const handleViewSample = (appointmentId) => {
     navigate(`/staff/samples/appointment/${appointmentId}`);
-  };
-
-  const handleEditSample = (sample) => {
-    // Handle edit sample action
-    console.log('Edit sample:', sample);
   };
 
   if (isLoading && !samples.length) {
@@ -255,11 +247,6 @@ const StaffSample = () => {
       </div>
     );
   }
-  
-  // Render error message helper
-  const renderError = (message) => (
-    <div className="text-red-500 text-sm mt-2">{message}</div>
-  );
 
   return (
     <div className="p-6">

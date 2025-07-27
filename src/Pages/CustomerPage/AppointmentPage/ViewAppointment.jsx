@@ -6,6 +6,27 @@ import useAuth from "../../../Hooks/useAuth";
 import ModalApplyKit from "./ModalApplyKit/ModalApplyKit";
 import { useNavigate } from "react-router-dom";
 
+const statusOptions = [
+  { value: "", label: "Tất cả trạng thái", color: "default" },
+  { value: "pending", label: "Chờ xác nhận", color: "orange" },
+  { value: "confirmed", label: "Đã xác nhận", color: "blue" },
+  { value: "sample_assigned", label: "Đã phân mẫu", color: "purple" },
+  { value: "sample_collected", label: "Đã lấy mẫu", color: "geekblue" },
+  { value: "sample_received", label: "Đã nhận mẫu", color: "cyan" },
+  { value: "testing", label: "Đang xét nghiệm", color: "gold" },
+  { value: "completed", label: "Hoàn thành", color: "green" },
+  { value: "cancelled", label: "Đã hủy", color: "red" },
+  { value: "awaiting_authorization", label: "Chờ phê duyệt", color: "magenta" },
+  { value: "authorized", label: "Đã phê duyệt", color: "success" },
+  { value: "ready_for_collection", label: "Sẵn sàng trả kết quả", color: "lime" },
+];
+
+const typeOptions = [
+  { value: "self", label: "Tự lấy mẫu" },
+  { value: "home", label: "Tại nhà" },
+  { value: "clinic", label: "Tại cơ sở y tế" },
+  { value: "other", label: "Khác" },
+];
 const columns = [
   {
     title: "Dịch vụ",
@@ -22,12 +43,23 @@ const columns = [
     title: "Trạng thái",
     dataIndex: "status",
     key: "status",
-    render: (status) => <Tag color={status === "pending" ? "orange" : status === "completed" ? "green" : "blue"}>{status}</Tag>,
+    render: (status) => {
+      const statusOption = statusOptions.find(option => option.value === status);
+      return (
+        <Tag color={statusOption ? statusOption.color : "default"}>
+          {statusOption ? statusOption.label : status}
+        </Tag>
+      );
+    },
   },
   {
     title: "Loại lấy mẫu",
     dataIndex: "type",
     key: "type",
+    render: (type) => {
+      const typeOption = typeOptions.find(option => option.value === type);
+      return typeOption ? typeOption.label : type;
+    },
   },
   {
     title: "Địa chỉ lấy mẫu",

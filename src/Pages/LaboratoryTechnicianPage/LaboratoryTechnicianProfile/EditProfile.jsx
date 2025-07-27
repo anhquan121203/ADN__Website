@@ -259,7 +259,7 @@ useEffect(() => {
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full cursor-pointer text-sm font-medium transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
             >
               <FaUpload />
-              <span>{uploading ? 'Uploading...' : 'Change Photo'}</span>
+              <span>{uploading ? 'Đang Tải Lên...' : 'Thay Đổi Ảnh'}</span>
             </label>
             <input
               id="avatar-input"
@@ -451,7 +451,7 @@ useEffect(() => {
             disabled={loading}
             type="button"
           >
-            Cancel
+            Hủy
           </button>
           <button 
             className="px-6 py-3 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-300 border-none min-w-32 bg-blue-600 text-white border-2 border-blue-600 hover:bg-blue-700 hover:border-blue-700 hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none" 
@@ -459,7 +459,7 @@ useEffect(() => {
             disabled={loading || uploading}
             type="button"
           >
-            {loading ? 'Saving...' : 'Save Changes'}
+            {loading ? 'Đang Lưu...' : 'Lưu Thay Đổi'}
           </button>
         </div>
       </div>

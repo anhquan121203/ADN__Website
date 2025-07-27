@@ -43,12 +43,12 @@ const ModalChangePassword = ({ onClose, userId }) => {
     e.preventDefault();
     
     if (passwords.new_password !== passwords.confirm_password) {
-      toast.error('New passwords do not match');
+      toast.error('Mật khẩu mới không khớp');
       return;
     }
 
     if (passwords.new_password.length < 6) {
-      toast.error('New password must be at least 6 characters long');
+      toast.error('Mật khẩu mới phải có ít nhất 6 ký tự');
       return;
     }
 
@@ -60,21 +60,21 @@ const ModalChangePassword = ({ onClose, userId }) => {
       });
 
       if (result.success) {
-        toast.success('Password changed successfully');
+        toast.success('Đổi mật khẩu thành công');
         onClose();
       } else {
-        toast.error(result.error || 'Failed to change password');
+        toast.error(result.error || 'Đổi mật khẩu thất bại');
       }
     } catch (error) {
-      toast.error('An error occurred while changing password');
-      console.error('Password change error:', error);
+      toast.error('Có lỗi xảy ra khi đổi mật khẩu');
+      console.error('Lỗi đổi mật khẩu:', error);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Change Password</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Đổi mật khẩu</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -93,6 +93,7 @@ const ModalChangePassword = ({ onClose, userId }) => {
                 type="button"
                 onClick={() => togglePasswordVisibility('old')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                aria-label="Hiện/Ẩn mật khẩu hiện tại"
               >
                 {showPassword.old ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -116,6 +117,7 @@ const ModalChangePassword = ({ onClose, userId }) => {
                 type="button"
                 onClick={() => togglePasswordVisibility('new')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                aria-label="Hiện/Ẩn mật khẩu mới"
               >
                 {showPassword.new ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -124,7 +126,7 @@ const ModalChangePassword = ({ onClose, userId }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Xác nhận mât khẩu mới
+              Xác nhận mật khẩu mới
             </label>
             <div className="relative">
               <input
@@ -139,6 +141,7 @@ const ModalChangePassword = ({ onClose, userId }) => {
                 type="button"
                 onClick={() => togglePasswordVisibility('confirm')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                aria-label="Hiện/Ẩn xác nhận mật khẩu mới"
               >
                 {showPassword.confirm ? <FaEyeSlash /> : <FaEye />}
               </button>

@@ -177,12 +177,14 @@ const StaffConfirmSlots = () => {
         const typeColors = {
           'self': 'bg-blue-100 text-blue-800',
           'facility': 'bg-green-100 text-green-800',
-          'home': 'bg-purple-100 text-purple-800'
+          'home': 'bg-purple-100 text-purple-800',
+          'administrative': 'bg-yellow-100 text-yellow-800'
         };
         const typeLabels = {
           'self': 'Tự đến',
           'facility': 'Tại cơ sở',
-          'home': 'Tại nhà'
+          'home': 'Tại nhà',
+          'administrative': 'Hành chính'
         };
         return (
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${typeColors[type] || 'bg-gray-100 text-gray-800'}`}>
@@ -198,24 +200,30 @@ const StaffConfirmSlots = () => {
       width: 120,
       render: (status) => {
         const statusColors = {
-          'pending': 'bg-yellow-100 text-yellow-800',
+          'pending': 'bg-orange-100 text-orange-800',
           'confirmed': 'bg-blue-100 text-blue-800',
-          'sample_assigned': 'bg-indigo-100 text-indigo-800',
-          'sample_collected': 'bg-orange-100 text-orange-800',
+          'sample_assigned': 'bg-purple-100 text-purple-800',
+          'sample_collected': 'bg-geekblue-100 text-geekblue-800',
           'sample_received': 'bg-cyan-100 text-cyan-800',
-          'testing': 'bg-purple-100 text-purple-800',
+          'testing': 'bg-gold-100 text-gold-800',
           'completed': 'bg-green-100 text-green-800',
-          'cancelled': 'bg-red-100 text-red-800'
+          'cancelled': 'bg-red-100 text-red-800',
+          'awaiting_authorization': 'bg-magenta-100 text-magenta-800',
+          'authorized': 'bg-green-100 text-green-800',
+          'ready_for_collection': 'bg-lime-100 text-lime-800'
         };
         const statusLabels = {
           'pending': 'Chờ xác nhận',
           'confirmed': 'Đã xác nhận',
           'sample_assigned': 'Đã phân mẫu',
-          'sample_collected': 'Đã thu mẫu',
+          'sample_collected': 'Đã lấy mẫu',
           'sample_received': 'Đã nhận mẫu',
           'testing': 'Đang xét nghiệm',
           'completed': 'Hoàn thành',
-          'cancelled': 'Đã hủy'
+          'cancelled': 'Đã hủy',
+          'awaiting_authorization': 'Chờ phê duyệt',
+          'authorized': 'Đã phê duyệt',
+          'ready_for_collection': 'Sẵn sàng trả kết quả'
         };
         return (
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[status] || 'bg-gray-100 text-gray-800'}`}>

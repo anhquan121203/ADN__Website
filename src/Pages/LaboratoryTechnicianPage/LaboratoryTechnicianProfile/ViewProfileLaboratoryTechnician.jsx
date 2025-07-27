@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import useAuth from '../../../Hooks/useAuth';
-import useLaboratoryTechnician from '../../../Hooks/useUser';
-import { FaCheck, FaUser, FaEdit } from 'react-icons/fa';
-import { format } from 'date-fns';
-import EditProfile from './EditProfile';
-import ModalChangePassword from './ModalChangePassword/ModalChangePassword';
+import React, { useState } from "react";
+import useAuth from "../../../Hooks/useAuth";
+import useLaboratoryTechnician from "../../../Hooks/useUser";
+import { FaCheck, FaUser, FaEdit } from "react-icons/fa";
+import { format } from "date-fns";
+import EditProfile from "./EditProfile";
+import ModalChangePassword from "./ModalChangePassword/ModalChangePassword";
 
 const ViewProfileLaboratoryTechnician = () => {
   const { user, refreshUserData } = useAuth();
@@ -13,12 +13,26 @@ const ViewProfileLaboratoryTechnician = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
+  // Format address for display
+  const formatAddress = (addressObj) => {
+    if (!addressObj) return "Không có địa chỉ";
+    return [
+      addressObj.street,
+      addressObj.ward,
+      addressObj.district,
+      addressObj.city,
+      addressObj.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
+  };
+
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     try {
-      return format(new Date(dateString), 'd MMM, yyyy');
+      return format(new Date(dateString), "d MMM, yyyy");
     } catch (error) {
-      return 'Invalid date';
+      return "Invalid date";
     }
   };
 
@@ -40,15 +54,29 @@ const ViewProfileLaboratoryTechnician = () => {
   };
 
   if (!user) {
-    return <div className="flex justify-center items-center h-64 text-gray-500">Đang tải dữ liệu...</div>;
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        Đang tải dữ liệu...
+      </div>
+    );
   }
 
   if (isRefreshing) {
-    return <div className="flex justify-center items-center h-64 text-gray-500">Refreshing profile data...</div>;
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        Refreshing profile data...
+      </div>
+    );
   }
 
   if (isEditing) {
-    return <EditProfile user={user} onCancel={handleCancelEdit} onSaveSuccess={handleSaveSuccess} />;
+    return (
+      <EditProfile
+        user={user}
+        onCancel={handleCancelEdit}
+        onSaveSuccess={handleSaveSuccess}
+      />
+    );
   }
 
   return (
@@ -57,9 +85,9 @@ const ViewProfileLaboratoryTechnician = () => {
         <div className="flex items-center space-x-4">
           <div className="relative">
             {user?.avatar_url ? (
-              <img 
-                src={user.avatar_url} 
-                alt="Profile" 
+              <img
+                src={user.avatar_url}
+                alt="Profile"
                 className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
               />
             ) : (
@@ -69,7 +97,9 @@ const ViewProfileLaboratoryTechnician = () => {
             )}
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">{user?.first_name} {user?.last_name}</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              {user?.first_name} {user?.last_name}
+            </h2>
             <div className="text-gray-600">{user?.email}</div>
           </div>
         </div>
@@ -77,11 +107,15 @@ const ViewProfileLaboratoryTechnician = () => {
 
       <div className="p-6">
         <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Thông Tin Cá Nhân</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Thông Tin Cá Nhân
+          </h3>
           <div className="space-y-4">
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Họ và Tên:</span>
-              <span className="text-gray-800">{user?.first_name} {user?.last_name}</span>
+              <span className="text-gray-800">
+                {user?.first_name} {user?.last_name}
+              </span>
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Email:</span>
@@ -96,7 +130,13 @@ const ViewProfileLaboratoryTechnician = () => {
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Số Điện Thoại:</span>
-              <span className="text-gray-800">{user?.phone_number || 'Chưa cung cấp'}</span>
+              <span className="text-gray-800">
+                {user?.phone_number || "Chưa cung cấp"}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-1/3 text-gray-600">Địa chỉ:</span>
+              <span className="text-gray-800">{formatAddress(user?.address)}</span>
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Ngày Sinh:</span>
@@ -110,7 +150,9 @@ const ViewProfileLaboratoryTechnician = () => {
         </div>
 
         <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Thông Tin Tài Khoản</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Thông Tin Tài Khoản
+          </h3>
           <div className="space-y-4">
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Mã Người Dùng:</span>
@@ -118,17 +160,27 @@ const ViewProfileLaboratoryTechnician = () => {
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Trạng Thái:</span>
-              <span className={`px-3 py-1 rounded-full text-sm ${user?.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {user?.status ? 'Đang hoạt động' : 'Không hoạt động'}
+              <span
+                className={`px-3 py-1 rounded-full text-sm ${
+                  user?.status
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {user?.status ? "Đang hoạt động" : "Không hoạt động"}
               </span>
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Ngày Tạo:</span>
-              <span className="text-gray-800">{formatDate(user?.created_at)}</span>
+              <span className="text-gray-800">
+                {formatDate(user?.created_at)}
+              </span>
             </div>
             <div className="flex items-center">
               <span className="w-1/3 text-gray-600">Cập Nhật Lần Cuối:</span>
-              <span className="text-gray-800">{formatDate(user?.updated_at)}</span>
+              <span className="text-gray-800">
+                {formatDate(user?.updated_at)}
+              </span>
             </div>
           </div>
         </div>
