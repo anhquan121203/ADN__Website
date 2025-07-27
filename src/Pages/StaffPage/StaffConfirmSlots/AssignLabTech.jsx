@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, message, Spin } from 'antd';
+import { Table, Button, message } from 'antd';
 import { useAppointment } from '../../../Hooks/useAppoinment';
 
 const AssignLabTech = ({ appointmentId, onAssigned, assignedLabTechId }) => {
@@ -26,17 +26,17 @@ const AssignLabTech = ({ appointmentId, onAssigned, assignedLabTechId }) => {
     setLoading(true);
     const res = await assignLabTech(appointmentId, labTechId);
     if (res.success) {
-      message.success('Assigned lab technician successfully!');
+      message.success('Phân công kỹ thuật viên xét nghiệm thành công!');
       if (onAssigned) onAssigned();
     } else {
-      message.error('Failed to assign lab technician');
+      message.error('Phân công kỹ thuật viên xét nghiệm thất bại');
     }
     setLoading(false);
   };
 
   const columns = [
     {
-      title: 'Name',
+      title: 'Họ tên',
       dataIndex: 'first_name',
       key: 'first_name',
       render: (text, record) => `${record.first_name} ${record.last_name}`,
@@ -47,27 +47,27 @@ const AssignLabTech = ({ appointmentId, onAssigned, assignedLabTechId }) => {
       key: 'email',
     },
     {
-      title: 'Phone',
+      title: 'Số điện thoại',
       dataIndex: 'phone_number',
       key: 'phone_number',
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: ['staff_profile', 'status'],
       key: 'status',
     },
     {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
         assignedLabTechId === record._id ? (
-        <span style={{ color: 'green', fontWeight: 'bold' }}>Đã apply</span>
+          <span style={{ color: 'green', fontWeight: 'bold' }}>Đã phân công</span>
         ) : (
-        <Button type="primary" onClick={() => handleAssign(record._id)}>
-            Confirm
-        </Button>
+          <Button type="primary" onClick={() => handleAssign(record._id)}>
+            Xác nhận
+          </Button>
         )
-    )
+      )
     }
   ];
 

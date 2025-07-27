@@ -217,10 +217,10 @@ const isSlotAssigned = (slotId) => {
               key: 'action',
               render: (_, record) => (
                 isSlotAssigned(record._id) ? (
-                  <Tag color="green">Đã apply</Tag>
+                  <Tag color="green">Đã phân công</Tag>
                 ) : (
                   <Button type="primary" onClick={() => handleConfirm(record._id)}>
-                    Confirm
+                    Xác nhận
                   </Button>
                 )
               )
@@ -259,11 +259,11 @@ const isSlotAssigned = (slotId) => {
         className="mt-4"
         onClick={() => setShowAssignLabTech((prev) => !prev)}
       >
-        {showAssignLabTech ? 'Hide Lab Technician Assignment' : 'Assign Lab Technician'}
+        {showAssignLabTech ? 'Ẩn Nhiệm vụ Kỹ thuật viên Phòng thí nghiệm' : 'Gán Kỹ thuật viên Phòng thí nghiệm'}
       </Button>
       {showAssignLabTech && (
         <Card
-          title="Assign Laboratory Technician"
+          title="Gán Kỹ thuật viên Phòng thí nghiệm"
           className="mt-4"
           bordered
         >

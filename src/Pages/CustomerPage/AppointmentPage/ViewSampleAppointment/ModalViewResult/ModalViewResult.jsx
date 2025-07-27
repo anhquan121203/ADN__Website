@@ -16,6 +16,44 @@ const ModalViewResult = ({
     getResultByAppointment 
   } = useResult();
 
+  // Hàm lấy màu và phiên dịch cho loại mẫu
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'blood': return 'red'; // Máu
+      case 'saliva': return 'blue'; // Nước bọt
+      case 'hair': return 'green'; // Tóc
+      default: return 'default';
+    }
+  };
+
+  const getTypeLabel = (type) => {
+    switch (type) {
+      case 'blood': return 'Máu';
+      case 'saliva': return 'Nước bọt';
+      case 'hair': return 'Tóc';
+      default: return type;
+    }
+  };
+
+ const getStatusAppointmentColor = (status) => {
+    switch (status) {
+      case 'pending': return 'orange'; // Đang chờ
+      case 'confirmed': return 'green'; // Đã xác nhận
+      case 'completed': return 'blue'; // Đã hoàn thành
+      case 'cancelled': return 'red'; // Đã hủy
+      default: return 'default';
+    }
+  };
+  const getStatusAppointmentLabel = (status) => {
+    switch (status) {
+      case 'pending': return 'Đang chờ';
+      case 'confirmed': return 'Đã xác nhận';
+      case 'completed': return 'Đã hoàn thành';
+      case 'cancelled': return 'Đã hủy';
+      default: return status;
+    }
+  };
+  
   // Handle View Result
   const handleViewResult = async () => {
     try {
@@ -145,33 +183,37 @@ const ModalViewResult = ({
           </div>
 
           <Divider />
-
-          {/* Sample Details */}
-          <div>
+            <div>
             <h4 className="text-lg font-semibold mb-3 text-gray-700">Chi tiết mẫu xét nghiệm</h4>
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="Mã cuộc hẹn">
-                {resultData.appointment_id?._id || appointmentId}
+              {resultData.appointment_id?._id || appointmentId}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày lấy mẫu">
-                {resultData.sample_ids?.[0]?.collection_date ? 
-                  new Date(resultData.sample_ids[0].collection_date).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}
+              {resultData.sample_ids?.[0]?.collection_date ? 
+                new Date(resultData.sample_ids[0].collection_date).toLocaleDateString('vi-VN') : 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Loại mẫu">
-                {resultData.sample_ids?.map(sample => sample.type).join(', ') || 'Không có dữ liệu'}
+              {resultData.sample_ids?.map(sample => (
+                <span key={sample._id} className={`text-${getTypeColor(sample.type)} font-medium`}>
+                {getTypeLabel(sample.type)}
+                </span>
+              )).reduce((prev, curr) => [prev, ', ', curr]) || 'Không có dữ liệu'}
               </Descriptions.Item>
               <Descriptions.Item label="Tình trạng mẫu">
-                {resultData.sample_ids?.[0]?.status || 'Không có dữ liệu'}
+              <span className={`text-${getStatusAppointmentColor(resultData.sample_ids?.[0]?.status)}`}>
+                {getStatusAppointmentLabel(resultData.sample_ids?.[0]?.status) || 'Không có dữ liệu'}
+              </span>
               </Descriptions.Item>
               <Descriptions.Item label="Ghi chú" span={2}>
-                {resultData.notes || 'Không có ghi chú'}
+              {resultData.notes || 'Không có ghi chú'}
               </Descriptions.Item>
             </Descriptions>
-          </div>
+            </div>
 
-          <Divider />
+                <Divider />
 
-          {/* DNA Match Results */}
+                {/* DNA Match Results */}
           <div>
             <h4 className="text-lg font-semibold mb-3 text-gray-700">Kết quả so khớp ADN</h4>
             <Descriptions bordered column={1} size="small">

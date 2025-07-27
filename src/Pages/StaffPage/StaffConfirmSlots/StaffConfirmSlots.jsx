@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Tooltip, Input, Select, DatePicker, Form, Row, Col, Tag } from 'antd';
 import { EyeOutlined, InboxOutlined, SettingOutlined, SearchOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useAppointment } from '../../../Hooks/useAppoinment';
+import useAppointmentAdmin from '../../../Hooks/useAppointmentAdmin';
+import ModalEditStatusAdmin from './ModalEditStatusAdmin/ModalEditStatusAdmin';
 import { useNavigate } from 'react-router-dom';
 import ModalRequestKit from './ModalRequestKit/ModalRequestKit';
 import ModalCheckIn from './ModalCheckIn';
@@ -27,9 +29,10 @@ const statusOptions = [
 
 const typeOptions = [
   { value: "", label: "Tất cả" },
-  { value: "self", label: "Tự đến" },
+  { value: "self", label: "Tại lấy mẫu" },
   { value: "facility", label: "Tại cơ sở" },
   { value: "home", label: "Tại nhà" },
+  { value: "administrative", label: "Hành chính" },
 ];
 
 const StaffConfirmSlots = () => {
@@ -212,7 +215,7 @@ const StaffConfirmSlots = () => {
           'administrative': 'bg-yellow-100 text-yellow-800'
         };
         const typeLabels = {
-          'self': 'Tự đến',
+          'self': 'Tự lấy mẫu',
           'facility': 'Tại cơ sở',
           'home': 'Tại nhà',
           'administrative': 'Hành chính'

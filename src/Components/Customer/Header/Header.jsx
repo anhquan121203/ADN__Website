@@ -229,7 +229,7 @@ function Header() {
                           </>
                         ) : (
                           <>
-                            <Link to="/admin">Dashboard</Link>
+                            <Link to="/admin">Trang tổng quan</Link>
                           </>
                         )}
 

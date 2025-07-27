@@ -153,6 +153,23 @@ const ViewSampleAppointment = () => {
     }
   };
 
+  const getCollectionMethodLabel = (method) => {
+    switch (method) {
+      case 'self': return 'Tự lấy mẫu';
+      case 'home': return 'Nhân viên đến nhà lấy mẫu';
+      case 'facility': return 'Nhân viên lấy mẫu';
+      default: return method;
+    }
+  };
+  const getCollectionMethodColor = (method) => {
+    switch (method) {
+      case 'self': return 'blue'; // Tự lấy mẫu
+      case 'home': return 'green'; // Nhân viên đến nhà lấy mẫu
+      case 'facility': return 'purple'; // Nhân viên lấy mẫu
+      default: return 'default';
+    }
+  };
+
   if (loading) {
     return <div className="p-6">Đang tải...</div>;
   }
@@ -247,7 +264,9 @@ const ViewSampleAppointment = () => {
       dataIndex: 'collection_method',
       key: 'collectionMethod',
       render: (method) => (
-        <Tag>{method}</Tag>
+        <Tag color={getCollectionMethodColor(method)}>
+          {getCollectionMethodLabel(method)}
+        </Tag>
       )
     },
     {

@@ -95,6 +95,25 @@ const LabTechViewSamplesByAppointment = () => {
     }
   };
 
+  
+  const getCollectionMethodLabel = (method) => {
+    switch (method) {
+      case 'self': return 'Tự lấy mẫu';
+      case 'home': return 'Nhân viên đến nhà lấy mẫu';
+      case 'facility': return 'Nhân viên lấy mẫu';
+      default: return method;
+    }
+  };
+  const getCollectionMethodColor = (method) => {
+    switch (method) {
+      case 'self': return 'blue'; // Tự lấy mẫu
+      case 'home': return 'green'; // Nhân viên đến nhà lấy mẫu
+      case 'facility': return 'purple'; // Nhân viên lấy mẫu
+      default: return 'default';
+    }
+  };
+
+
   if (loading) {
     return <div className="p-4 sm:p-6 max-w-full overflow-hidden">Đang tải mẫu...</div>;
   }
@@ -188,7 +207,9 @@ const LabTechViewSamplesByAppointment = () => {
       key: 'collectionMethod',
       width: 90,
       render: (method) => (
-        <Tag size="small">{method}</Tag>
+        <Tag size="small" color={getCollectionMethodColor(method)}>
+          {getCollectionMethodLabel(method)}
+        </Tag>
       ),
     },
     {
