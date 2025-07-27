@@ -14,6 +14,18 @@ const ViewProfile = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
+      // Format address for display
+  const formatAddress = (addressObj) => {
+    if (!addressObj) return "Không có địa chỉ";
+    return [
+      addressObj.street,
+      addressObj.ward,
+      addressObj.district,
+      addressObj.city,
+      addressObj.country
+    ].filter(Boolean).join(', ');
+  };
+
   // Format dates for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -105,6 +117,10 @@ const ViewProfile = () => {
           <div className="detail-row">
             <span className="detail-label">Số điện thoại:</span>
             <span className="detail-value">{user?.phone_number || 'Chưa cung cấp'}</span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Địa chỉ:</span>
+            <span className="detail-value">{formatAddress(user?.address)}</span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Ngày sinh:</span>

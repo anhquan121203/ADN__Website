@@ -23,6 +23,9 @@ const AppointmentManager = () => {
   { value: 'testing', label: 'Đang xét nghiệm', color: 'bg-orange-100 text-orange-800' },
   { value: 'completed', label: 'Hoàn thành', color: 'bg-green-100 text-green-800' },
   { value: 'cancelled', label: 'Đã hủy', color: 'bg-red-100 text-red-800'  },
+  { value: "awaiting_authorization", label: "Chờ phê duyệt", color: "bg-pink-100 text-pink-800" },
+  { value: "authorized", label: "Đã phê duyệt", color: "bg-green-100 text-green-800" },
+  { value: "ready_for_collection", label: "Sẵn sàng trả kết quả", color: "bg-lime-100 text-lime-800" },
 ];
 
   const fetchAppointments = async (params = {}) => {
@@ -76,6 +79,10 @@ const AppointmentManager = () => {
             label = 'Tự lấy mẫu';
             color = 'bg-green-100 text-green-800';
             break;
+           case 'administrative':
+            label = 'Hành chính';
+            color = 'bg-yellow-100 text-yellow-800';
+            break; 
           default:
             label = type;
             color = 'bg-gray-100 text-gray-800';

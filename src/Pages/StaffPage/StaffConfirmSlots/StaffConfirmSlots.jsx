@@ -1,30 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Button,
-  Space,
-  Tooltip,
-  Input,
-  Select,
-  DatePicker,
-  Form,
-  Row,
-  Col,
-} from "antd";
-import {
-  EyeOutlined,
-  InboxOutlined,
-  SettingOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import { useAppointment } from "../../../Hooks/useAppoinment";
-import { useNavigate } from "react-router-dom";
-import ModalRequestKit from "./ModalRequestKit/ModalRequestKit";
-import dayjs from "dayjs";
-import ModalRequestKitAdmin from "./ModalRequestKitAdmin/ModalRequestKitAdmin";
-import { MdEditNote } from "react-icons/md";
-import useAppointmentAdmin from "../../../Hooks/useAppointmentAdmin";
-import ModalEditStatusAdmin from "./ModalEditStatusAdmin/ModalEditStatusAdmin";
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Space, Tooltip, Input, Select, DatePicker, Form, Row, Col, Tag } from 'antd';
+import { EyeOutlined, InboxOutlined, SettingOutlined, SearchOutlined, CheckCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import { useAppointment } from '../../../Hooks/useAppoinment';
+import { useNavigate } from 'react-router-dom';
+import ModalRequestKit from './ModalRequestKit/ModalRequestKit';
+import ModalCheckIn from './ModalCheckIn';
+import ModalAddNote from './ModalAddNote';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+import ModalRequestKitAdmin from './ModalRequestKitAdmin/ModalRequestKitAdmin';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -60,6 +44,8 @@ const StaffConfirmSlots = () => {
   const [pageSize, setPageSize] = useState(10);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [checkInModalOpen, setCheckInModalOpen] = useState(false);
+  const [addNoteModalOpen, setAddNoteModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const { updateAppointAdmin} = useAppointmentAdmin();
@@ -148,6 +134,36 @@ const StaffConfirmSlots = () => {
     getStaffAssignedAppointments({ pageNum, pageSize, ...filterParams });
   };
 
+  const handleCheckIn = (appointment) => {
+    setSelectedAppointment(appointment);
+    setCheckInModalOpen(true);
+  };
+
+  const handleAddNote = (appointment) => {
+    setSelectedAppointment(appointment);
+    setAddNoteModalOpen(true);
+  };
+
+  const handleCheckInSuccess = () => {
+    setCheckInModalOpen(false);
+    // Refresh data
+    getStaffAssignedAppointments({
+      pageNum,
+      pageSize,
+      ...filterParams
+    });
+  };
+
+  const handleAddNoteSuccess = () => {
+    setAddNoteModalOpen(false);
+    // Refresh data
+    getStaffAssignedAppointments({
+      pageNum,
+      pageSize,
+      ...filterParams
+    });
+  };
+
   const columns = [
     {
       title: "Khách hàng",
@@ -190,15 +206,16 @@ const StaffConfirmSlots = () => {
       width: 100,
       render: (type) => {
         const typeColors = {
-          self: "bg-blue-100 text-blue-800",
-          facility: "bg-green-100 text-green-800",
-          home: "bg-purple-100 text-purple-800",
+          'self': 'bg-blue-100 text-blue-800',
+          'facility': 'bg-green-100 text-green-800',
+          'home': 'bg-purple-100 text-purple-800',
+          'administrative': 'bg-yellow-100 text-yellow-800'
         };
         const typeLabels = {
-          administrative: "Hành chính",
-          self: "Tự đến",
-          facility: "Tại cơ sở",
-          home: "Tại nhà",
+          'self': 'Tự đến',
+          'facility': 'Tại cơ sở',
+          'home': 'Tại nhà',
+          'administrative': 'Hành chính'
         };
         return (
           <span
@@ -218,25 +235,30 @@ const StaffConfirmSlots = () => {
       width: 120,
       render: (status) => {
         const statusColors = {
-          pending: "bg-yellow-100 text-yellow-800",
-          confirmed: "bg-blue-100 text-blue-800",
-          sample_assigned: "bg-indigo-100 text-indigo-800",
-          sample_collected: "bg-orange-100 text-orange-800",
-          sample_received: "bg-cyan-100 text-cyan-800",
-          testing: "bg-purple-100 text-purple-800",
-          completed: "bg-green-100 text-green-800",
-          cancelled: "bg-red-100 text-red-800",
+          'pending': 'bg-orange-100 text-orange-800',
+          'confirmed': 'bg-blue-100 text-blue-800',
+          'sample_assigned': 'bg-purple-100 text-purple-800',
+          'sample_collected': 'bg-geekblue-100 text-geekblue-800',
+          'sample_received': 'bg-cyan-100 text-cyan-800',
+          'testing': 'bg-gold-100 text-gold-800',
+          'completed': 'bg-green-100 text-green-800',
+          'cancelled': 'bg-red-100 text-red-800',
+          'awaiting_authorization': 'bg-magenta-100 text-magenta-800',
+          'authorized': 'bg-green-100 text-green-800',
+          'ready_for_collection': 'bg-lime-100 text-lime-800'
         };
         const statusLabels = {
-          pending: "Chờ xác nhận",
-          confirmed: "Đã xác nhận",
-          sample_assigned: "Đã phân mẫu",
-          sample_collected: "Đã thu mẫu",
-          sample_received: "Đã nhận mẫu",
-          testing: "Đang xét nghiệm",
-          completed: "Hoàn thành",
-          cancelled: "Đã hủy",
-          authorized: "Đang được ủy quyền",
+          'pending': 'Chờ xác nhận',
+          'confirmed': 'Đã xác nhận',
+          'sample_assigned': 'Đã phân mẫu',
+          'sample_collected': 'Đã lấy mẫu',
+          'sample_received': 'Đã nhận mẫu',
+          'testing': 'Đang xét nghiệm',
+          'completed': 'Hoàn thành',
+          'cancelled': 'Đã hủy',
+          'awaiting_authorization': 'Chờ phê duyệt',
+          'authorized': 'Đã phê duyệt',
+          'ready_for_collection': 'Sẵn sàng trả kết quả'
         };
         return (
           <span
@@ -303,6 +325,28 @@ const StaffConfirmSlots = () => {
                 className="text-green-600 hover:text-green-800"
               />
             </Tooltip>
+          )}
+          
+          {record.type === 'home' && (
+          <Tooltip title="Check-in tại địa điểm">
+            <Button
+              type="text"
+              icon={<CheckCircleOutlined />}
+              onClick={() => handleCheckIn(record)}
+              className="text-green-600 hover:text-green-800"
+            />
+          </Tooltip>
+          )}
+          
+          {record.type === 'home' && (
+          <Tooltip title="Thêm ghi chú">
+            <Button
+              type="text"
+              icon={<FileTextOutlined />}
+              onClick={() => handleAddNote(record)}
+              className="text-purple-600 hover:text-purple-800"
+            />
+          </Tooltip>
           )}
         </Space>
       ),
@@ -423,6 +467,20 @@ const StaffConfirmSlots = () => {
         onClose={handleModalClose}
         appointmentId={selectedAppointment?._id}
         onSuccess={handleModalSuccess}
+      />
+
+      <ModalCheckIn
+        open={checkInModalOpen}
+        onClose={() => setCheckInModalOpen(false)}
+        appointmentId={selectedAppointment?._id}
+        onSuccess={handleCheckInSuccess}
+      />
+
+      <ModalAddNote
+        open={addNoteModalOpen}
+        onClose={() => setAddNoteModalOpen(false)}
+        appointmentId={selectedAppointment?._id}
+        onSuccess={handleAddNoteSuccess}
       />
 
       <ModalRequestKitAdmin

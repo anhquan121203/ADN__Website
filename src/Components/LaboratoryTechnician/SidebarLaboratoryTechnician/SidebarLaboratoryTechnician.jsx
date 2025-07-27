@@ -47,6 +47,16 @@ function SidebarLaboratoryTechnician() {
           <nav className="nav-lab">
             <div className="nav-group">
               {/* Quản lý mẫu xét nghiệm */}
+             <Link
+                to="/laboratory_technician/dashboard"
+                className={`nav-item ${
+                  pathname === "/laboratory_technician/dashboard" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Thống kê" : ""}
+              >
+                <FaMicroscope /> {!sidebarCollapsed && "Thống kê"}
+              </Link>
+
               {!sidebarCollapsed ? (
                 <div
                   className={`nav-item dropdown-service ${

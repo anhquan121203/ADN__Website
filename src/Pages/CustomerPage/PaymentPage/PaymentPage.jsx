@@ -7,7 +7,7 @@ import useAppointment from "../../../Hooks/useAppoinment";
 import { notification, Spin } from "antd";
 
 const PaymentPage = () => {
-  const { appointmentId, sampleIds } = useLocation().state || {};
+  const { appointmentId, sampleIds, isFirstPayment } = useLocation().state || {};
   const navigate = useNavigate();
   const { getSamplesByAppointment } = useSample();
   const { getAppointmentDetail } = useAppointment();
@@ -17,12 +17,59 @@ const PaymentPage = () => {
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [method, setMethod] = useState("cash");
+  const [isOutsideBusinessHours, setIsOutsideBusinessHours] = useState(false);
 
   const translateStatus = (status) => {
     switch (status) {
       case "sample_received":
         return "Mẫu đã nhận";
+      case "pending":
+        return "Chờ xử lý";
+      case "confirmed":
+        return "Đã xác nhận";
+      case "testing":
+        return "Đang xét nghiệm";
+      case "completed":
+        return "Hoàn thành";
+      default:
+        return status;
     }
+  };
+
+  // Check if slot is outside business hours
+  const checkBusinessHours = (slot) => {
+    if (!slot?.time_slots?.[0]) return false;
+    const timeSlot = slot.time_slots[0];
+    const startHour = timeSlot.start_time?.hour;
+    const endHour = timeSlot.end_time?.hour;
+    
+    // Create date object and get day of week (0=Sunday, 6=Saturday)
+    const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
+    const dayOfWeek = slotDate.getDay();
+    
+    // Check if the slot is on a weekend (Saturday or Sunday)
+    if (dayOfWeek === 6 || dayOfWeek === 0) return true; // Saturday or Sunday
+    
+    // For weekdays, check business hours: 8:00 - 17:00 (8 AM - 5 PM)
+    return startHour < 8 || startHour >= 17 || endHour < 8 || endHour > 17;
+  };
+
+  // Calculate payment amount
+  const calculatePaymentAmount = () => {
+    let basePrice = appointment?.service_id?.price || 0;
+    
+    // Add 20% surcharge for outside business hours
+    if (isOutsideBusinessHours) {
+      basePrice *= 1.2;
+    }
+    
+    // If this is the first payment (deposit), calculate 30%
+    if (isFirstPayment) {
+      return Math.round(basePrice * 0.3);
+    }
+    
+    // If this is the second payment, calculate remaining 70% (or 84% if outside business hours)
+    return Math.round(basePrice * 0.7);
   };
   useEffect(() => {
     if (!appointmentId) return navigate(-1);
@@ -31,30 +78,62 @@ const PaymentPage = () => {
       getAppointmentDetail(appointmentId),
       getSamplesByAppointment(appointmentId)
     ]).then(([appRes, sampleRes]) => {
-      if (appRes.success) setAppointment(appRes.data.data);
+      if (appRes.success) {
+        const appointmentData = appRes.data.data;
+        setAppointment(appointmentData);
+        
+        // Check if appointment is outside business hours
+        if (appointmentData?.slot_id) {
+          const isOutside = checkBusinessHours(appointmentData.slot_id);
+          console.log('PaymentPage - Checking business hours:');
+          console.log('Slot data:', appointmentData.slot_id);
+          console.log('Is outside business hours:', isOutside);
+          setIsOutsideBusinessHours(isOutside);
+        }
+      }
       if (sampleRes.success) setSamples(Array.isArray(sampleRes.data.data) ? sampleRes.data.data : []);
       setLoading(false);
     });
   }, [appointmentId]);
 
   const handlePayment = async () => {
-    const payload = { appointment_id: appointmentId, payment_method: method, sample_ids: sampleIds };
+    const paymentAmount = calculatePaymentAmount();
+    const payload = { 
+      appointment_id: appointmentId, 
+      payment_method: method, 
+      sample_ids: sampleIds,
+      amount: paymentAmount,
+      payment_type: isFirstPayment ? 'deposit' : 'final'
+    };
+    
     const res = await makePayment(payload);
     if (!res.success) {
       notification.error({ message: "Lỗi thanh toán: " + res.error });
       return;
     }
+    
     const paymentData = res.data.data;
     const url = paymentData.checkout_url;
     const paymentNo = paymentData.payment_no;
+    
     if (res.success) {
-      if (method === "pay_os" && url) {
+      if (method === "payos" && url) {
         if (paymentNo) {
           localStorage.setItem("payment_no", paymentNo);
         }
         window.location.href = url;
       } else {
-        notification.success({ message: "Thanh toán tiền mặt thành công!" });
+        if (isFirstPayment) {
+          notification.success({ 
+            message: "Thanh toán đặt cọc thành công!", 
+            description: "Bạn đã thanh toán 30% số tiền. Phần còn lại sẽ được thanh toán sau khi hoàn thành dịch vụ."
+          });
+        } else {
+          notification.success({ 
+            message: "Thanh toán hoàn tất thành công!", 
+            description: "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi."
+          });
+        }
         navigate(-1);
       }
     } else {
@@ -75,7 +154,40 @@ const PaymentPage = () => {
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-50 pt-44 pb-12">
       <div className="w-full max-w-auto bg-white rounded-lg shadow-lg p-12">
-        <h2 className="text-3xl font-bold mb-8 text-center">Thanh toán lịch hẹn</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          {isFirstPayment ? 'Thanh toán đặt cọc (30%)' : 'Thanh toán hoàn tất (70%)'}
+        </h2>
+        
+        {/* Payment Type Alert */}
+        {isFirstPayment && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-2 text-blue-800">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <span className="font-semibold">Thanh toán đặt cọc</span>
+            </div>
+            <p className="text-blue-700 mt-1">
+              Bạn đang thực hiện thanh toán đặt cọc 30% để xác nhận lịch hẹn. 
+              Số tiền còn lại (70%) sẽ được thanh toán sau khi hoàn thành dịch vụ.
+            </p>
+          </div>
+        )}
+
+        {isOutsideBusinessHours && (
+          <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+            <div className="flex items-center gap-2 text-orange-800">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span className="font-semibold">Phụ phí ngoài giờ hành chính</span>
+            </div>
+            <p className="text-orange-700 mt-1">
+              Lịch hẹn của bạn nằm ngoài giờ hành chính (8:00 - 17:00). 
+              Phí dịch vụ đã được tăng thêm 20%.
+            </p>
+          </div>
+        )}
         {/* Appointment Info */}
         <div className="mb-10 border-b pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
@@ -140,9 +252,48 @@ const PaymentPage = () => {
         </div>
         {/* Payment */}
         <div className="mb-4">
+          {/* Price Breakdown */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h3 className="font-semibold text-lg mb-3">Chi tiết thanh toán</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Giá dịch vụ gốc:</span>
+                <span>{appointment?.service_id?.price?.toLocaleString()} đ</span>
+              </div>
+              {isOutsideBusinessHours && (
+                <div className="flex justify-between text-orange-600">
+                  <span>Phụ phí ngoài giờ (+20%):</span>
+                  <span>+{Math.round(appointment?.service_id?.price * 0.2)?.toLocaleString()} đ</span>
+                </div>
+              )}
+              <div className="border-t pt-2">
+                <div className="flex justify-between font-semibold">
+                  <span>Tổng tiền dịch vụ:</span>
+                  <span>{Math.round(appointment?.service_id?.price * (isOutsideBusinessHours ? 1.2 : 1))?.toLocaleString()} đ</span>
+                </div>
+              </div>
+              {isFirstPayment && (
+                <div className="flex justify-between text-blue-600 font-semibold">
+                  <span>Số tiền cần thanh toán (30%):</span>
+                  <span>{calculatePaymentAmount()?.toLocaleString()} đ</span>
+                </div>
+              )}
+              {!isFirstPayment && (
+                <div className="flex justify-between text-green-600 font-semibold">
+                  <span>Số tiền còn lại (70%):</span>
+                  <span>{calculatePaymentAmount()?.toLocaleString()} đ</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
           <div className="flex justify-between items-center mb-4">
-            <span className="font-semibold text-xl">Tổng tiền:</span>
-            <span className="text-3xl text-green-600 font-bold">{appointment?.service_id?.price?.toLocaleString()} đ</span>
+            <span className="font-semibold text-xl">
+              {isFirstPayment ? 'Thanh toán đặt cọc:' : 'Thanh toán hoàn tất:'}
+            </span>
+            <span className="text-3xl text-green-600 font-bold">
+              {calculatePaymentAmount()?.toLocaleString()} đ
+            </span>
           </div>
           <div className="mb-4 font-semibold text-xl">Chọn phương thức thanh toán:</div>
           <div className="flex gap-8 mt-2">
@@ -151,8 +302,8 @@ const PaymentPage = () => {
               <span>💵 Tiền mặt</span>
             </label>
             <label className="flex items-center cursor-pointer text-xl">
-              <input type="radio" checked={method === "pay_os"} onChange={() => setMethod("pay_os")} className="mr-2 w-5 h-5" />
-              <span>🌐 PAY_OS</span>
+              <input type="radio" checked={method === "payos"} onChange={() => setMethod("payos")} className="mr-2 w-5 h-5" />
+              <span>🌐 PAYOS</span>
             </label>
           </div>
         </div>
@@ -161,7 +312,7 @@ const PaymentPage = () => {
           onClick={handlePayment}
           disabled={paying}
         >
-          {paying ? "Đang xử lý..." : "Xác nhận thanh toán"}
+          {paying ? "Đang xử lý..." : (isFirstPayment ? "Thanh toán đặt cọc" : "Hoàn tất thanh toán")}
         </button>
         {error && <div className="mt-4 text-red-500 text-lg">{error}</div>}
       </div>

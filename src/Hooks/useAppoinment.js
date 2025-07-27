@@ -10,7 +10,9 @@ import {
   confirmAppointment,
   fetchAvailableLabTechs,
   assignLabTechToAppointment,
-  fetchLabTechAssignedAppointments
+  fetchLabTechAssignedAppointments,
+  checkInAppointment,
+  addNoteToAppointment
 } from "../Feartures/appoinment/appoimentSlice";
 
 export const useAppointment = () => {
@@ -56,9 +58,9 @@ export const useAppointment = () => {
     }
   };
 
-  const getAvailableStaffList = async () => {
+  const getAvailableStaffList = async (params) => {
     try {
-      const result = await dispatch(getAvailableStaff()).unwrap();
+      const result = await dispatch(getAvailableStaff(params)).unwrap();
       return { success: true, data: result };
     } catch (error) {
       return { success: false, error: error.message };
@@ -128,6 +130,24 @@ export const useAppointment = () => {
     }
   };
 
+  const checkIn = async (appointmentId, note) => {
+    try {
+      const result = await dispatch(checkInAppointment({ appointmentId, note })).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
+  const addNote = async (appointmentId, note) => {
+    try {
+      const result = await dispatch(addNoteToAppointment({ appointmentId, note })).unwrap();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   return {
     appointments,
     selectedAppointment,
@@ -151,6 +171,8 @@ export const useAppointment = () => {
     getLabTechAssignedAppointments,
     labTechAssignedAppointments,
     labTechAssignedPageInfo,
+    checkIn,
+    addNote,
   };
 };
 

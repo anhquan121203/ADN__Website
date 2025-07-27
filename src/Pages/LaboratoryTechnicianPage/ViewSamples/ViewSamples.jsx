@@ -7,7 +7,7 @@ import {
   ArrowLeftOutlined, ExperimentOutlined, UserOutlined, 
   CalendarOutlined, FileTextOutlined, PlusOutlined, EyeOutlined,
   DownloadOutlined, CheckCircleOutlined, CloseCircleOutlined,
-  InfoCircleOutlined, PercentageOutlined, SafetyOutlined
+  InfoCircleOutlined, PercentageOutlined, SafetyOutlined, EditOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -15,6 +15,7 @@ import useSample from '../../../Hooks/useSample';
 import useAppointment from '../../../Hooks/useAppoinment';
 import useResult from '../../../Hooks/useResult';
 import CreateResultModal from './CreateResultModal/CreateResultModal';
+import ModalEditResult from './ModalEditResult/ModalEditResult';
 import moment from 'moment';
 
 const { Title, Text } = Typography;
@@ -26,6 +27,7 @@ const ViewSamples = () => {
   const [createResultModalOpen, setCreateResultModalOpen] = useState(false);
   const [selectedSamples, setSelectedSamples] = useState([]);
   const [resultViewModalOpen, setResultViewModalOpen] = useState(false);
+  const [editResultModalOpen, setEditResultModalOpen] = useState(false);
 
   const { appointmentId } = useParams();
   const { getSamplesByAppointment } = useSample();
@@ -77,7 +79,7 @@ const ViewSamples = () => {
       setLoading(false);
     }
   };
-  console.log('Fetching data...', appointment);
+
   useEffect(() => {
     if (appointmentId) {
       fetchData();
@@ -117,6 +119,12 @@ const ViewSamples = () => {
     toast.success('Đã tạo kết quả xét nghiệm thành công!');
   };
 
+  const handleEditResultSuccess = () => {
+    setEditResultModalOpen(false);
+    fetchData(); // Refresh data after update
+    toast.success('Đã cập nhật kết quả xét nghiệm thành công!');
+  };
+
   const handleViewResult = () => {
     setResultViewModalOpen(true);
   };
@@ -127,26 +135,47 @@ const ViewSamples = () => {
     }
   };
 
+  // Hàm lấy màu và phiên dịch cho trạng thái mẫu
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'pending': return 'orange';
-      case 'collected': return 'blue';
-      case 'received': return 'green';
-      case 'processing': return 'purple';
-      case 'testing': return 'cyan';
-      case 'completed': return 'success';
-      case 'failed': return 'red';
+    switch (status) {
+      case 'pending': return 'orange'; // Chờ xử lý
+      case 'collected': return 'blue'; // Đã lấy mẫu
+      case 'received': return 'green'; // Đã nhận mẫu
+      case 'processing': return 'purple'; // Đang xử lý
+      case 'completed': return 'success'; // Hoàn thành
+      case 'failed': return 'red'; // Thất bại
       default: return 'default';
     }
   };
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'pending': return 'Chờ xử lý';
+      case 'collected': return 'Đã lấy mẫu';
+      case 'received': return 'Đã nhận mẫu';
+      case 'processing': return 'Đang xử lý';
+      case 'completed': return 'Hoàn thành';
+      case 'failed': return 'Thất bại';
+      default: return status;
+    }
+  };
+
+  // Hàm lấy màu và phiên dịch cho loại mẫu
   const getTypeColor = (type) => {
-    switch (type?.toLowerCase()) {
-      case 'blood': return 'red';
-      case 'saliva': return 'blue';
-      case 'hair': return 'green';
-      case 'tissue': return 'purple';
+    switch (type) {
+      case 'blood': return 'red'; // Máu
+      case 'saliva': return 'blue'; // Nước bọt
+      case 'hair': return 'green'; // Tóc
       default: return 'default';
+    }
+  };
+
+  const getTypeLabel = (type) => {
+    switch (type) {
+      case 'blood': return 'Máu';
+      case 'saliva': return 'Nước bọt';
+      case 'hair': return 'Tóc';
+      default: return type;
     }
   };
 
@@ -180,15 +209,7 @@ const ViewSamples = () => {
       width: 90,
       render: (type) => (
         <Tag color={getTypeColor(type)} className="text-xs font-medium">
-          {(() => {
-            switch (type?.toLowerCase()) {
-              case 'blood': return 'MÁU';
-              case 'saliva': return 'NƯỚC BỌT';
-              case 'hair': return 'TÓC';
-              case 'tissue': return 'MÔ';
-              default: return type?.toUpperCase();
-            }
-          })()}
+          {getTypeLabel(type)}
         </Tag>
       ),
     },
@@ -217,19 +238,8 @@ const ViewSamples = () => {
       key: 'status',
       width: 100,
       render: (status) => (
-        <Tag color={getStatusColor(status)} className="text-xs font-medium px-2 py-1">
-          {(() => {
-            switch (status?.toLowerCase()) {
-              case 'pending': return 'CHỜ XỬ LÝ';
-              case 'collected': return 'ĐÃ THU THẬP';
-              case 'received': return 'ĐÃ NHẬN';
-              case 'processing': return 'ĐANG XỬ LÝ';
-              case 'testing': return 'ĐANG XÉT NGHIỆM';
-              case 'completed': return 'HOÀN THÀNH';
-              case 'failed': return 'THẤT BẠI';
-              default: return status?.toUpperCase();
-            }
-          })()}
+        <Tag color={getStatusColor(status)} className="text-xs font-medium">
+          {getStatusLabel(status)}
         </Tag>
       ),
     },
@@ -410,7 +420,7 @@ const ViewSamples = () => {
                   }}
                 />
                 <div className="text-sm text-gray-600 mt-1">
-                  Payment: {appointment.payment_status?.toUpperCase() || 'N/A'}
+                  Thanh toán: {appointment.payment_status?.toUpperCase() ? "Đã Thanh Toán" : 'N/A'}
                 </div>
               </Col>
             </Row>
@@ -450,6 +460,14 @@ const ViewSamples = () => {
                     className="bg-blue-500 hover:bg-blue-600"
                   >
                     Xem Kết Quả
+                  </Button>
+                  <Button
+                    type="default"
+                    icon={<EditOutlined />}
+                    onClick={() => setEditResultModalOpen(true)}
+                    className="border-orange-500 text-orange-500 hover:bg-orange-50"
+                  >
+                    Cập nhật kết quả
                   </Button>
                   <Button
                     type="default"
@@ -630,7 +648,7 @@ const ViewSamples = () => {
                 </Card>
 
                 {/* Sample Information */}
-                <Card title="Sample Information" className="border-0 shadow-sm">
+                <Card title="Thông tin mẫu" className="border-0 shadow-sm">
                   <Row gutter={[16, 16]}>
                     {currentResult.data.sample_ids?.map((sample, index) => (
                       <Col xs={24} md={12} key={sample._id}>
@@ -654,11 +672,11 @@ const ViewSamples = () => {
                           <Row gutter={[8, 8]}>
                             <Col span={12}>
                               <Text type="secondary" className="text-xs">Loại mẫu:</Text>
-                              <div><Tag color={sample.type === 'saliva' ? 'blue' : 'green'}>{sample.type?.toUpperCase()}</Tag></div>
+                              <div><Tag color={getTypeColor(sample.type)}>{getTypeLabel(sample.type)}</Tag></div>
                             </Col>
                             <Col span={12}>
                               <Text type="secondary" className="text-xs">Trạng thái:</Text>
-                              <div><Tag color="success">{sample.status?.toUpperCase()}</Tag></div>
+                              <div><Tag color={getStatusColor(sample.status)}>{getStatusLabel(sample.status)}</Tag></div>
                             </Col>
                             <Col span={12}>
                               <Text type="secondary" className="text-xs">Tuổi:</Text>
@@ -706,6 +724,14 @@ const ViewSamples = () => {
             )}
           </Spin>
         </Modal>
+
+        {/* Modal Edit Result */}
+        <ModalEditResult
+          open={editResultModalOpen}
+          onClose={() => setEditResultModalOpen(false)}
+          resultData={currentResult?.data}
+          onSuccess={handleEditResultSuccess}
+        />
       </Card>
     </div>
   );

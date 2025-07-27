@@ -6,9 +6,9 @@ import '../ProfileAdmin.css';
 
 const ChangePasswordModal = ({ onClose, userId }) => {
   const { changeUserPassword, loading } = useUser();
-  const { user } = useAuth(); // Add this line to get user data
+  const { user } = useAuth();
 
-  // Add early return if user has google_id
+  // Nếu người dùng đăng nhập bằng Google, đóng modal
   if (user?.google_id) {
     onClose();
     return null;
@@ -30,14 +30,14 @@ const ChangePasswordModal = ({ onClose, userId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate passwords
+    // Kiểm tra mật khẩu
     if (passwords.new_password !== passwords.confirm_password) {
-      toast.error('New passwords do not match');
+      toast.error('Mật khẩu mới không khớp');
       return;
     }
 
     if (passwords.new_password.length < 6) {
-      toast.error('New password must be at least 6 characters long');
+      toast.error('Mật khẩu mới phải có ít nhất 6 ký tự');
       return;
     }
 
@@ -49,24 +49,24 @@ const ChangePasswordModal = ({ onClose, userId }) => {
       });
 
       if (result.success) {
-        toast.success('Password changed successfully');
+        toast.success('Đổi mật khẩu thành công');
         onClose();
       } else {
-        toast.error(result.error || 'Failed to change password');
+        toast.error(result.error || 'Đổi mật khẩu thất bại');
       }
     } catch (error) {
-      toast.error('An error occurred while changing password');
-      console.error('Password change error:', error);
+      toast.error('Có lỗi xảy ra khi đổi mật khẩu');
+      console.error('Lỗi đổi mật khẩu:', error);
     }
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Change Password</h2>
+        <h2>Đổi mật khẩu</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Current Password</label>
+            <label>Mật khẩu hiện tại</label>
             <input
               type="password"
               name="old_password"
@@ -76,7 +76,7 @@ const ChangePasswordModal = ({ onClose, userId }) => {
             />
           </div>
           <div className="form-group">
-            <label>New Password</label>
+            <label>Mật khẩu mới</label>
             <input
               type="password"
               name="new_password"
@@ -86,7 +86,7 @@ const ChangePasswordModal = ({ onClose, userId }) => {
             />
           </div>
           <div className="form-group">
-            <label>Confirm New Password</label>
+            <label>Xác nhận mật khẩu mới</label>
             <input
               type="password"
               name="confirm_password"
@@ -97,10 +97,10 @@ const ChangePasswordModal = ({ onClose, userId }) => {
           </div>
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>
-              Cancel
+              Hủy
             </button>
             <button type="submit" disabled={loading}>
-              {loading ? 'Changing...' : 'Change Password'}
+              {loading ? 'Đang đổi...' : 'Đổi mật khẩu'}
             </button>
           </div>
         </form>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Descriptions, Button, Spin, message, Tag, Table, Modal } from 'antd';
-import { ArrowLeftOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Card, Descriptions, Button, Spin, message, Tag, Table, Modal, Input, Row, Col } from 'antd';
+import { ArrowLeftOutlined, UserAddOutlined, SearchOutlined, ClearOutlined } from '@ant-design/icons';
 import { useAppointment } from '../../../Hooks/useAppoinment';
 
 const AppointmentDetail = () => {
@@ -13,8 +13,14 @@ const AppointmentDetail = () => {
   const [isStaffModalVisible, setIsStaffModalVisible] = useState(false);
   const [availableStaff, setAvailableStaff] = useState([]);
   const [staffLoading, setStaffLoading] = useState(false);
-    const [confirmVisible, setConfirmVisible] = useState(false);
-    const [selectedStaffId, setSelectedStaffId] = useState(null);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [selectedStaffId, setSelectedStaffId] = useState(null);
+  const [searchFilters, setSearchFilters] = useState({
+    city: '',
+    district: '',
+    ward: '',
+    street: ''
+  });
 
   useEffect(() => {
     const fetchAppointmentDetail = async () => {
@@ -35,16 +41,27 @@ const AppointmentDetail = () => {
     fetchAppointmentDetail();
   }, [id]);
 
-  const fetchAvailableStaff = async () => {
+  const fetchAvailableStaff = async (searchAddress = null) => {
     setStaffLoading(true);
     try {
-      const result = await getAvailableStaffList();
+      const params = {
+        pageNum: 1,
+        pageSize: 10,
+      };
+      
+      // Thêm address filter nếu có
+      if (searchAddress) {
+        params.address = JSON.stringify(searchAddress);
+      }
+      const result = await getAvailableStaffList(params);      
       if (result.success) {
-        setAvailableStaff(result.data.data);
+        const staffData = result.data?.data?.pageData || [];
+        setAvailableStaff(staffData);
       } else {
         message.error('Không thể tải danh sách nhân viên');
       }
     } catch (error) {
+      console.error('Error:', error); 
       message.error('Đã có lỗi xảy ra');
     } finally {
       setStaffLoading(false);
@@ -75,6 +92,36 @@ const handleAssignStaff = async () => {
   }
 };
 
+const handleSearchStaff = () => {
+  // Chỉ gửi các field có giá trị
+  const addressFilter = {};
+  if (searchFilters.city.trim()) addressFilter.city = searchFilters.city.trim();
+  if (searchFilters.district.trim()) addressFilter.district = searchFilters.district.trim();
+  if (searchFilters.ward.trim()) addressFilter.ward = searchFilters.ward.trim();
+  if (searchFilters.street.trim()) addressFilter.street = searchFilters.street.trim();
+  
+  // Nếu có ít nhất 1 filter thì search, không thì load tất cả
+  const hasFilters = Object.keys(addressFilter).length > 0;
+  fetchAvailableStaff(hasFilters ? addressFilter : null);
+};
+
+const handleClearSearch = () => {
+  setSearchFilters({
+    city: '',
+    district: '',
+    ward: '',
+    street: ''
+  });
+  fetchAvailableStaff(null);
+};
+
+const handleFilterChange = (field, value) => {
+  setSearchFilters(prev => ({
+    ...prev,
+    [field]: value
+  }));
+};
+
 
 
   const staffColumns = [
@@ -92,6 +139,32 @@ const handleAssignStaff = async () => {
       title: 'Số điện thoại',
       dataIndex: 'phone_number',
       key: 'phone',
+    },
+    {
+      title: 'Vai trò',
+      dataIndex: 'role',
+      key: 'role',
+      render: (role) => {
+        const roleMap = {
+          'staff': 'Nhân viên',
+          'laboratory_technician': 'Kỹ thuật viên',
+          'manager': 'Quản lý'
+        };
+        return (
+          <Tag color={role === 'laboratory_technician' ? 'blue' : role === 'manager' ? 'gold' : 'green'}>
+            {roleMap[role] || role}
+          </Tag>
+        );
+      }
+    },
+    {
+      title: 'Địa chỉ',
+      key: 'address',
+      render: (_, record) => {
+        const { address } = record;
+        if (!address) return 'Không có';
+        return `${address.street || ''}, ${address.ward || ''}, ${address.district || ''}, ${address.city || ''}, ${address.country || ''}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',');
+      }
     },
     {
       title: 'Thao tác',
@@ -231,7 +304,7 @@ const handleAssignStaff = async () => {
           type="primary"
           onClick={() => {
             setIsStaffModalVisible(true);
-            fetchAvailableStaff();
+            fetchAvailableStaff(null);
           }}
           className="bg-[#00a9a4] hover:bg-[#1c6b68]"
         >
@@ -243,14 +316,67 @@ const handleAssignStaff = async () => {
           open={isStaffModalVisible}
           onCancel={() => setIsStaffModalVisible(false)}
           footer={null}
-          width={800}
+          width={1200}
         >
+          {/* Search Form */}
+          <Card className="mb-4" size="small">
+            <Row gutter={16} className="mb-3">
+              <Col span={6}>
+                <Input
+                  placeholder="Thành phố"
+                  value={searchFilters.city}
+                  onChange={(e) => handleFilterChange('city', e.target.value)}
+                />
+              </Col>
+              <Col span={6}>
+                <Input
+                  placeholder="Quận/Huyện"
+                  value={searchFilters.district}
+                  onChange={(e) => handleFilterChange('district', e.target.value)}
+                />
+              </Col>
+              <Col span={6}>
+                <Input
+                  placeholder="Phường/Xã"
+                  value={searchFilters.ward}
+                  onChange={(e) => handleFilterChange('ward', e.target.value)}
+                />
+              </Col>
+              <Col span={6}>
+                <Input
+                  placeholder="Đường"
+                  value={searchFilters.street}
+                  onChange={(e) => handleFilterChange('street', e.target.value)}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button 
+                  type="primary" 
+                  icon={<SearchOutlined />}
+                  onClick={handleSearchStaff}
+                  className="mr-2"
+                >
+                  Tìm kiếm
+                </Button>
+                <Button 
+                  icon={<ClearOutlined />}
+                  onClick={handleClearSearch}
+                >
+                  Xóa bộ lọc
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+
           <Table
             columns={staffColumns}
             dataSource={availableStaff}
             rowKey="_id"
             pagination={false}
             loading={staffLoading}
+            scroll={{ x: 800 }}
           />
         </Modal>
       </Card>

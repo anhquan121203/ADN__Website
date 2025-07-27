@@ -15,6 +15,7 @@ import CustomerSideBarLayout from "./Layouts/CustomerSideBarLayout";
 import CustomerProfile from "./Pages/CustomerPage/CustomerProfile/CustomerProfile";
 import CustomerService from "./Pages/CustomerPage/ServicePage/ServicePage";
 import ViewAppointment from "./Pages/CustomerPage/AppointmentPage/ViewAppointment";
+import AppointmentDetailCustomer from "./Pages/CustomerPage/AppointmentPage/AppointmentDetailCusomter";
 import ViewSampleAppointment from "./Pages/CustomerPage/AppointmentPage/ViewSampleAppointment/ViewSampleAppointment";
 import PaymentPage from "./Pages/CustomerPage/PaymentPage/PaymentPage";
 import PayOSReturn from "./Pages/CustomerPage/PaymentPage/PayOSReturn";
@@ -51,7 +52,7 @@ import AppointmentViewDetail from "./Pages/StaffPage/StaffConfirmSlots/Appointme
 import StaffSample from "./Pages/StaffPage/StaffSample/StaffSample";
 import ViewSampleAppoinment from "./Pages/StaffPage/StaffSample/ViewSampleAppoinment/ViewSampleAppoinment";
 import ViewSamplesByAppointment from "./Pages/StaffPage/StaffConfirmSlots/ViewSamplesByAppointment/ViewSamplesByAppointment";
-
+import StaffDashboard from "./Pages/StaffPage/StaffDashboard/StaffDashboard";
 // MANAGER PAGE
 import ManagerLayout from "./Layouts/ManagerLayout";
 import ManagerProfile from "./Pages/ManagerPage/ProfileManager/ProfileManger";
@@ -71,6 +72,8 @@ import ManageResult from "./Pages/LaboratoryTechnicianPage/ManageResult/ManageRe
 import ViewSamples from "./Pages/LaboratoryTechnicianPage/ViewSamples/ViewSamples";
 import GuidePage from "./Pages/CustomerPage/GuidePage/GuidePage";
 import KitManager from "./Pages/ManagerPage/KitManager/KitManager";
+import LabTechDashboard from "./Pages/LaboratoryTechnicianPage/LabTechDashboard/LabTechDashboard";
+
 import StaffAppointmentAdmin from "./Pages/StaffPage/StaffAppointmentAdmin/StaffAppointmentAdmin";
 
 // Protected route component
@@ -139,6 +142,7 @@ function App() {
         <Route path="/customer" element={<CustomerSideBarLayout />}>
           <Route index element={<CustomerProfile />} />
           <Route path="appointment" element={<ViewAppointment />} />
+          <Route path="appointment/detail/:appointmentId" element={<AppointmentDetailCustomer />} />
           <Route
             path="appointment/sample/:appointmentId"
             element={<ViewSampleAppointment />}
@@ -186,6 +190,7 @@ function App() {
             path="appointment/samples/:appointmentId"
             element={<ViewSamplesByAppointment />}
           />
+          <Route path="dashboard" element={<StaffDashboard />} />
 
           {/* Appointment Amdin */}
           <Route path="appointment-admin/case" element={<StaffAppointmentAdmin />} />
@@ -219,6 +224,7 @@ function App() {
           />
           <Route path="results" element={<ManageResult />} />
           <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
+          <Route path="dashboard" element={<LabTechDashboard />} />
         </Route>
       </Routes>
 

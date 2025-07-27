@@ -56,6 +56,16 @@ function SidebarStaff() {
           </div>
           <nav className="nav-staff">
             <div className="nav-group">
+              {/* Dashboard */}
+              <Link
+                to="/staff/dashboard"
+                className={`nav-item ${
+                  pathname === "/staff/dashboard" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Dashboard" : ""}
+              >
+                <MdOutlineDashboard /> {!sidebarCollapsed && "Dashboard"}
+              </Link>
               {/* Hồ sơ cá nhân */}
               <Link
                 to="/staff"
