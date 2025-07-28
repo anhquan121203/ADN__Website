@@ -77,80 +77,152 @@ import LabTechDashboard from "./Pages/LaboratoryTechnicianPage/LabTechDashboard/
 import StaffAppointmentAdmin from "./Pages/StaffPage/StaffAppointmentAdmin/StaffAppointmentAdmin";
 
 // Protected route component
-// const ProtectedRoute = ({ element, allowedRoles }) => {
-//   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+const ProtectedRoute = ({ element, allowedRoles, redirectTo = "/login" }) => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const token = localStorage.getItem("accessToken");
 
-//   // If not logged in, redirect to login
-//   if (!isLoggedIn) {
-//     return <Navigate to="/login" />;
-//   }
+  // If not logged in, redirect to login
+  if (!isLoggedIn || !token) {
+    return <Navigate to="/login" replace />;
+  }
 
-//   // Check user role from token
-//   const token = localStorage.getItem("accessToken");
-//   if (token) {
-//     try {
-//       const decoded = jwtDecode(token);
-//       const userRole = decoded.role || "customer"; // Default to customer if no role
+  try {
+    // Decode token to get user role
+    const decoded = jwtDecode(token);
+    const userRole = decoded.role || "customer";
+    
+    // Check if token is expired
+    const currentTime = Date.now() / 1000;
+    if (decoded.exp < currentTime) {
+      // Token expired, clear storage and redirect to login
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      return <Navigate to="/login" replace />;
+    }
 
-//       // If user role is allowed, render the element
-//       if (allowedRoles.includes(userRole)) {
-//         return element;
-//       } else {
-//         // Redirect based on role
-//         if (userRole === "admin") {
-//           return <Navigate to="/admin" />;
-//         } else if (userRole === "staff") {
-//           return <Navigate to="/staff" />;
-//         } else {
-//           return <Navigate to="/" />;
-//         }
-//       }
-//     } catch (error) {
-//       console.error("Error decoding token:", error);
-//       return <Navigate to="/login" />;
-//     }
-//   }
+    // If user role is allowed, render the element
+    if (allowedRoles.includes(userRole)) {
+      return element;
+    } else {
+      // Redirect based on role to their appropriate dashboard
+      switch (userRole) {
+        case "admin":
+          return <Navigate to="/admin" replace />;
+        case "staff":
+          return <Navigate to="/staff" replace />;
+        case "manager":
+          return <Navigate to="/manager" replace />;
+        case "laboratory_technician":
+          return <Navigate to="/laboratory_technician" replace />;
+        case "customer":
+        default:
+          return <Navigate to="/" replace />;
+      }
+    }
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    // Invalid token, clear storage and redirect to login
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    return <Navigate to="/login" replace />;
+  }
+};
 
-//   return <Navigate to="/login" />;
-// };
+// Public route component (for login, register pages - only accessible when not logged in)
+const PublicRoute = ({ element }) => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const token = localStorage.getItem("accessToken");
+
+  if (isLoggedIn && token) {
+    try {
+      const decoded = jwtDecode(token);
+      const userRole = decoded.role || "customer";
+      
+      // Check if token is expired
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        // Token expired, allow access to public route
+        return element;
+      }
+
+      // User is logged in, redirect to their dashboard
+      switch (userRole) {
+        case "admin":
+          return <Navigate to="/admin" replace />;
+        case "staff":
+          return <Navigate to="/staff" replace />;
+        case "manager":
+          return <Navigate to="/manager" replace />;
+        case "laboratory_technician":
+          return <Navigate to="/laboratory_technician" replace />;
+        case "customer":
+        default:
+          return <Navigate to="/customer" replace />;
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      // Invalid token, allow access to public route
+      return element;
+    }
+  }
+
+  return element;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Customer Routes - accessible without login */}
         <Route path="/" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/service" element={<CustomerService />} />
-          <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/api/payments/payos-return" element={<PayOSReturn />} />
-          <Route path="/api/payments/payos-cancel" element={<PayOSCancel />} />
-          <Route
-            path="/create-appointment-admin"
-            element={<CreateAppointmentAdminComponent />}
-          />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/blog" element={<Blogger />} />
-          <Route path="/blog/:slug" element={<BlogDetail />} />
-          <Route path="/guide" element={<GuidePage />} />
+          <Route path="service" element={<CustomerService />} />
+          <Route path="payment" element={<PaymentPage />} />
+          <Route path="api/payments/payos-return" element={<PayOSReturn />} />
+          <Route path="api/payments/payos-cancel" element={<PayOSCancel />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="blog" element={<Blogger />} />
+          <Route path="blog/:slug" element={<BlogDetail />} />
+          <Route path="guide" element={<GuidePage />} />
+          <Route path="verify-email/:token" element={<VerifyEmail />} />
+          
+          {/* Auth routes - only accessible when not logged in */}
+          <Route path="login" element={<PublicRoute element={<LoginPage />} />} />
+          <Route path="register" element={<PublicRoute element={<Register />} />} />
+          <Route path="forgot-password" element={<PublicRoute element={<ForgotPassword />} />} />
         </Route>
 
-        <Route path="/customer" element={<CustomerSideBarLayout />}>
+        {/* Protected Customer Routes */}
+        <Route path="/customer" element={
+          <ProtectedRoute 
+            element={<CustomerSideBarLayout />} 
+            allowedRoles={["customer"]} 
+          />
+        }>
           <Route index element={<CustomerProfile />} />
           <Route path="appointment" element={<ViewAppointment />} />
           <Route path="appointment/detail/:appointmentId" element={<AppointmentDetailCustomer />} />
-          <Route
-            path="appointment/sample/:appointmentId"
-            element={<ViewSampleAppointment />}
-          />
+          <Route path="appointment/sample/:appointmentId" element={<ViewSampleAppointment />} />
         </Route>
 
-        {/* ADMIN ROUTES*********************************** */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Special admin creation route for customers */}
+        <Route 
+          path="/create-appointment-admin" 
+          element={
+            <ProtectedRoute 
+              element={<CreateAppointmentAdminComponent />} 
+              allowedRoles={["customer"]} 
+            />
+          } 
+        />
+
+        {/* ADMIN ROUTES - Protected */}
+        <Route path="/admin" element={
+          <ProtectedRoute 
+            element={<AdminLayout />} 
+            allowedRoles={["admin"]} 
+          />
+        }>
           <Route index element={<DashboardAdmin />} />
           <Route path="dashboard-admin" element={<DashboardAdmin />} />
           <Route path="manager-account" element={<ManagerUser />} />
@@ -160,72 +232,67 @@ function App() {
           <Route path="slot-admin" element={<SlotAdmin />} />
           <Route path="admin-staff-profile" element={<AdminStaffProfile />} />
           <Route path="kit-admin" element={<KitAdmin />} />
-          <Route
-            path="administrative-case"
-            element={<AdministrativeCaseAdmin />}
-          />
+          <Route path="administrative-case" element={<AdministrativeCaseAdmin />} />
           <Route path="appointment-admin" element={<AppointmentAdmin />} />
           <Route path="blog" element={<BlogAdmin />} />
           <Route path="blog-category" element={<BlogCategoriesAdmin />} />
         </Route>
 
-        {/* STAFF ROUTES*********************************** */}
-        <Route path="/staff" element={<StaffLayout />}>
+        {/* STAFF ROUTES - Protected */}
+        <Route path="/staff" element={
+          <ProtectedRoute 
+            element={<StaffLayout />} 
+            allowedRoles={["staff"]} 
+          />
+        }>
           <Route index element={<StaffProfile />} />
           <Route path="appointment" element={<AppointmentStaff />} />
           <Route path="service" element={<StaffService />} />
           <Route path="department" element={<StaffDepartment />} />
           <Route path="slot" element={<StaffSlot />} />
           <Route path="confirm-slots" element={<StaffConfirmSlots />} />
-          <Route
-            path="appointment/view/:id"
-            element={<AppointmentViewDetail />}
-          />
+          <Route path="appointment/view/:id" element={<AppointmentViewDetail />} />
           <Route path="sample" element={<StaffSample />} />
-          <Route
-            path="samples/appointment/:appointmentId"
-            element={<ViewSampleAppoinment />}
-          />
-          <Route
-            path="appointment/samples/:appointmentId"
-            element={<ViewSamplesByAppointment />}
-          />
+          <Route path="samples/appointment/:appointmentId" element={<ViewSampleAppoinment />} />
+          <Route path="appointment/samples/:appointmentId" element={<ViewSamplesByAppointment />} />
           <Route path="dashboard" element={<StaffDashboard />} />
-
-          {/* Appointment Amdin */}
           <Route path="appointment-admin/case" element={<StaffAppointmentAdmin />} />
         </Route>
 
-        {/* MANAGER ROUTES*********************************** */}
-        <Route path="/manager" element={<ManagerLayout />}>
+        {/* MANAGER ROUTES - Protected */}
+        <Route path="/manager" element={
+          <ProtectedRoute 
+            element={<ManagerLayout />} 
+            allowedRoles={["manager"]} 
+          />
+        }>
           <Route index element={<ManagerProfile />} />
           <Route path="department-manager" element={<DepartmentManager />} />
           <Route path="appointments" element={<AppointmentManager />} />
           <Route path="appointments/:id" element={<AppointmentDetail />} />
           <Route path="service-manager" element={<ServiceManager />} />
-          <Route
-            path="staff-profile-manager"
-            element={<StaffProfileManager />}
-          />
+          <Route path="staff-profile-manager" element={<StaffProfileManager />} />
           <Route path="slot-manager" element={<SlotManager />} />
           <Route path="kit-manager" element={<KitManager />} />
         </Route>
 
-        {/* LABORATORY TECHNICIAN ROUTES*********************************** */}
-        <Route
-          path="/laboratory_technician"
-          element={<LaboratoryTechnicianLayout />}
-        >
+        {/* LABORATORY TECHNICIAN ROUTES - Protected */}
+        <Route path="/laboratory_technician" element={
+          <ProtectedRoute 
+            element={<LaboratoryTechnicianLayout />} 
+            allowedRoles={["laboratory_technician"]} 
+          />
+        }>
           <Route index element={<LaboratoryTechnicianProfile />} />
           <Route path="samples" element={<LabTechAppointments />} />
-          <Route
-            path="appointments/:appointmentId/samples"
-            element={<LabTechViewSamplesByAppointment />}
-          />
+          <Route path="appointments/:appointmentId/samples" element={<LabTechViewSamplesByAppointment />} />
           <Route path="results" element={<ManageResult />} />
           <Route path="view-samples/:appointmentId" element={<ViewSamples />} />
           <Route path="dashboard" element={<LabTechDashboard />} />
         </Route>
+
+        {/* Catch all route - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {/* Setup toast */}
@@ -238,59 +305,6 @@ function App() {
         limit={5}
       />
     </BrowserRouter>
-    // <BrowserRouter>
-    //   <Routes>
-    //   <Route path="/" element={<CustomerLayout />}>
-
-    //     {/* Public routes */}
-    //     <Route path="/login" element={<LoginPage />} />
-    //     <Route path="/register" element={<Register />} />
-    //     <Route path="/verify-email/:token" element={<VerifyEmail />} />
-    //     </Route>
-    //     {/* Customer routes */}
-    //     <Route path="/" element={<CustomerLayout />}>
-    //       <Route index element={<HomePage />} />
-    //       {/* Add more customer routes here */}
-    //     </Route>
-
-    //     {/* Admin routes */}
-    //     <Route
-    //       path="/admin"
-    //       element={
-    //         <ProtectedRoute
-    //           element={<AdminLayout />}
-    //           allowedRoles={["admin"]}
-    //         />
-    //       }
-    //     >
-    //       <Route index element={<DashboardAdmin />} />
-    //       <Route path="/admin/dashboard-admin" element={<DashboardAdmin />} />
-    //     </Route>
-
-    //     {/* Staff routes (if needed) */}
-    //     <Route
-    //       path="/staff"
-    //       element={
-    //         <ProtectedRoute
-    //           element={<StaffLayout />}
-    //           allowedRoles={["staff"]}
-    //         />
-    //       }
-    //     >
-    //       {/* <Route index element={<StaffDashboard />} /> */}
-    //     </Route>
-    //   </Routes>
-
-    //   {/* Setup toast */}
-    //   <ToastContainer
-    //     transition={Slide}
-    //     autoClose={1000}
-    //     newestOnTop={true}
-    //     pauseOnHover={true}
-    //     pauseOnFocusLoss={false}
-    //     limit={5}
-    //   />
-    // </BrowserRouter>
   );
 }
 

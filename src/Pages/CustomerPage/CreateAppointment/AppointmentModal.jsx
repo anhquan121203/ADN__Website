@@ -63,19 +63,44 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
 
   const isSlotSelectableForHome = (slot) => {
     if (!slot?.time_slots?.[0]) return false;
+    
     const timeSlot = slot.time_slots[0];
-    // Create date object and get day of week (0=Sunday, 6=Saturday)
     const slotDate = new Date(timeSlot.year, timeSlot.month - 1, timeSlot.day);
-    const dayOfWeek = slotDate.getDay();
+    const dayOfWeek = slotDate.getDay(); // 0=Sunday, 6=Saturday
     const startHour = timeSlot.start_time?.hour;
-    // For home type, allow all time slots on weekends (Saturday=6, Sunday=0)
+    const endHour = timeSlot.end_time?.hour;
+    
+    // Debug logging for this specific function
+    console.log(`🔍 isSlotSelectableForHome check:`, {
+      date: `${timeSlot.day}/${timeSlot.month}/${timeSlot.year}`,
+      dayOfWeek,
+      dayName: ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'][dayOfWeek],
+      startHour,
+      endHour,
+      isWeekend: dayOfWeek === 6 || dayOfWeek === 0,
+      isCompletelyOutsideBusinessHours: (endHour <= 8) || (startHour >= 17)
+    });
+    
+    // For home service: 
+    // - Weekends (Saturday=6, Sunday=0): Allow all time slots
+    // - Weekdays (Monday-Friday): Only allow slots that are COMPLETELY outside business hours
     const isWeekend = dayOfWeek === 6 || dayOfWeek === 0;
+    
     if (isWeekend) {
+      console.log(`✅ Weekend (${dayOfWeek === 6 ? 'Thứ 7' : 'Chủ nhật'}) - slot allowed for home service`);
       return true; // Allow any time slot on weekends
     }
-    // For weekdays, only allow outside business hours
-    const isOutsideBusinessHours = startHour < 8 || startHour >= 17;
-    return isOutsideBusinessHours;
+    
+    // For weekdays, the ENTIRE slot must be outside business hours (8:00-17:00)
+    // Either: slot ends before 8:00 AM, OR slot starts at/after 17:00 (5:00 PM)
+    const isCompletelyOutsideBusinessHours = (endHour <= 8) || (startHour >= 17);
+    const result = isCompletelyOutsideBusinessHours;
+    
+    console.log(`${result ? '✅' : '❌'} Weekday (${['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'][dayOfWeek]}) - slot ${result ? 'ALLOWED' : 'NOT ALLOWED'} for home service`);
+    console.log(`   - Time: ${startHour}:00 - ${endHour}:00, Completely outside business hours: ${isCompletelyOutsideBusinessHours}`);
+    console.log(`   - Logic: (endHour <= 8: ${endHour <= 8}) OR (startHour >= 17: ${startHour >= 17})`);
+    
+    return result;
   };
 
   const isSlotPastDate = (slot) => {
@@ -550,17 +575,41 @@ const AppointmentModal = ({ isOpen, onClose, serviceId, serviceName, serviceType
                           const dayOfWeek = slotDate.getDay(); // 0=Sunday, 6=Saturday
                           const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
                           
+                          // Debug logging for render logic
+                          console.log(`🎨 Render logic for slot ${displayDate} ${displayTime}:`, {
+                            slotId: slot._id,
+                            isPastDate,
+                            type,
+                            serviceType,
+                            dayOfWeek,
+                            isWeekend,
+                            startHour: timeSlot.start_time?.hour
+                          });
+                          
                           if (isPastDate) {
                             isDisabled = true;
                             disabledReason = 'Đã quá thời gian';
+                            console.log(`❌ Slot disabled: Past date`);
                           } else if (type === 'home') {
-                            if (isWeekend) {
+                            // Use the consistent logic from isSlotSelectableForHome
+                            const canSelectForHome = isSlotSelectableForHome(slot);
+                            console.log(`🏠 Home service check result: ${canSelectForHome}`);
+                            
+                            if (!canSelectForHome) {
+                              isDisabled = true;
+                              if (isWeekend) {
+                                disabledReason = 'Slot không khả dụng cho dịch vụ tại nhà';
+                              } else {
+                                disabledReason = 'Ngày thường chỉ ngoài giờ hành chính (trước 8:00 hoặc sau 17:00)';
+                              }
+                              console.log(`❌ Slot disabled for home: ${disabledReason}`);
+                            } else {
                               isDisabled = false;
                               disabledReason = '';
-                            } else if (!isSlotSelectableForHome(slot)) {
-                              isDisabled = true;
-                              disabledReason = 'Ngày thường chỉ ngoài giờ hành chính';
+                              console.log(`✅ Slot enabled for home service`);
                             }
+                          } else {
+                            console.log(`ℹ️ Not home service or past date check passed`);
                           }
                         }
 
