@@ -38,7 +38,9 @@ function SidebarAdmin() {
         <div>
           <div className="top-admin">
             <div className="top-admin__icon">
+              <Link to="/">
               <RiAdminLine />
+              </Link>
             </div>
             <span className="title-name">Admin Dashboard</span>
           </div>

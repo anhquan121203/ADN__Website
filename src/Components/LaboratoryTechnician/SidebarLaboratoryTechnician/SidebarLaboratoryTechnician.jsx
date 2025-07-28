@@ -40,7 +40,9 @@ function SidebarLaboratoryTechnician() {
         <div>
           <div className="top-lab">
             <div className="top-lab__icon">
+            <Link to="/">
               <FaFlask />
+            </Link>
             </div>
             {!sidebarCollapsed && <span className="title-name">Lab Technician</span>}
           </div>

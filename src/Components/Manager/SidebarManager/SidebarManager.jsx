@@ -44,7 +44,9 @@ function SidebarManager() {
         <div>
           <div className="top-manager">
             <div className="top-manager__icon">
+            <Link to="/">
               <FaUserTie />
+            </Link>
             </div>
             {!sidebarCollapsed && (
               <span className="title-name">Quản lý trang thống kê</span>

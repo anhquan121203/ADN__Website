@@ -50,7 +50,9 @@ function SidebarStaff() {
         <div>
           <div className="top-staff">
             <div className="top-staff__icon">
+            <Link to="/">
               <FaUserTie />
+            </Link>
             </div>
             {!sidebarCollapsed && <span className="title-name">Staff Dashboard</span>}
           </div>
