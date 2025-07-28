@@ -1,1 +1,1 @@
-export const API_BASE_URL = "https://restapi-dnatesting.up.railway.app";
+export const API_BASE_URL = "https://restapi-dna-testing.onrender.com";

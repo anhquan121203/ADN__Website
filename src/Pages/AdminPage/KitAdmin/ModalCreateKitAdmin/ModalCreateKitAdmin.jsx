@@ -54,7 +54,7 @@ const ModalCreateService = ({ isModalOpen, handleCancel, handleAdd }) => {
           Hủy
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Tạo tài khoản
+          Tạo dụng cụ
         </Button>,
       ]}
     >
