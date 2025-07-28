@@ -190,7 +190,7 @@ export default function ViewAppointment() {
               Xem Mẫu
             </Menu.Item>
 
-            {record.status === "completed" &&
+            {/* {record.status === "completed" &&
               record.type === "administrative" && (
                 <Menu.Item
                   key="requestResult"
@@ -200,7 +200,7 @@ export default function ViewAppointment() {
                 >
                   Yêu cầu giấy xét nghiệm
                 </Menu.Item>
-              )}
+              )} */}
           </Menu>
         );
         return (

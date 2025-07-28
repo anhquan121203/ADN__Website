@@ -132,6 +132,17 @@ function SidebarManager() {
                 <FaAddressBook /> {!sidebarCollapsed && "Phòng ban"}
               </Link>
 
+              {/* Phòng ban */}
+              <Link
+                to="/manager/service-manager"
+                className={`nav-item ${
+                  pathname === "/manager/service-manager" ? "active" : ""
+                }`}
+                title={sidebarCollapsed ? "Quản lý dịch vụ" : ""}
+              >
+                <FaAddressBook /> {!sidebarCollapsed && "Quản lý dịch vụ"}
+              </Link>
+
               {/* Kit test */}
               <Link
                 to="/manager/kit-manager"

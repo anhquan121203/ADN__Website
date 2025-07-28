@@ -7,8 +7,8 @@ import useDashboard from "../../../../Hooks/useDashboard";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 function CardDashboard() {
-
-  const { summary, loading, error, total, listDashboardSumary } = useDashboard();
+  const { summary, loading, error, total, listDashboardSumary } =
+    useDashboard();
 
   useEffect(() => {
     listDashboardSumary();
@@ -42,27 +42,26 @@ function CardDashboard() {
 
       <div className="card--element">
         <div className="icon-card">
-          <IoDocumentTextOutline  />
+          <IoDocumentTextOutline />
         </div>
         <div className="card-user-info">
           <h2>Số lượng mẫu xét nghiệm</h2>
           <div className="statics-card">
             <p>{summary?.samples}</p>
-            <p className="statics">📈 11.01%</p>
+            {/* <p className="statics">📈 11.01%</p> */}
           </div>
         </div>
       </div>
 
       <div className="card--element">
         <div className="icon-card">
-          <RiMoneyDollarCircleLine  />
+          <RiMoneyDollarCircleLine />
         </div>
         <div className="card-user-info">
           <h2>Doanh thu</h2>
           <p>{summary?.revenue?.toLocaleString()}</p>
         </div>
       </div>
-
     </div>
   );
 }

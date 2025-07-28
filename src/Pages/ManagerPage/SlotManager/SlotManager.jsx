@@ -67,7 +67,7 @@ function SlotManager() {
         Array.isArray(filters.staff_profile_ids) &&
         filters.staff_profile_ids.length > 0
           ? filters.staff_profile_ids.join(",")
-          : undefined, 
+          : undefined,
       is_active: true,
       pageNum: currentPage,
       pageSize: pageSize,
@@ -223,8 +223,15 @@ function SlotManager() {
         </div>
         <div className="account-container">
           {slots.length > 0 ? (
-            Object.entries(groupSlotsByDate(slots)).map(
-              ([date, slotsInDay]) => (
+            Object.entries(groupSlotsByDate(slots))
+              .sort(([dateA], [dateB]) => {
+                const [dayA, monthA, yearA] = dateA.split("/").map(Number);
+                const [dayB, monthB, yearB] = dateB.split("/").map(Number);
+                const dA = new Date(yearA, monthA - 1, dayA);
+                const dB = new Date(yearB, monthB - 1, dayB);
+                return dB - dA; // mới nhất lên trước
+              })
+              .map(([date, slotsInDay]) => (
                 <div key={date} style={{ marginBottom: 40 }}>
                   <h4 style={{ marginBottom: 16 }}>📅 Ngày: {date}</h4>
 
@@ -293,8 +300,7 @@ function SlotManager() {
                     );
                   })}
                 </div>
-              )
-            )
+              ))
           ) : (
             <p>Không có dữ liệu</p>
           )}
@@ -316,6 +322,7 @@ function SlotManager() {
           isModalOpen={isAddModalOpen}
           handleCancel={() => setIsAddModalOpen(false)}
           handleAdd={handleAddSlot}
+          existingSlots={slots}
         />
 
         <EditSlotManager

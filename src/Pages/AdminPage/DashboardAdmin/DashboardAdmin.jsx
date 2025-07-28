@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import './DashboardAdmin.css'
-import CardDashboard from './CardDashboard/CardDashboard'
-import DepartmentDashboard from './DepartmentDashboard/DepartmentDashboard'
-import RevenueDashboardAdmin from './RevenueDashboardAdmin/RevenueDashboardAdmin'
-import { Divider } from 'antd';
-import LoadingComponent from '../../../Components/Customer/LoadingComponent/LoadingComponent'
-import PaymentDashboardAdmin from './PaymentDashboardAdmin/PaymentDashboardAdmin'
+import React, { useEffect, useState } from "react";
+import "./DashboardAdmin.css";
+import CardDashboard from "./CardDashboard/CardDashboard";
+import DepartmentDashboard from "./DepartmentDashboard/DepartmentDashboard";
+import RevenueDashboardAdmin from "./RevenueDashboardAdmin/RevenueDashboardAdmin";
+import { Divider } from "antd";
+import LoadingComponent from "../../../Components/Customer/LoadingComponent/LoadingComponent";
+import PaymentDashboardAdmin from "./PaymentDashboardAdmin/PaymentDashboardAdmin";
 
 function DashboardAdmin() {
-
   return (
-    <div className='dashboard-admin'>
+    <div className="dashboard-admin">
       <h1>Dashboard admin</h1>
 
       <div className="card-dashboard">
@@ -18,13 +17,13 @@ function DashboardAdmin() {
       </div>
 
       <div className="statics-dashoard">
-        <div className="department-statics">
+        {/* <div className="department-statics">
           <DepartmentDashboard />
-        </div>
-
-        <div className="user-statics">
+        </div> */}
+        <PaymentDashboardAdmin />
+        {/* <div className="user-statics">
           <PaymentDashboardAdmin/>
-        </div>
+        </div> */}
       </div>
 
       {/* <Divider size="middle" /> */}
@@ -33,7 +32,7 @@ function DashboardAdmin() {
         <RevenueDashboardAdmin />
       </div>
     </div>
-  )
+  );
 }
 
-export default DashboardAdmin
+export default DashboardAdmin;

@@ -212,8 +212,8 @@ function Header() {
                             <div style={{ padding: '12px 16px', fontWeight: 'bold', borderBottom: '2px solid #eee' }}>
                               {firstName} {lastName}
                             </div>
-                            <Link to="/customer">Profile</Link>
-                            <Link to="/history">Lịch sử xét nghiệm</Link>
+                            <Link to="/customer">Hồ sơ</Link>
+                            {/* <Link to="/history">Lịch sử xét nghiệm</Link> */}
                           </>
                         ) : role === "staff" ? (
                           <>

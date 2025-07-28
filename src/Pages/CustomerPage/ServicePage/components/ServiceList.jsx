@@ -125,12 +125,7 @@ const ServiceList = ({
                         setSelectedService(service);
                         if (service.type === "civil") {
                           setIsCivilModalOpen(true);
-                        } else if (
-                          service &&
-                          service.type === "administrative"
-                        ) {
-                          setIsAdminModalOpen(true);
-                        }
+                        } 
                       }}
                       className="w-full bg-[#00a9a4] text-white py-2 px-4 rounded-lg hover:bg-[#1c6b68] transition-colors duration-300"
                     >

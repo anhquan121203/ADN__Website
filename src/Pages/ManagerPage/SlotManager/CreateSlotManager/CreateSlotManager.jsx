@@ -17,7 +17,12 @@ import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
-const CreateSlotManager = ({ isModalOpen, handleCancel, handleAdd }) => {
+const CreateSlotManager = ({
+  isModalOpen,
+  handleCancel,
+  handleAdd,
+  existingSlots = [],
+}) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -37,11 +42,54 @@ const CreateSlotManager = ({ isModalOpen, handleCancel, handleAdd }) => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      values.appointment_limit = Number(values.appointment_limit)
+      values.appointment_limit = Number(values.appointment_limit);
 
       const date = values.date;
       const [startTime, endTime] = values.time_range;
 
+      const newSlotStart = dayjs(date)
+        .hour(startTime.hour())
+        .minute(startTime.minute());
+
+      const newSlotEnd = dayjs(date)
+        .hour(endTime.hour())
+        .minute(endTime.minute());
+
+      // Kiểm tra trùng slot
+      const isOverlap = existingSlots.some((slot) => {
+        const ts = slot.time_slots?.[0];
+        if (!ts) return false;
+
+        const slotStart = dayjs()
+          .year(ts.year)
+          .month(ts.month - 1)
+          .date(ts.day)
+          .hour(ts.start_time.hour)
+          .minute(ts.start_time.minute);
+
+        const slotEnd = dayjs()
+          .year(ts.year)
+          .month(ts.month - 1)
+          .date(ts.day)
+          .hour(ts.end_time.hour)
+          .minute(ts.end_time.minute);
+
+        const isSameDay =
+          slotStart.format("YYYY-MM-DD") === newSlotStart.format("YYYY-MM-DD");
+
+        // check overlap
+        const hasOverlap =
+          newSlotStart.isBefore(slotEnd) && newSlotEnd.isAfter(slotStart);
+
+        return isSameDay && hasOverlap;
+      });
+
+      if (isOverlap) {
+        toast.error("Đã tồn tại slot trùng thời gian trong ngày này!");
+        return;
+      }
+
+      // Nếu không trùng mới tiếp tục gọi API
       const timeSlot = {
         year: date.year(),
         month: date.month() + 1,
@@ -131,7 +179,6 @@ const CreateSlotManager = ({ isModalOpen, handleCancel, handleAdd }) => {
         >
           <TimePicker.RangePicker format="HH:mm" />
         </Form.Item>
-
 
         <Form.Item
           label="Giới hạn cuộc hẹn"

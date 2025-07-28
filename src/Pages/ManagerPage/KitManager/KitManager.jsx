@@ -13,6 +13,7 @@ import EditKitManager from "./EditKitManager/EditKitManager";
 import DetailKitManager from "./DetailKitManager/DetailKitManager";
 import ReturnKitManager from "./ReturnKitManager/ReturnKitManager";
 import FilterKitManager from "./FilterKitManager/FilterKitManager";
+import CreateKitManager from "./CreateKitManager/CreateKitManager";
 
 function KitManager() {
   const {
@@ -37,6 +38,7 @@ function KitManager() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
 
   // trang thái xác nhận thay đổi dụng cụ
@@ -98,8 +100,13 @@ function KitManager() {
     }
   };
 
-  // create new kit
-  const handleCreateKit = async (createNewKit) => {
+  // create new kit==========================================================
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+    setSelectedKit(null);
+  };
+
+  const handleAddKit = async (createNewKit) => {
     try {
       const result = await addNewKit(createNewKit);
       if (result.success) {
@@ -244,7 +251,7 @@ function KitManager() {
         <div className="btn--managerAccount">
           <button
             className="button-add__account"
-            onClick={() => handleCreateKit()}
+            onClick={openAddModal}
             style={{ width: 180, height: 45 }}
           >
             <FaPlus style={{ marginRight: "8px" }} />
@@ -380,6 +387,13 @@ function KitManager() {
             display: "flex",
             justifyContent: "flex-end",
           }}
+        />
+
+        {/* Modal create service */}
+        <CreateKitManager
+          isModalOpen={isAddModalOpen}
+          handleCancel={() => setIsAddModalOpen(false)}
+          handleAdd={handleAddKit}
         />
 
         {/* modal Eidt kit */}

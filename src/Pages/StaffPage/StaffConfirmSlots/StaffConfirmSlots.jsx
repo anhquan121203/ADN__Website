@@ -11,8 +11,6 @@ import ModalAddNote from './ModalAddNote';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import ModalRequestKitAdmin from './ModalRequestKitAdmin/ModalRequestKitAdmin';
-import useAppointmentAdmin from '../../../Hooks/useAppointmentAdmin';
-import ModalEditStatusAdmin from './ModalEditStatusAdmin/ModalEditStatusAdmin';
 import { MdEditNote } from 'react-icons/md';
 
 
